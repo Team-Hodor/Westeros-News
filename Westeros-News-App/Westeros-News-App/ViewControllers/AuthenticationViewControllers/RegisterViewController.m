@@ -10,7 +10,7 @@
 #import "ServerManager.h"
 #import "UIAlertController+ShowAlert.h"
 
-@interface RegisterViewController () <UITextFieldDelegate>
+@interface RegisterViewController () <UITextFieldDelegate, NSURLSessionDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
@@ -26,7 +26,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self registerForKeyboardNotifications];
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -35,11 +34,14 @@
 }
 
 - (IBAction)submitButtonTouchUpInside:(id)sender {
+    [self registerUser];
+/*
     if ([self areFieldsValidated]) {
         NSManagedObjectContext *workerContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
         
         [workerContext setParentContext:[ServerManager sharedInstance].mainContext];
         NSManagedObjectContext *masterContext = [ServerManager sharedInstance].masterContext;
+        
         
         if ([self isValidUserWithUsername:self.usernameTextField.text inContext:masterContext]) {
             NSEntityDescription *newUser = [NSEntityDescription insertNewObjectForEntityForName:@"User"
@@ -48,6 +50,9 @@
             [newUser setValue:self.usernameTextField.text forKey:@"username"];
             [newUser setValue:self.passwordTextField.text forKey:@"password"];
             [newUser setValue:self.nameTextField.text forKey:@"name"];
+        
+            // Send request to server for registration
+            
             
             NSError *error;
             [workerContext save:&error];
@@ -80,6 +85,7 @@
         }
         
     }
+ */
 }
 
 - (IBAction)cancelButtonTouchUpInside:(id)sender {
@@ -188,6 +194,64 @@
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
+}
+
+#pragma mark - Register User with webservice
+
+-(void)registerUser{
+    
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
+    NSURL *url = [NSURL URLWithString:@"http://78.90.132.242:2403/users"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
+                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                       timeoutInterval:60.0];
+    
+    [request setHTTPMethod:@"POST"];
+    
+    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@&name=%@",self.usernameTextField.text, self.passwordTextField.text, self.nameTextField.text];
+    [request setHTTPBody:[userData dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    
+    if ([self areFieldsValidated]) {
+        NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            if (!error) {
+                
+                NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                NSLog(@"%@", responseString);
+                
+                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                if ([dictionary objectForKey:@"errors"]) {
+                    NSDictionary *errors =[dictionary objectForKey:@"errors"];
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"Invalid username. The specified username is already taken."
+                                         inViewController:self
+                                              withHandler:nil];
+
+                }
+                else if(([dictionary objectForKey:@"id"])){
+                    [UIAlertController showAlertWithTitle:@"Success"
+                                               andMessage:@"You have registered successfully."
+                                         inViewController:self
+                                              withHandler:^(void) {
+                                                  [self.view endEditing:YES];
+                                                  [self dismissViewControllerAnimated:YES completion:nil];
+                                              }];
+                }else{
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"There was an error saving the data on the server."
+                                         inViewController:self
+                                              withHandler:nil];
+                }
+                    });
+            }
+        }];
+    [postDataTask resume];
+    }
+    
+
 }
 
 

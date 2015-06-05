@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AppDelegate.h"
+#import "User.h"
 
 @interface ServerManager : NSObject
 
@@ -18,5 +19,4 @@
 
 + (ServerManager *)sharedInstance;
 - (void)saveContext;
-
 @end

@@ -6,13 +6,13 @@
 //  Copyright (c) 2015 Team-Hodor. All rights reserved.
 //
 
-#import "ServerManager.h"
+#import "DatabaseManager.h"
 
-@implementation ServerManager
+@implementation DatabaseManager
 
-static ServerManager *sharedInst = nil;
+static DatabaseManager *sharedInst = nil;
 
-+ (ServerManager *)sharedInstance {
++ (DatabaseManager *)sharedInstance {
     @synchronized( self ) {
         if ( sharedInst == nil ) {
             /* sharedInst set up in init */
@@ -33,6 +33,11 @@ static ServerManager *sharedInst = nil;
          NSStringFromSelector(@selector(sharedInstance))];
     } else if ( self = [super init] ) {
         sharedInst = self;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(receiveManagedObjectSaveNotification:)
+                                                     name:NSManagedObjectContextDidSaveNotification
+                                                   object:nil];
     }
     
     return sharedInst;
@@ -130,5 +135,27 @@ static ServerManager *sharedInst = nil;
         }
     }
 }
+
+- (NSManagedObjectContext *)workerContext {
+    NSManagedObjectContext *workerContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    
+    [workerContext setParentContext:self.mainContext];
+    
+    return workerContext;
+}
+
+- (void)receiveManagedObjectSaveNotification:(id)receivedNotification {
+    NSNotification *notification = receivedNotification;
+    NSManagedObjectContext *context = notification.object;
+    if ([context parentContext]) {
+        NSError *error;
+        [context.parentContext save:&error];
+        if (error) {
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        }
+    }
+}
+
+
 
 @end

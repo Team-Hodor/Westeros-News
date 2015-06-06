@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2865D87F1B235B4500D84EE5 /* DataRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 2865D87E1B235B4500D84EE5 /* DataRepository.m */; };
 		28C2DF871B1C8D740001E968 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DF861B1C8D740001E968 /* main.m */; };
 		28C2DF8A1B1C8D740001E968 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DF891B1C8D740001E968 /* AppDelegate.m */; };
 		28C2DF8D1B1C8D740001E968 /* Westeros_News_App.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DF8B1B1C8D740001E968 /* Westeros_News_App.xcdatamodeld */; };
@@ -14,7 +15,7 @@
 		28C2DF951B1C8D740001E968 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 28C2DF941B1C8D740001E968 /* Images.xcassets */; };
 		28C2DF981B1C8D740001E968 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28C2DF961B1C8D740001E968 /* LaunchScreen.xib */; };
 		28C2DFA41B1C8D740001E968 /* Westeros_News_AppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFA31B1C8D740001E968 /* Westeros_News_AppTests.m */; };
-		28C2DFB31B1C8DCF0001E968 /* ServerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFB21B1C8DCF0001E968 /* ServerManager.m */; };
+		28C2DFB31B1C8DCF0001E968 /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFB21B1C8DCF0001E968 /* DatabaseManager.m */; };
 		28C2DFB71B1C8F560001E968 /* UIAlertController+ShowAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFB61B1C8F560001E968 /* UIAlertController+ShowAlert.m */; };
 		28C2DFBD1B1C8FCB0001E968 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFBA1B1C8FCB0001E968 /* LoginViewController.m */; };
 		28C2DFBE1B1C8FCB0001E968 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFBC1B1C8FCB0001E968 /* RegisterViewController.m */; };
@@ -32,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2865D87D1B235B4500D84EE5 /* DataRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRepository.h; sourceTree = "<group>"; };
+		2865D87E1B235B4500D84EE5 /* DataRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataRepository.m; sourceTree = "<group>"; };
 		28C2DF811B1C8D740001E968 /* Westeros-News-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Westeros-News-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		28C2DF851B1C8D740001E968 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		28C2DF861B1C8D740001E968 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -44,8 +47,8 @@
 		28C2DF9D1B1C8D740001E968 /* Westeros-News-AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Westeros-News-AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		28C2DFA21B1C8D740001E968 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		28C2DFA31B1C8D740001E968 /* Westeros_News_AppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Westeros_News_AppTests.m; sourceTree = "<group>"; };
-		28C2DFB11B1C8DCF0001E968 /* ServerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerManager.h; sourceTree = "<group>"; };
-		28C2DFB21B1C8DCF0001E968 /* ServerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerManager.m; sourceTree = "<group>"; };
+		28C2DFB11B1C8DCF0001E968 /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseManager.h; sourceTree = "<group>"; };
+		28C2DFB21B1C8DCF0001E968 /* DatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseManager.m; sourceTree = "<group>"; };
 		28C2DFB51B1C8F560001E968 /* UIAlertController+ShowAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+ShowAlert.h"; sourceTree = "<group>"; };
 		28C2DFB61B1C8F560001E968 /* UIAlertController+ShowAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+ShowAlert.m"; sourceTree = "<group>"; };
 		28C2DFB91B1C8FCB0001E968 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
@@ -140,8 +143,10 @@
 		28C2DFAE1B1C8D920001E968 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				28C2DFB11B1C8DCF0001E968 /* ServerManager.h */,
-				28C2DFB21B1C8DCF0001E968 /* ServerManager.m */,
+				28C2DFB11B1C8DCF0001E968 /* DatabaseManager.h */,
+				28C2DFB21B1C8DCF0001E968 /* DatabaseManager.m */,
+				2865D87D1B235B4500D84EE5 /* DataRepository.h */,
+				2865D87E1B235B4500D84EE5 /* DataRepository.m */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -291,7 +296,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				28C2DFC51B1C91910001E968 /* User.m in Sources */,
-				28C2DFB31B1C8DCF0001E968 /* ServerManager.m in Sources */,
+				2865D87F1B235B4500D84EE5 /* DataRepository.m in Sources */,
+				28C2DFB31B1C8DCF0001E968 /* DatabaseManager.m in Sources */,
 				28C2DF8A1B1C8D740001E968 /* AppDelegate.m in Sources */,
 				28C2DFBD1B1C8FCB0001E968 /* LoginViewController.m in Sources */,
 				28C2DF8D1B1C8D740001E968 /* Westeros_News_App.xcdatamodeld in Sources */,
@@ -490,6 +496,7 @@
 				28C2DFA91B1C8D740001E968 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		28C2DFAA1B1C8D740001E968 /* Build configuration list for PBXNativeTarget "Westeros-News-AppTests" */ = {
 			isa = XCConfigurationList;
@@ -498,6 +505,7 @@
 				28C2DFAC1B1C8D740001E968 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

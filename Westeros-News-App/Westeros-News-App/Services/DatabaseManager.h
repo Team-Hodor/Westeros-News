@@ -10,13 +10,14 @@
 #import "AppDelegate.h"
 #import "User.h"
 
-@interface ServerManager : NSObject
+@interface DatabaseManager : NSObject
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *masterContext;
 @property (readonly, strong, nonatomic) NSManagedObjectContext *mainContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-+ (ServerManager *)sharedInstance;
++ (DatabaseManager *)sharedInstance;
+- (NSManagedObjectContext *)workerContext;
 - (void)saveContext;
 @end

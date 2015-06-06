@@ -10,10 +10,12 @@
 #import <CoreData/CoreData.h>
 
 
-@interface User : NSManagedObject
+@interface User : NSObject
 
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSString * password;
-@property (nonatomic, retain) NSString * username;
+@property (nonatomic, strong, readonly) NSString *sessionId;
+@property (nonatomic, strong, readonly) NSString *uniqueId;
+@property (nonatomic, strong, readonly) NSString *username;
+
+- (instancetype)initWithUsername:(NSString *)username andSessionId:(NSString *)sessionId andUniqueId:(NSString *)uniqueId;
 
 @end

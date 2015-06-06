@@ -7,8 +7,9 @@
 //
 
 #import "RegisterViewController.h"
-#import "ServerManager.h"
+#import "DatabaseManager.h"
 #import "UIAlertController+ShowAlert.h"
+#import "DataRepository.h"
 
 @interface RegisterViewController () <UITextFieldDelegate, NSURLSessionDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
@@ -202,7 +203,9 @@
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
-    NSURL *url = [NSURL URLWithString:@"http://78.90.132.242:2403/users"];
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users"];
+    NSURL *url = [NSURL URLWithString:serviceURL];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                        timeoutInterval:60.0];

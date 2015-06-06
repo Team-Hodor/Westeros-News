@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>B2D8806D-BDD2-4D56-86CB-4F3B2520C01B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Westeros-News-App</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>C2BEBD61A29CC3425D127DAD006DB7A1FF65E1D0</key>
+		<string>https://github.com/Team-Hodor/News-App</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Westeros-News-App/Westeros-News-App.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>C2BEBD61A29CC3425D127DAD006DB7A1FF65E1D0</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Team-Hodor/News-App</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>C2BEBD61A29CC3425D127DAD006DB7A1FF65E1D0</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C2BEBD61A29CC3425D127DAD006DB7A1FF65E1D0</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Westeros-News-App</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -7,11 +7,12 @@
 //
 
 #import "LoginViewController.h"
-#import "ServerManager.h"
+#import "DatabaseManager.h"
 #import "User.h"
 #import "UIAlertController+ShowAlert.h"
+#import "DataRepository.h"
 
-@interface LoginViewController () <UITextFieldDelegate>
+@interface LoginViewController () <UITextFieldDelegate, NSURLSessionDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -24,7 +25,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    NSManagedObjectContext *workerContext = [DatabaseManager sharedInstance].workerContext;
+    [workerContext save:nil];
+    
     [self registerForKeyboardNotifications];
 }
 
@@ -34,29 +38,7 @@
 }
 
 - (IBAction)loginButtonTouchUpInside:(id)sender {
-    NSString *username = self.usernameTextField.text;
-    NSString *password = self.passwordTextField.text;
-    
-    NSManagedObjectContext *context = [[ServerManager sharedInstance] masterContext];
-    
-    User *user = [self userWithUsername:username andPassword:password inContext:context];
-    
-    if (user) {
-        // [UserManager sharedInstance].loggedUser = user;
-        // TODO: Set logged user
-        
-        [UIAlertController showAlertWithTitle:@"Success"
-                      andMessage:@"You have logged in successfully"
-                             inViewController:self
-                                  withHandler:^() {
-                          // TODO: Show all news page
-                      }];
-    } else {
-        [UIAlertController showAlertWithTitle:@"Error"
-                                   andMessage:@"Invalid username or password"
-                                 inViewController:self
-                                      withHandler:nil];
-    }
+    [self loginUser];
 }
 
 - (IBAction)cancelButtonTouchUpInside:(id)sender {
@@ -151,6 +133,75 @@
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
+}
+
+#pragma mark - Login User with Webservice
+
+- (void)loginUser {
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users/login"];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
+                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                       timeoutInterval:60.0];
+    
+    [request setHTTPMethod:@"POST"];
+    
+    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@",self.usernameTextField.text, self.passwordTextField.text];
+    [request setHTTPBody:[userData dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSURLSessionDataTask *postDataTask = [session
+                                          dataTaskWithRequest:request
+                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (!error) {
+            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([dictionary objectForKey:@"errors"]) {
+                    NSDictionary *errors =[dictionary objectForKey:@"errors"];
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"Invalid username or password."
+                                         inViewController:self
+                                              withHandler:nil];
+                    
+                } else if(([dictionary objectForKey:@"id"])){
+                    NSString *sessionId = [dictionary objectForKey:@"id"];
+                    NSString *username = self.usernameTextField.text;
+                    NSString *uniqueId = [dictionary objectForKey:@"uid"];
+                    
+                    User *loggedUser = [[User alloc] initWithUsername:username andSessionId:sessionId andUniqueId:uniqueId];
+                    
+                    [DataRepository sharedInstance].loggedUser = loggedUser;
+                    
+                    [UIAlertController showAlertWithTitle:@"Success"
+                                               andMessage:@"You have logged in successfully."
+                                         inViewController:self
+                                              withHandler:^(void) {
+                                                  [self showNewsViewController];
+                                              }];
+                } else {
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"There was an error saving the data on the server."
+                                         inViewController:self
+                                              withHandler:nil];
+                }
+            });
+        } else {
+            [UIAlertController showAlertWithTitle:@"Error"
+                                       andMessage:@"There was an error while processing your request. Please try again later."
+                                 inViewController:self
+                                      withHandler:nil];
+        }
+    }];
+    [postDataTask resume];
+    
+}
+
+- (void)showNewsViewController {
+    NSLog(@"Success");
+    // TODO: Show news view controller
 }
 
 @end

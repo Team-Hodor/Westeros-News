@@ -15,6 +15,7 @@
 @property (nonatomic, strong, readonly) NSString *sessionId;
 @property (nonatomic, strong, readonly) NSString *uniqueId;
 @property (nonatomic, strong, readonly) NSString *username;
+@property (nonatomic, strong) NSArray *favouriteNews;
 
 - (instancetype)initWithUsername:(NSString *)username andSessionId:(NSString *)sessionId andUniqueId:(NSString *)uniqueId;
 

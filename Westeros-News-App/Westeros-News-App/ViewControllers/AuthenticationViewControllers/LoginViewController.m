@@ -19,6 +19,8 @@
 
 @property (strong, nonatomic) UIView *activeField;
 
+#define NEWS_CONTROLLER_ID @"newsNavigationController";
+
 @end
 
 @implementation LoginViewController
@@ -200,8 +202,10 @@
 }
 
 - (void)showNewsViewController {
-    NSLog(@"Success");
-    // TODO: Show news view controller
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"newsNavigationController"];
+    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 @end

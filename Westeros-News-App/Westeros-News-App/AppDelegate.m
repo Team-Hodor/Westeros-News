@@ -10,6 +10,7 @@
 #import "DatabaseManager.h"
 #import "WebServiceManager.h"
 #import "DataRepository.h"
+#import "DatabaseManager.h"
 
 @interface AppDelegate ()
 
@@ -20,7 +21,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    //[self generateRandomNewsToTheServer];
+    // [self generateRandomNewsToTheServer];
     return YES;
 }
 
@@ -43,15 +44,33 @@
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    // Saves changes in the application's managed object context before the application terminates.
-    [[DatabaseManager sharedInstance] saveContext];
+    NSManagedObjectContext *context = [DatabaseManager sharedInstance].masterContext;
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Article"
+                                              inManagedObjectContext:context];
+    
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"createdAt" ascending:YES];
+    
+    [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sort]];
+    [fetchRequest setFetchBatchSize:20];
+    [fetchRequest setEntity:entity];
+    
+    NSError *error;
+    NSArray *results = [context executeFetchRequest:fetchRequest error:&error];
+    
+    if (!error) {
+        for (int index = 0; index < [results count] - 10; index++) {
+            [context deleteObject:results[index]];
+        }
+        [context save:&error];
+    }
 }
 
 - (void)generateRandomNewsToTheServer {
     for (int index = 0; index < 10; index++) {
         NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/news"]];
-        NSString *userData = [NSString stringWithFormat:@"title=%@&subtitle=\"TEST\"&author=\"BOT\"&content=TEST&createdAt=\"2014-05-22 13:4%d\"&updatedAt=\"22-05-2014 13:40\"&image=\"asd\"&category=\"TEST\"", [NSString stringWithFormat:@"TEST NEWS %d", index], index];
+        NSString *userData = [NSString stringWithFormat:@"title=%@&subtitle=\"TEST\"&author=\"BOT\"&content=TEST&createdAt=\"2014-06-22 13:4%d\"&updatedAt=\"22-05-2014 13:40\"&image=\"asd\"&category=\"TEST\"", [NSString stringWithFormat:@"TEST NEWS AGAIN %d", index], index];
         
         [[WebServiceManager sharedInstance] performRequestWithUrl:url andMethod:@"POST" andHttpBody:userData andHandler:^(NSDictionary *dict, NSURLResponse *response, NSError *error) {
             

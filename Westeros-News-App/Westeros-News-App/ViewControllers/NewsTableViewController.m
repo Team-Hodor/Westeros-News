@@ -25,6 +25,7 @@ typedef enum {
 @property (nonatomic) NewsSection selectedSection;
 @property (nonatomic) NSInteger currentWebRequestSkipCount;
 @property (nonatomic) NSInteger currentNumberOfInsertions;
+@property (nonatomic) BOOL hasFinishedPaging;
 
 #define CELL_ID @"ArticleCell"
 #define WEB_REQUEST_LIMIT 5
@@ -102,7 +103,7 @@ typedef enum {
     
     NSInteger numRows = [self.fetchedResultsController.fetchedObjects count];
     
-    if (self.selectedSection == AllNewsSection) {
+    if (self.selectedSection == AllNewsSection && !self.hasFinishedPaging) {
         return numRows + 1;
     }
     
@@ -233,11 +234,23 @@ typedef enum {
     
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/news?{\"$limit\":%ld,\"$skip\":%ld,\"$sort\":{\"createdAt\":1}}", limit, skip]];
+                            [NSString stringWithFormat:@"/news?{\"$limit\":%ld,\"$skip\":%ld,\"$sort\":{\"createdAt\":-1}}", limit, skip]];
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     [[WebServiceManager sharedInstance] performRequestWithUrl:url andMethod:@"GET" andHttpBody:@"" andHandler:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
         NSManagedObjectContext *workerContext = [[DatabaseManager sharedInstance] workerContext];
+        
+        if (![resultData count]) {
+            self.hasFinishedPaging = YES;
+            [self.tableView beginUpdates];
+            NSInteger lastSection = [self.tableView numberOfSections] - 1;
+            NSInteger lastRow = [self.tableView numberOfRowsInSection:lastSection] - 1;
+            
+            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:lastRow inSection:lastSection];
+            [self.tableView deleteRowsAtIndexPaths:@[lastIndexPath] withRowAnimation:UITableViewRowAnimationTop];
+            [self.tableView endUpdates];
+            return;
+        }
         
         [workerContext performBlock:^() {
             for (id news in resultData) {

@@ -10,6 +10,7 @@
 #import "DatabaseManager.h"
 #import "UIAlertController+ShowAlert.h"
 #import "DataRepository.h"
+#import "WebServiceManager.h"
 
 @interface RegisterViewController () <UITextFieldDelegate, NSURLSessionDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
@@ -35,7 +36,9 @@
 }
 
 - (IBAction)submitButtonTouchUpInside:(id)sender {
-    [self registerUser];
+    if ([self areFieldsValidated]) {
+        [self registerUser];
+    }
 /*
     if ([self areFieldsValidated]) {
         NSManagedObjectContext *workerContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
@@ -115,32 +118,6 @@
     }
 }
 
--(BOOL) isValidUserWithUsername:(NSString *)username inContext:(NSManagedObjectContext *)context{
-    NSEntityDescription *entityDescription = [NSEntityDescription
-                                              entityForName:@"User" inManagedObjectContext:context];
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:entityDescription];
-    
-    // Set example predicate and sort orderings...
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:
-                              @"(username = %@)", username];
-    
-    [request setPredicate:predicate];
-    
-    
-    NSError *error;
-    NSArray *array = [context executeFetchRequest:request error:&error];
-    
-    if ([array count] == 0)
-    {
-        return YES;
-    } else {
-        NSLog(@"%@", array);
-        return NO;
-    }
-}
-
 #pragma mark - Managing the keyboard
 
 - (void)registerForKeyboardNotifications
@@ -201,60 +178,39 @@
 
 -(void)registerUser{
     
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
-    
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users"];
     NSURL *url = [NSURL URLWithString:serviceURL];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
-                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:60.0];
-    
-    [request setHTTPMethod:@"POST"];
     
     NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@&name=%@",self.usernameTextField.text, self.passwordTextField.text, self.nameTextField.text];
-    [request setHTTPBody:[userData dataUsingEncoding:NSUTF8StringEncoding]];
     
-    
-    if ([self areFieldsValidated]) {
-        NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-            if (!error) {
+    [[WebServiceManager sharedInstance] performRequestWithUrl:url
+                                                    andMethod:@"POST"
+                                                  andHttpBody:userData
+                                                   andHandler:^(NSDictionary *resultData,
+                                                                NSURLResponse *response,
+                                                                NSError *error) {
+            if ([resultData objectForKey:@"errors"]) {
+                NSDictionary *errors =[resultData objectForKey:@"errors"];
+                [UIAlertController showAlertWithTitle:@"Error"
+                                           andMessage:@"Invalid username. The specified username is already taken."
+                                     inViewController:self
+                                          withHandler:nil];
                 
-                NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                NSLog(@"%@", responseString);
-                
-                NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                if ([dictionary objectForKey:@"errors"]) {
-                    NSDictionary *errors =[dictionary objectForKey:@"errors"];
-                    [UIAlertController showAlertWithTitle:@"Error"
-                                               andMessage:@"Invalid username. The specified username is already taken."
-                                         inViewController:self
-                                              withHandler:nil];
-
-                }
-                else if(([dictionary objectForKey:@"id"])){
-                    [UIAlertController showAlertWithTitle:@"Success"
-                                               andMessage:@"You have registered successfully."
-                                         inViewController:self
-                                              withHandler:^(void) {
-                                                  [self.view endEditing:YES];
-                                                  [self dismissViewControllerAnimated:YES completion:nil];
-                                              }];
-                }else{
-                    [UIAlertController showAlertWithTitle:@"Error"
-                                               andMessage:@"There was an error saving the data on the server."
-                                         inViewController:self
-                                              withHandler:nil];
-                }
-                    });
+            } else if ( [resultData objectForKey:@"id"] ) {
+                [UIAlertController showAlertWithTitle:@"Success"
+                                           andMessage:@"You have registered successfully."
+                                     inViewController:self
+                                          withHandler:^(void) {
+                                              [self.view endEditing:YES];
+                                              [self dismissViewControllerAnimated:YES completion:nil];
+                                          }];
+            } else {
+                [UIAlertController showAlertWithTitle:@"Error"
+                                           andMessage:@"There was an error saving the data on the server."
+                                     inViewController:self
+                                          withHandler:nil];
             }
-        }];
-    [postDataTask resume];
-    }
-    
-
+    }];
 }
 
 

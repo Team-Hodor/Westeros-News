@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 #import "DatabaseManager.h"
+#import "WebServiceManager.h"
+#import "DataRepository.h"
 
 @interface AppDelegate ()
 
@@ -18,6 +20,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    //[self generateRandomNewsToTheServer];
     return YES;
 }
 
@@ -43,6 +46,17 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
     [[DatabaseManager sharedInstance] saveContext];
+}
+
+- (void)generateRandomNewsToTheServer {
+    for (int index = 0; index < 10; index++) {
+        NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/news"]];
+        NSString *userData = [NSString stringWithFormat:@"title=%@&subtitle=\"TEST\"&author=\"BOT\"&content=TEST&createdAt=\"2014-05-22 13:4%d\"&updatedAt=\"22-05-2014 13:40\"&image=\"asd\"&category=\"TEST\"", [NSString stringWithFormat:@"TEST NEWS %d", index], index];
+        
+        [[WebServiceManager sharedInstance] performRequestWithUrl:url andMethod:@"POST" andHttpBody:userData andHandler:^(NSDictionary *dict, NSURLResponse *response, NSError *error) {
+            
+        }];
+    }
 }
 
 @end

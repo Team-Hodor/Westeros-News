@@ -330,7 +330,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="alf-K9-g6l" style="IBUITableViewCellStyleDefault" id="rB8-mp-mQg">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ArticleCell" textLabel="alf-K9-g6l" style="IBUITableViewCellStyleDefault" id="rB8-mp-mQg">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rB8-mp-mQg" id="Hod-dE-rd0">
                                     <autoresizingMask key="autoresizingMask"/>
@@ -352,11 +352,23 @@
                     </tableView>
                     <toolbarItems>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="CU6-CE-Pco"/>
-                        <barButtonItem title="Featured" id="gl2-yz-q9z"/>
+                        <barButtonItem title="Featured" id="gl2-yz-q9z">
+                            <connections>
+                                <action selector="featuredBarButtonItemActionTriggered:" destination="icG-EK-FGE" id="wxm-HI-2GA"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="lYc-Sp-vr6"/>
-                        <barButtonItem title="All News" id="Lv8-eh-BkB"/>
+                        <barButtonItem title="All News" id="Lv8-eh-BkB">
+                            <connections>
+                                <action selector="allNewsBarButtonItemActionTriggered:" destination="icG-EK-FGE" id="1S9-Rb-t3J"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="kCX-Vw-c4g"/>
-                        <barButtonItem title="Favourites" id="8eR-ZH-Zso"/>
+                        <barButtonItem title="Favourites" id="8eR-ZH-Zso">
+                            <connections>
+                                <action selector="favouritesBarButtonItemActionTriggered:" destination="icG-EK-FGE" id="aCr-JA-6wN"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="Ied-rW-5nc"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" id="gKy-eI-txo"/>

@@ -96,7 +96,7 @@ typedef enum {
     // Return the number of rows in the section.
     id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
     
-    NSInteger numRows = [self.fetchedResultsController.fetchedObjects count];
+    NSInteger numRows = [sectionInfo numberOfObjects];
     
     if (self.selectedSection == AllNewsSection && !self.hasFinishedPaging) {
         return numRows + 1;
@@ -214,6 +214,8 @@ typedef enum {
 */
 
 - (void)performInitialConfiguration {
+    [self loadFullUserDataForUser:[DataRepository sharedInstance].loggedUser];
+    
     self.currentWebRequestSkipCount = 0;
     self.selectedSection = FeaturedNewsSection;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -238,6 +240,20 @@ typedef enum {
 }
 
 #pragma mark - Web service managers
+
+- (void)loadFullUserDataForUser:(User *)user {
+    [[WebServiceManager sharedInstance] loadFullUserDataForUserWithID:user.uniqueId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+        
+        User *loggedUser = [DataRepository sharedInstance].loggedUser;
+        if ([resultData valueForKey:@"isAdmin"]) {
+            loggedUser.isAdmin = YES;
+        } else {
+            loggedUser.isAdmin = NO;
+        }
+        
+        loggedUser.favouriteNews = [resultData valueForKey:@"favourites"];
+    }];
+}
 
 - (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip {
     [[WebServiceManager sharedInstance] loadNewsWithLimit:limit skip:skip completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
@@ -308,11 +324,17 @@ typedef enum {
         
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
         [request setFetchLimit:5];
+        [request setPredicate:nil];
         
         
         NSError *error;
         [self.fetchedResultsController performFetch:&error];
-        [self.tableView reloadData];
+        
+        if (error) {
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        } else {
+            [self.tableView reloadData];
+        }
     }
 }
 
@@ -322,10 +344,16 @@ typedef enum {
         
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
         [request setFetchLimit:2000];
+        [request setPredicate:nil];
         
         NSError *error;
         [self.fetchedResultsController performFetch:&error];
-        [self.tableView reloadData];
+        
+        if (error) {
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        } else {
+            [self.tableView reloadData];
+        }
     }
 }
 
@@ -333,6 +361,24 @@ typedef enum {
     if (self.selectedSection != FavouriteNewsSection) {
         self.selectedSection = FavouriteNewsSection;
         
+        [[WebServiceManager sharedInstance] loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+            [self saveNewsInDatabase:resultData];
+        }];
+        
+        NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%@ CONTAINS identifier", [DataRepository sharedInstance].loggedUser.favouriteNews];
+        
+        [request setPredicate:predicate];
+        [request setFetchLimit:2000];
+        
+        NSError *error;
+        [self.fetchedResultsController performFetch:&error];
+        
+        if (error) {
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        } else {
+            [self.tableView reloadData];
+        }
     }
 }
 

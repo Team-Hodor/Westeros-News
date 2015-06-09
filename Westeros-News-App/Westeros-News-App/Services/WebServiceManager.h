@@ -7,8 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "User.h"
 
 @interface WebServiceManager : NSObject
+
+-(void)loadFullUserDataForUserWithID:(NSString *)identifier completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
+
+- (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
 - (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 

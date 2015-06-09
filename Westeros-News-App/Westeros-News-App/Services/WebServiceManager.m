@@ -45,6 +45,32 @@ static WebServiceManager *sharedInst = nil;
 
 // TODO:
 
+- (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:
+                            [NSString stringWithFormat:@"/news/?{\"id\":{\"$in\":[\"%@\"]}}",
+                             [user.favouriteNews componentsJoinedByString:@"\",\""]]];
+    
+    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
+    [[WebServiceManager sharedInstance] performRequestWithUrl:url
+                                                    andMethod:@"GET"
+                                                  andHttpBody:@""
+                                                   andHandler:handlerBlock];
+}
+
+-(void)loadFullUserDataForUserWithID:(NSString *)identifier completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
+    NSString *serviceURL = [BASE_URL stringByAppendingString:
+                            [NSString stringWithFormat:@"/users/%@", identifier]];
+    
+    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
+    [[WebServiceManager sharedInstance] performRequestWithUrl:url
+                                                    andMethod:@"GET"
+                                                  andHttpBody:@""
+                                                   andHandler:handlerBlock];
+}
+
 - (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:

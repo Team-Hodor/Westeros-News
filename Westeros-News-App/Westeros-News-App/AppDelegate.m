@@ -72,7 +72,7 @@
         NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/news"]];
         NSString *userData = [NSString stringWithFormat:@"title=%@&subtitle=\"TEST\"&author=\"BOT\"&content=TEST&createdAt=\"2014-06-22 13:4%d\"&updatedAt=\"22-05-2014 13:40\"&image=\"asd\"&category=\"TEST\"", [NSString stringWithFormat:@"TEST NEWS AGAIN %d", index], index];
         
-        [[WebServiceManager sharedInstance] performRequestWithUrl:url andMethod:@"POST" andHttpBody:userData andHandler:^(NSDictionary *dict, NSURLResponse *response, NSError *error) {
+        [WebServiceManager performRequestWithUrl:url andMethod:@"POST" andHttpBody:userData andHandler:^(NSDictionary *dict, NSURLResponse *response, NSError *error) {
             
         }];
     }

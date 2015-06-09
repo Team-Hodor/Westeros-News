@@ -242,34 +242,34 @@ typedef enum {
 #pragma mark - Web service managers
 
 - (void)loadFullUserDataForUser:(User *)user {
-    [[WebServiceManager sharedInstance] loadFullUserDataForUserWithID:user.uniqueId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+    [WebServiceManager loadFullUserDataForUserWithID:user.uniqueId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
         
-        User *loggedUser = [DataRepository sharedInstance].loggedUser;
-        if ([resultData valueForKey:@"isAdmin"]) {
-            loggedUser.isAdmin = YES;
-        } else {
-            loggedUser.isAdmin = NO;
-        }
-        
-        loggedUser.favouriteNews = [resultData valueForKey:@"favourites"];
+            User *loggedUser = [DataRepository sharedInstance].loggedUser;
+            if ([resultData valueForKey:@"isAdmin"]) {
+                loggedUser.isAdmin = YES;
+            } else {
+                loggedUser.isAdmin = NO;
+            }
+            
+            loggedUser.favouriteNews = [resultData valueForKey:@"favourites"];
     }];
 }
 
 - (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip {
-    [[WebServiceManager sharedInstance] loadNewsWithLimit:limit skip:skip completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-        if (![resultData count]) {
-            self.hasFinishedPaging = YES;
-            [self.tableView beginUpdates];
-            NSInteger lastSection = [self.tableView numberOfSections] - 1;
-            NSInteger lastRow = [self.tableView numberOfRowsInSection:lastSection] - 1;
+    [WebServiceManager loadNewsWithLimit:limit skip:skip completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+            if (![resultData count]) {
+                self.hasFinishedPaging = YES;
+                [self.tableView beginUpdates];
+                NSInteger lastSection = [self.tableView numberOfSections] - 1;
+                NSInteger lastRow = [self.tableView numberOfRowsInSection:lastSection] - 1;
+                
+                NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:lastRow inSection:lastSection];
+                [self.tableView deleteRowsAtIndexPaths:@[lastIndexPath] withRowAnimation:UITableViewRowAnimationTop];
+                [self.tableView endUpdates];
+                return;
+            }
             
-            NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow:lastRow inSection:lastSection];
-            [self.tableView deleteRowsAtIndexPaths:@[lastIndexPath] withRowAnimation:UITableViewRowAnimationTop];
-            [self.tableView endUpdates];
-            return;
-        }
-        
-        [self saveNewsInDatabase:resultData];
+            [self saveNewsInDatabase:resultData];
     }];
 }
 
@@ -361,8 +361,8 @@ typedef enum {
     if (self.selectedSection != FavouriteNewsSection) {
         self.selectedSection = FavouriteNewsSection;
         
-        [[WebServiceManager sharedInstance] loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-            [self saveNewsInDatabase:resultData];
+        [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+                [self saveNewsInDatabase:resultData];
         }];
         
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];

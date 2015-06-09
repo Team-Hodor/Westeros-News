@@ -37,30 +37,28 @@
 
 - (IBAction)submitButtonTouchUpInside:(id)sender {
     if ([self areFieldsValidated]) {
-        [[WebServiceManager sharedInstance] registerUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text andName:self.nameTextField.text completion:^(NSDictionary *resultData,
-                                                                                                                                                                                     NSURLResponse *response,
-                                                                                                                                                                                     NSError *error) {
-            if ([resultData objectForKey:@"errors"]) {
-                NSDictionary *errors =[resultData objectForKey:@"errors"];
-                [UIAlertController showAlertWithTitle:@"Error"
-                                           andMessage:@"Invalid username. The specified username is already taken."
-                                     inViewController:self
-                                          withHandler:nil];
-                
-            } else if ( [resultData objectForKey:@"id"] ) {
-                [UIAlertController showAlertWithTitle:@"Success"
-                                           andMessage:@"You have registered successfully."
-                                     inViewController:self
-                                          withHandler:^(void) {
-                                              [self.view endEditing:YES];
-                                              [self dismissViewControllerAnimated:YES completion:nil];
-                                          }];
-            } else {
-                [UIAlertController showAlertWithTitle:@"Error"
-                                           andMessage:@"There was an error saving the data on the server."
-                                     inViewController:self
-                                          withHandler:nil];
-            }
+        [WebServiceManager registerUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text andName:self.nameTextField.text completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+                if ([resultData objectForKey:@"errors"]) {
+                    NSDictionary *errors =[resultData objectForKey:@"errors"];
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"Invalid username. The specified username is already taken."
+                                         inViewController:self
+                                              withHandler:nil];
+                    
+                } else if ( [resultData objectForKey:@"id"] ) {
+                    [UIAlertController showAlertWithTitle:@"Success"
+                                               andMessage:@"You have registered successfully."
+                                         inViewController:self
+                                              withHandler:^(void) {
+                                                  [self.view endEditing:YES];
+                                                  [self dismissViewControllerAnimated:YES completion:nil];
+                                              }];
+                } else {
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"There was an error saving the data on the server."
+                                         inViewController:self
+                                              withHandler:nil];
+                }
         }];
     }
 }

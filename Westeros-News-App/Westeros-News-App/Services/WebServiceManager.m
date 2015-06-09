@@ -45,7 +45,8 @@ static WebServiceManager *sharedInst = nil;
 
 // TODO:
 
-- (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
+
++ (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/news/?{\"id\":{\"$in\":[\"%@\"]}}",
@@ -53,64 +54,64 @@ static WebServiceManager *sharedInst = nil;
     
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
-    [[WebServiceManager sharedInstance] performRequestWithUrl:url
+    [WebServiceManager performRequestWithUrl:url
                                                     andMethod:@"GET"
                                                   andHttpBody:@""
                                                    andHandler:handlerBlock];
 }
 
--(void)loadFullUserDataForUserWithID:(NSString *)identifier completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
++ (void)loadFullUserDataForUserWithID:(NSString *)identifier completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/users/%@", identifier]];
     
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
-    [[WebServiceManager sharedInstance] performRequestWithUrl:url
+    [WebServiceManager performRequestWithUrl:url
                                                     andMethod:@"GET"
                                                   andHttpBody:@""
                                                    andHandler:handlerBlock];
 }
 
-- (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
++ (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/news?{\"$limit\":%ld,\"$skip\":%ld,\"$sort\":{\"createdAt\":-1}}", limit, skip]];
     
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
-    [[WebServiceManager sharedInstance] performRequestWithUrl:url
+    [WebServiceManager performRequestWithUrl:url
                                                     andMethod:@"GET"
                                                   andHttpBody:@""
                                                    andHandler:handlerBlock];
 }
 
--(void)loginUserWithUsername:(NSString *)username andPassword:(NSString *)password completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
++ (void)loginUserWithUsername:(NSString *)username andPassword:(NSString *)password completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users/login"];
     NSURL *url = [NSURL URLWithString:serviceURL];
     
     NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@",username, password];
     
-    [self performRequestWithUrl:url
+    [WebServiceManager performRequestWithUrl:url
                       andMethod:@"POST"
                     andHttpBody:userData
                      andHandler:handlerBlock];
 }
 
--(void)registerUserWithUsername:(NSString *)username andPassword:(NSString *)password andName:(NSString *)name completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
++ (void)registerUserWithUsername:(NSString *)username andPassword:(NSString *)password andName:(NSString *)name completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users"];
     NSURL *url = [NSURL URLWithString:serviceURL];
     
     NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@&name=%@",username, password, name];
     
-    [self performRequestWithUrl:url
+    [WebServiceManager performRequestWithUrl:url
                       andMethod:@"POST"
                     andHttpBody:userData
                      andHandler:handlerBlock];
 }
 
--(void)performRequestWithUrl:(NSURL *)url andMethod:(NSString *)method andHttpBody:(NSString *)httpBody andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
++ (void)performRequestWithUrl:(NSURL *)url andMethod:(NSString *)method andHttpBody:(NSString *)httpBody andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];

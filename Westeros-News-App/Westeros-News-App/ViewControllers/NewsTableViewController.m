@@ -37,12 +37,7 @@ typedef enum {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.currentWebRequestSkipCount = 0;
-    self.selectedSection = FeaturedNewsSection;
-    
-    [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
-    
-    self.currentWebRequestSkipCount += 5;
+    [self performInitialConfiguration];
     
     NSError *error;
     [[self fetchedResultsController] performFetch:&error];
@@ -144,17 +139,8 @@ typedef enum {
     UITableView *tableView = self.tableView;
     switch(type) {
         case NSFetchedResultsChangeInsert:
-//            if (newIndexPath.row >= self.fetchedResultsController.fetchRequest.fetchLimit) {
-//                break;
-//            }
             [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:newIndexPath]
                                   withRowAnimation:UITableViewRowAnimationFade];
-            
-//            if (self.currentNumberOfInsertions > self.fetchedResultsController.fetchRequest.fetchLimit) {
-//                //Determining which row to delete depends on your sort descriptors
-//                [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.fetchedResultsController.fetchRequest.fetchLimit - 1 inSection:[newIndexPath section]]] withRowAnimation:UITableViewRowAnimationFade];
-//                self.currentNumberOfInsertions--;
-//            }
             break;
         case NSFetchedResultsChangeDelete:
             [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
@@ -188,7 +174,7 @@ typedef enum {
     
     if ( !( [sectionInfo numberOfObjects] > indexPath.row ) ) {
         [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
-        self.currentWebRequestSkipCount += 5;
+        self.currentWebRequestSkipCount += WEB_REQUEST_LIMIT;
     }
 }
 
@@ -227,19 +213,34 @@ typedef enum {
 }
 */
 
+- (void)performInitialConfiguration {
+    self.currentWebRequestSkipCount = 0;
+    self.selectedSection = FeaturedNewsSection;
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSManagedObjectContext *masterContext = [DatabaseManager sharedInstance].masterContext;
+    [request setEntity:[NSEntityDescription entityForName:@"Article" inManagedObjectContext:masterContext]];
+    
+    NSError *error;
+    NSUInteger totalEntitiesCount = [masterContext countForFetchRequest:request error:&error];
+    if (!error) {
+        self.currentWebRequestSkipCount = totalEntitiesCount;
+    } else {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+    }
+    
+    if (!self.currentWebRequestSkipCount) {
+        self.currentWebRequestSkipCount = 0;
+        
+        [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
+        
+        self.currentWebRequestSkipCount += WEB_REQUEST_LIMIT;
+    }
+}
+
 #pragma mark - Web service managers
 
 - (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip {
-    // ?{"$limit":1,"$skip":1}
-    
-    
-    NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/news?{\"$limit\":%ld,\"$skip\":%ld,\"$sort\":{\"createdAt\":-1}}", limit, skip]];
-    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    
-    [[WebServiceManager sharedInstance] performRequestWithUrl:url andMethod:@"GET" andHttpBody:@"" andHandler:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-        NSManagedObjectContext *workerContext = [[DatabaseManager sharedInstance] workerContext];
-        
+    [[WebServiceManager sharedInstance] loadNewsWithLimit:limit skip:skip completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
         if (![resultData count]) {
             self.hasFinishedPaging = YES;
             [self.tableView beginUpdates];
@@ -252,43 +253,50 @@ typedef enum {
             return;
         }
         
-        [workerContext performBlock:^() {
-            for (id news in resultData) {
-                NSString *author = [news valueForKey:@"author"];
-                NSString *category = [news valueForKey:@"category"];
-                NSString *content = [news valueForKey:@"content"];
-                NSString *identifier = [news valueForKey:@"id"];
-                NSData *imageData = [[news valueForKey:@"image"] dataUsingEncoding:NSUTF8StringEncoding];
-                NSString *title = [news valueForKey:@"title"];
-                NSString *subtitle = [news valueForKey:@"subtitle"];
-                NSDate *createdAt = ((NSString *)[news valueForKey:@"createdAt"]).dateValue;
-                NSDate *updatedAt = ((NSString *)[news valueForKey:@"updatedAt"]).dateValue;
-                
-                NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Article"];
-                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier = %@", identifier];
-                [request setPredicate:predicate];
-                
-                NSArray *result = [workerContext executeFetchRequest:request error:nil];
-                if (![result count]) {
-                    Article *article = [NSEntityDescription insertNewObjectForEntityForName:@"Article" inManagedObjectContext:workerContext];
-                    
-                    article.author = author;
-                    article.category = category;
-                    article.content = content;
-                    article.identifier = identifier;
-                    article.image = imageData;
-                    article.title = title;
-                    article.subtitle = subtitle;
-                    article.createdAt = createdAt;
-                    article.updatedAt = updatedAt;
-                } else {
-                    NSLog(@"Duplicate!");
-                }
-            }
+        [self saveNewsInDatabase:resultData];
+    }];
+}
+
+-(void)saveNewsInDatabase:(NSDictionary *)newsData {
+    NSManagedObjectContext *workerContext = [[DatabaseManager sharedInstance] workerContext];
+    
+    [workerContext performBlock:^() {
+        for (id news in newsData) {
+            NSString *author = [news valueForKey:@"author"];
+            NSString *category = [news valueForKey:@"category"];
+            NSString *content = [news valueForKey:@"content"];
+            NSString *identifier = [news valueForKey:@"id"];
+            NSData *imageData = [[news valueForKey:@"image"] dataUsingEncoding:NSUTF8StringEncoding];
+            NSString *title = [news valueForKey:@"title"];
+            NSString *subtitle = [news valueForKey:@"subtitle"];
+            NSDate *createdAt = ((NSString *)[news valueForKey:@"createdAt"]).dateValue;
+            NSDate *updatedAt = ((NSString *)[news valueForKey:@"updatedAt"]).dateValue;
             
-            NSError *error;
-            [workerContext save:&error];
-        }];
+            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Article"];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier = %@", identifier];
+            [request setPredicate:predicate];
+            
+            NSArray *result = [workerContext executeFetchRequest:request error:nil];
+            if (![result count]) {
+                Article *article = [NSEntityDescription insertNewObjectForEntityForName:@"Article"
+                                                                 inManagedObjectContext:workerContext];
+                
+                article.author = author;
+                article.category = category;
+                article.content = content;
+                article.identifier = identifier;
+                article.image = imageData;
+                article.title = title;
+                article.subtitle = subtitle;
+                article.createdAt = createdAt;
+                article.updatedAt = updatedAt;
+            } else {
+                NSLog(@"Duplicate!");
+            }
+        }
+        
+        NSError *error;
+        [workerContext save:&error];
     }];
 }
 

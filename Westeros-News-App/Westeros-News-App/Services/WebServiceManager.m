@@ -7,6 +7,7 @@
 //
 
 #import "WebServiceManager.h"
+#import "DataRepository.h"
 
 @interface WebServiceManager() <NSURLSessionDelegate>
 
@@ -40,6 +41,47 @@ static WebServiceManager *sharedInst = nil;
     }
     
     return sharedInst;
+}
+
+// TODO:
+
+- (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:
+                            [NSString stringWithFormat:@"/news?{\"$limit\":%ld,\"$skip\":%ld,\"$sort\":{\"createdAt\":-1}}", limit, skip]];
+    
+    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
+    [[WebServiceManager sharedInstance] performRequestWithUrl:url
+                                                    andMethod:@"GET"
+                                                  andHttpBody:@""
+                                                   andHandler:handlerBlock];
+}
+
+-(void)loginUserWithUsername:(NSString *)username andPassword:(NSString *)password completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users/login"];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    
+    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@",username, password];
+    
+    [self performRequestWithUrl:url
+                      andMethod:@"POST"
+                    andHttpBody:userData
+                     andHandler:handlerBlock];
+}
+
+-(void)registerUserWithUsername:(NSString *)username andPassword:(NSString *)password andName:(NSString *)name completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users"];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    
+    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@&name=%@",username, password, name];
+    
+    [self performRequestWithUrl:url
+                      andMethod:@"POST"
+                    andHttpBody:userData
+                     andHandler:handlerBlock];
 }
 
 -(void)performRequestWithUrl:(NSURL *)url andMethod:(NSString *)method andHttpBody:(NSString *)httpBody andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {

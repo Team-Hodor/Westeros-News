@@ -37,42 +37,17 @@
 
 - (IBAction)submitButtonTouchUpInside:(id)sender {
     if ([self areFieldsValidated]) {
-        [self registerUser];
-    }
-/*
-    if ([self areFieldsValidated]) {
-        NSManagedObjectContext *workerContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-        
-        [workerContext setParentContext:[ServerManager sharedInstance].mainContext];
-        NSManagedObjectContext *masterContext = [ServerManager sharedInstance].masterContext;
-        
-        
-        if ([self isValidUserWithUsername:self.usernameTextField.text inContext:masterContext]) {
-            NSEntityDescription *newUser = [NSEntityDescription insertNewObjectForEntityForName:@"User"
-                                                                         inManagedObjectContext:workerContext];
-            
-            [newUser setValue:self.usernameTextField.text forKey:@"username"];
-            [newUser setValue:self.passwordTextField.text forKey:@"password"];
-            [newUser setValue:self.nameTextField.text forKey:@"name"];
-        
-            // Send request to server for registration
-            
-            
-            NSError *error;
-            [workerContext save:&error];
-            if (!error) {
-                [[ServerManager sharedInstance].mainContext save:&error];
-                if (!error) {
-                    [[ServerManager sharedInstance].masterContext save:&error];
-                }
-            }
-            
-            if (error) {
+        [[WebServiceManager sharedInstance] registerUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text andName:self.nameTextField.text completion:^(NSDictionary *resultData,
+                                                                                                                                                                                     NSURLResponse *response,
+                                                                                                                                                                                     NSError *error) {
+            if ([resultData objectForKey:@"errors"]) {
+                NSDictionary *errors =[resultData objectForKey:@"errors"];
                 [UIAlertController showAlertWithTitle:@"Error"
-                                           andMessage:@"There was an error saving the data on the server."
+                                           andMessage:@"Invalid username. The specified username is already taken."
                                      inViewController:self
                                           withHandler:nil];
-            } else {
+                
+            } else if ( [resultData objectForKey:@"id"] ) {
                 [UIAlertController showAlertWithTitle:@"Success"
                                            andMessage:@"You have registered successfully."
                                      inViewController:self
@@ -80,16 +55,14 @@
                                               [self.view endEditing:YES];
                                               [self dismissViewControllerAnimated:YES completion:nil];
                                           }];
+            } else {
+                [UIAlertController showAlertWithTitle:@"Error"
+                                           andMessage:@"There was an error saving the data on the server."
+                                     inViewController:self
+                                          withHandler:nil];
             }
-        } else {
-            [UIAlertController showAlertWithTitle:@"Error"
-                                       andMessage:@"Invalid username. The specified username is already taken."
-                                 inViewController:self
-                                      withHandler:nil];
-        }
-        
+        }];
     }
- */
 }
 
 - (IBAction)cancelButtonTouchUpInside:(id)sender {
@@ -173,45 +146,5 @@
     [textField resignFirstResponder];
     return YES;
 }
-
-#pragma mark - Register User with webservice
-
--(void)registerUser{
-    
-    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users"];
-    NSURL *url = [NSURL URLWithString:serviceURL];
-    
-    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@&name=%@",self.usernameTextField.text, self.passwordTextField.text, self.nameTextField.text];
-    
-    [[WebServiceManager sharedInstance] performRequestWithUrl:url
-                                                    andMethod:@"POST"
-                                                  andHttpBody:userData
-                                                   andHandler:^(NSDictionary *resultData,
-                                                                NSURLResponse *response,
-                                                                NSError *error) {
-            if ([resultData objectForKey:@"errors"]) {
-                NSDictionary *errors =[resultData objectForKey:@"errors"];
-                [UIAlertController showAlertWithTitle:@"Error"
-                                           andMessage:@"Invalid username. The specified username is already taken."
-                                     inViewController:self
-                                          withHandler:nil];
-                
-            } else if ( [resultData objectForKey:@"id"] ) {
-                [UIAlertController showAlertWithTitle:@"Success"
-                                           andMessage:@"You have registered successfully."
-                                     inViewController:self
-                                          withHandler:^(void) {
-                                              [self.view endEditing:YES];
-                                              [self dismissViewControllerAnimated:YES completion:nil];
-                                          }];
-            } else {
-                [UIAlertController showAlertWithTitle:@"Error"
-                                           andMessage:@"There was an error saving the data on the server."
-                                     inViewController:self
-                                          withHandler:nil];
-            }
-    }];
-}
-
 
 @end

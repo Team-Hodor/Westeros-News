@@ -29,9 +29,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSManagedObjectContext *workerContext = [DatabaseManager sharedInstance].workerContext;
-    [workerContext save:nil];
-    
     [self registerForKeyboardNotifications];
 }
 
@@ -41,45 +38,51 @@
 }
 
 - (IBAction)loginButtonTouchUpInside:(id)sender {
-    [self loginUser];
+    
+    [[WebServiceManager sharedInstance] loginUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+        if ( ![resultData objectForKey:@"id"] ) {
+            NSDictionary *errors =[resultData objectForKey:@"errors"];
+            [UIAlertController showAlertWithTitle:@"Error"
+                                       andMessage:@"Invalid username or password."
+                                 inViewController:self
+                                      withHandler:nil];
+            
+        } else if( [resultData objectForKey:@"id"] ){
+            NSString *sessionId = [resultData objectForKey:@"id"];
+            NSString *username = self.usernameTextField.text;
+            NSString *uniqueId = [resultData objectForKey:@"uid"];
+            
+            User *loggedUser = [[User alloc] initWithUsername:username andSessionId:sessionId andUniqueId:uniqueId];
+            
+            [DataRepository sharedInstance].loggedUser = loggedUser;
+            
+            [UIAlertController showAlertWithTitle:@"Success"
+                                       andMessage:@"You have logged in successfully."
+                                 inViewController:self
+                                      withHandler:^(void) {
+                                          [self showNewsViewController];
+                                      }];
+        } else {
+            [UIAlertController showAlertWithTitle:@"Error"
+                                       andMessage:@"There was an error while processing your request. Please try again later."
+                                 inViewController:self
+                                      withHandler:nil];
+        }
+    }];
 }
 
 - (IBAction)cancelButtonTouchUpInside:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
--(User *) userWithUsername:(NSString *)username
-                    andPassword:(NSString *)password
-                      inContext:(NSManagedObjectContext *)context {
+- (void)showNewsViewController {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     
-    NSEntityDescription *entityDescription = [NSEntityDescription
-                                              entityForName:@"User" inManagedObjectContext:context];
+    UINavigationController *newsNavigationController = [storyboard instantiateViewControllerWithIdentifier:@"newsNavigationController"];
     
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:entityDescription];
+    newsNavigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     
-    // Set example predicate and sort orderings...
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:
-                              @"(username = %@) AND (password = %@)", username, password];
-    
-    [request setPredicate:predicate];
-    
-    
-    NSError *error;
-    NSArray *array = [context executeFetchRequest:request error:&error];
-    
-    if ([array count] == 0)
-    {
-        return nil;
-    } else {
-        return (User *)array[0];
-    }
-}
-
-- (void) showApartmentsViewController {
-    UINavigationController *navController = [[UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]] instantiateViewControllerWithIdentifier:@"navController"];
-    
-    [self presentViewController:navController animated:YES completion:nil];
+    [self presentViewController:newsNavigationController animated:YES completion:nil];
 }
 
 #pragma mark - Managing the keyboard
@@ -136,53 +139,6 @@
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
-}
-
-#pragma mark - Login User with Webservice
-
-- (void)loginUser {
-    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users/login"];
-    NSURL *url = [NSURL URLWithString:serviceURL];
-    
-    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@",self.usernameTextField.text, self.passwordTextField.text];
-    
-    [[WebServiceManager sharedInstance] performRequestWithUrl:url andMethod:@"POST" andHttpBody:userData andHandler:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-        if ( ![resultData objectForKey:@"id"] ) {
-            NSDictionary *errors =[resultData objectForKey:@"errors"];
-            [UIAlertController showAlertWithTitle:@"Error"
-                                       andMessage:@"Invalid username or password."
-                                 inViewController:self
-                                      withHandler:nil];
-            
-        } else if( [resultData objectForKey:@"id"] ){
-            NSString *sessionId = [resultData objectForKey:@"id"];
-            NSString *username = self.usernameTextField.text;
-            NSString *uniqueId = [resultData objectForKey:@"uid"];
-            
-            User *loggedUser = [[User alloc] initWithUsername:username andSessionId:sessionId andUniqueId:uniqueId];
-            
-            [DataRepository sharedInstance].loggedUser = loggedUser;
-            
-            [UIAlertController showAlertWithTitle:@"Success"
-                                       andMessage:@"You have logged in successfully."
-                                 inViewController:self
-                                      withHandler:^(void) {
-                                          [self showNewsViewController];
-                                      }];
-        } else {
-            [UIAlertController showAlertWithTitle:@"Error"
-                                       andMessage:@"There was an error while processing your request. Please try again later."
-                                 inViewController:self
-                                      withHandler:nil];
-        }
-    }];
-}
-
-- (void)showNewsViewController {
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-    UINavigationController *vc = [storyboard instantiateViewControllerWithIdentifier:@"newsNavigationController"];
-    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    [self presentViewController:vc animated:YES completion:nil];
 }
 
 @end

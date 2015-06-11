@@ -51,7 +51,7 @@ static WebServiceManager *sharedInst = nil;
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/news/?{\"id\":{\"$in\":[\"%@\"]}}",
                              [user.favouriteNews componentsJoinedByString:@"\",\""]]];
-    
+
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     [WebServiceManager performRequestWithUrl:url

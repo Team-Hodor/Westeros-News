@@ -24,6 +24,11 @@
 		28C2DFBD1B1C8FCB0001E968 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFBA1B1C8FCB0001E968 /* LoginViewController.m */; };
 		28C2DFBE1B1C8FCB0001E968 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFBC1B1C8FCB0001E968 /* RegisterViewController.m */; };
 		28C2DFC51B1C91910001E968 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFC41B1C91910001E968 /* User.m */; };
+		31CF4C111B2991D900F3D9C4 /* UserProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CF4C101B2991D900F3D9C4 /* UserProfileTableViewController.m */; };
+		31CF4C191B299B8E00F3D9C4 /* profile-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C161B299B8E00F3D9C4 /* profile-icon.png */; };
+		31CF4C1A1B299B8E00F3D9C4 /* profile-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C171B299B8E00F3D9C4 /* profile-icon@3x.png */; };
+		31CF4C1B1B299B8E00F3D9C4 /* profile-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C181B299B8E00F3D9C4 /* profile-icon@2x.png */; };
+		31CF4C1D1B29A66800F3D9C4 /* game_of_thrones_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C1C1B29A66800F3D9C4 /* game_of_thrones_bg.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +74,12 @@
 		28C2DFBC1B1C8FCB0001E968 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
 		28C2DFC31B1C91910001E968 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		28C2DFC41B1C91910001E968 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		31CF4C0F1B2991D900F3D9C4 /* UserProfileTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileTableViewController.h; sourceTree = "<group>"; };
+		31CF4C101B2991D900F3D9C4 /* UserProfileTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileTableViewController.m; sourceTree = "<group>"; };
+		31CF4C161B299B8E00F3D9C4 /* profile-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-icon.png"; sourceTree = "<group>"; };
+		31CF4C171B299B8E00F3D9C4 /* profile-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-icon@3x.png"; sourceTree = "<group>"; };
+		31CF4C181B299B8E00F3D9C4 /* profile-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-icon@2x.png"; sourceTree = "<group>"; };
+		31CF4C1C1B29A66800F3D9C4 /* game_of_thrones_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = game_of_thrones_bg.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +148,10 @@
 		28C2DF841B1C8D740001E968 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				31CF4C1C1B29A66800F3D9C4 /* game_of_thrones_bg.png */,
+				31CF4C161B299B8E00F3D9C4 /* profile-icon.png */,
+				31CF4C171B299B8E00F3D9C4 /* profile-icon@3x.png */,
+				31CF4C181B299B8E00F3D9C4 /* profile-icon@2x.png */,
 				28C2DF851B1C8D740001E968 /* Info.plist */,
 				28C2DF861B1C8D740001E968 /* main.m */,
 			);
@@ -179,6 +194,8 @@
 				28C2DFB81B1C8FCB0001E968 /* AuthenticationViewControllers */,
 				287EC9791B245BCD001B1C19 /* NewsTableViewController.h */,
 				287EC97A1B245BCD001B1C19 /* NewsTableViewController.m */,
+				31CF4C0F1B2991D900F3D9C4 /* UserProfileTableViewController.h */,
+				31CF4C101B2991D900F3D9C4 /* UserProfileTableViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -305,7 +322,11 @@
 			files = (
 				28C2DF931B1C8D740001E968 /* Main.storyboard in Resources */,
 				28C2DF981B1C8D740001E968 /* LaunchScreen.xib in Resources */,
+				31CF4C191B299B8E00F3D9C4 /* profile-icon.png in Resources */,
 				28C2DF951B1C8D740001E968 /* Images.xcassets in Resources */,
+				31CF4C1A1B299B8E00F3D9C4 /* profile-icon@3x.png in Resources */,
+				31CF4C1B1B299B8E00F3D9C4 /* profile-icon@2x.png in Resources */,
+				31CF4C1D1B29A66800F3D9C4 /* game_of_thrones_bg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +350,7 @@
 				2865D87F1B235B4500D84EE5 /* DataRepository.m in Sources */,
 				28C2DFB31B1C8DCF0001E968 /* DatabaseManager.m in Sources */,
 				28C2DF8A1B1C8D740001E968 /* AppDelegate.m in Sources */,
+				31CF4C111B2991D900F3D9C4 /* UserProfileTableViewController.m in Sources */,
 				28C2DFBD1B1C8FCB0001E968 /* LoginViewController.m in Sources */,
 				28C2DF8D1B1C8D740001E968 /* Westeros_News_App.xcdatamodeld in Sources */,
 				287EC97B1B245BCD001B1C19 /* NewsTableViewController.m in Sources */,

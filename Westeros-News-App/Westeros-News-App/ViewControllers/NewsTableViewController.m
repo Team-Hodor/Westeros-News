@@ -37,6 +37,9 @@ typedef enum {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    UIBarButtonItem *profileButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"profile-icon@3x.png"] landscapeImagePhone:[UIImage imageNamed:@"profile-icon@3x.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showUserProfileButtonTapped)];
+    self.navigationItem.rightBarButtonItem = profileButton;
+    
     [self performInitialConfiguration];
     
     NSError *error;
@@ -52,6 +55,15 @@ typedef enum {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+-(void)showUserProfileButtonTapped{
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UIViewController *addAlbumViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"userProfileView"];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:addAlbumViewController];
+    
+    [self presentViewController:navController animated:YES completion:^{
+        NSLog(@"User Profile View Controller presented");
+    }];}
 
 #pragma mark - Fetch Results Controller
 

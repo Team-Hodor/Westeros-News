@@ -58,12 +58,10 @@ typedef enum {
 
 -(void)showUserProfileButtonTapped{
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-    UIViewController *addAlbumViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"userProfileView"];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:addAlbumViewController];
+    UIViewController *showUserProfileViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"userProfileView"];
     
-    [self presentViewController:navController animated:YES completion:^{
-        NSLog(@"User Profile View Controller presented");
-    }];}
+    [self.navigationController pushViewController:showUserProfileViewController animated:YES];
+}
 
 #pragma mark - Fetch Results Controller
 

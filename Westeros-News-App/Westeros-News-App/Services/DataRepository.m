@@ -7,6 +7,9 @@
 //
 
 #import "DataRepository.h"
+#import "WebServiceManager.h"
+#import <UIKit/UIKit.h>
+#import "UIAlertController+ShowAlert.h"
 
 @implementation DataRepository
 
@@ -38,9 +41,27 @@ static DataRepository *sharedInst = nil;
     return sharedInst;
 }
 
-- (void)logoutLoggedUser {
+- (void)logoutLoggedUserInViewController:(UIViewController *)viewController {
     if (self.loggedUser) {
-        // TODO: Logout
+        [WebServiceManager logoutUserWithSessionId:self.loggedUser.sessionId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+            if (!error) {
+                NSLog(@"Logged out");
+                
+                self.loggedUser = nil;
+                [UIAlertController showAlertWithTitle:@"Success"
+                                           andMessage:@"You have logged out successfully."
+                                     inViewController:viewController
+                                          withHandler:^() {
+                                              [viewController.navigationController dismissViewControllerAnimated:YES completion:nil];
+                                          }];
+                
+            } else {
+                [UIAlertController showAlertWithTitle:@"Error"
+                                           andMessage:@"There was an error logging out. Please try again later."
+                                     inViewController:viewController
+                                          withHandler:nil];
+            }
+        }];
     }
 }
 

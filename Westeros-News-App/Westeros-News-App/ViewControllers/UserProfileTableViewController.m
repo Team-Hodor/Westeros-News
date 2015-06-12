@@ -7,6 +7,7 @@
 //
 
 #import "UserProfileTableViewController.h"
+#import "DataRepository.h"
 
 @interface UserProfileTableViewController ()
 #define CELL_ID @"SettingCell"
@@ -75,6 +76,18 @@
     return cell;
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if(indexPath.section == 0 && indexPath.row==0){
+        // EDIT
+    }
+    else if(indexPath.section == 0 && indexPath.row==1){
+        // CHANGE PASS
+    }
+    else if(indexPath.section == 1 && indexPath.row==0){
+        [[DataRepository sharedInstance] logoutLoggedUserInViewController:self];
+    }
+}
 
 /*
 // Override to support conditional editing of the table view.

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "User.h"
+#import <UIKit/UIKit.h>
 
 @interface DataRepository : NSObject
 
@@ -15,7 +16,7 @@
 
 + (DataRepository *)sharedInstance;
 
-- (void)logoutLoggedUser;
+- (void)logoutLoggedUserInViewController:(UIViewController *)viewController;
 
 #define BASE_URL @"http://78.90.132.242:2403"
 

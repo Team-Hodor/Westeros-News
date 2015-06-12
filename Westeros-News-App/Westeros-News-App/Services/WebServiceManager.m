@@ -103,12 +103,23 @@ static WebServiceManager *sharedInst = nil;
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users"];
     NSURL *url = [NSURL URLWithString:serviceURL];
     
-    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@&name=%@",username, password, name];
+    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@&name=%@", username, password, name];
     
     [WebServiceManager performRequestWithUrl:url
                       andMethod:@"POST"
                     andHttpBody:userData
                      andHandler:handlerBlock];
+}
+
++ (void)logoutUserWithSessionId:(NSString *)sessionId completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users/logout"];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    
+    NSString *userData = [NSString stringWithFormat:@"sid=%@", sessionId];
+    
+    [WebServiceManager performRequestWithUrl:url
+                                   andMethod:@"POST" andHttpBody:userData andHandler:handlerBlock];
 }
 
 + (void)performRequestWithUrl:(NSURL *)url andMethod:(NSString *)method andHttpBody:(NSString *)httpBody andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {

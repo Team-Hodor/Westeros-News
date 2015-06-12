@@ -11,6 +11,10 @@
 
 @interface WebServiceManager() <NSURLSessionDelegate>
 
+
+#define PARSE_APPLICATION_ID @"asCqw49GNR2QRP7xw1vETNZpW9DoqDtibGWCbg4e"
+#define PARSE_REST_ID @"T8eI5HefBUPlZRQQ6UoSTFqoKgd1raXl1iAhWXw4"
+
 @end
 
 @implementation WebServiceManager
@@ -44,22 +48,22 @@ static WebServiceManager *sharedInst = nil;
 }
 
 // TODO:
-
-
 + (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/news/?{\"id\":{\"$in\":[\"%@\"]}}",
+                            [NSString stringWithFormat:@"/classes/News?where={\"objectId\":{\"$in\":[\"%@\"]}}",
                              [user.favouriteNews componentsJoinedByString:@"\",\""]]];
 
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     [WebServiceManager performRequestWithUrl:url
-                                                    andMethod:@"GET"
-                                                  andHttpBody:@""
-                                                   andHandler:handlerBlock];
+                                   andMethod:@"GET"
+                                 andHttpBody:nil
+                                sessionToken:user.sessionToken
+                                  andHandler:handlerBlock];
 }
 
+// Probably useless
 + (void)loadFullUserDataForUserWithID:(NSString *)identifier completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/users/%@", identifier]];
@@ -68,34 +72,36 @@ static WebServiceManager *sharedInst = nil;
     
     [WebServiceManager performRequestWithUrl:url
                                                     andMethod:@"GET"
-                                                  andHttpBody:@""
+                                                  andHttpBody:nil
                                                    andHandler:handlerBlock];
 }
 
-+ (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
++ (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/news?{\"$limit\":%ld,\"$skip\":%ld,\"$sort\":{\"createdAt\":-1}}", limit, skip]];
+                            [NSString stringWithFormat:@"/classes/News?limit=%ld&skip=%ld", limit, skip]];
     
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     [WebServiceManager performRequestWithUrl:url
-                                                    andMethod:@"GET"
-                                                  andHttpBody:@""
-                                                   andHandler:handlerBlock];
+                                   andMethod:@"GET"
+                                 andHttpBody:nil
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
 }
 
 + (void)loginUserWithUsername:(NSString *)username andPassword:(NSString *)password completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
-    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users/login"];
-    NSURL *url = [NSURL URLWithString:serviceURL];
+    NSString *serviceURL = [BASE_URL stringByAppendingString:
+                            [NSString stringWithFormat:@"/login?username=%@&password=%@", username, password]];
     
-    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@",username, password];
+    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     [WebServiceManager performRequestWithUrl:url
-                      andMethod:@"POST"
-                    andHttpBody:userData
-                     andHandler:handlerBlock];
+                                   andMethod:@"GET"
+                                 andHttpBody:nil
+                                sessionToken:nil
+                                  andHandler:handlerBlock];
 }
 
 + (void)registerUserWithUsername:(NSString *)username andPassword:(NSString *)password andName:(NSString *)name completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
@@ -103,37 +109,57 @@ static WebServiceManager *sharedInst = nil;
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users"];
     NSURL *url = [NSURL URLWithString:serviceURL];
     
-    NSString *userData = [NSString stringWithFormat:@"username=%@&password=%@&name=%@", username, password, name];
+    NSDictionary *userData = @{@"username":username, @"password":password, @"name":name};
     
     [WebServiceManager performRequestWithUrl:url
-                      andMethod:@"POST"
-                    andHttpBody:userData
-                     andHandler:handlerBlock];
+                                   andMethod:@"POST"
+                                 andHttpBody:userData
+                                sessionToken:nil
+                                  andHandler:handlerBlock];
 }
 
-+ (void)logoutUserWithSessionId:(NSString *)sessionId completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
++ (void)logoutUserWithSessionId:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
-    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users/logout"];
+    NSString *serviceURL = [BASE_URL stringByAppendingString:@"/logout"];
     NSURL *url = [NSURL URLWithString:serviceURL];
     
-    NSString *userData = [NSString stringWithFormat:@"sid=%@", sessionId];
-    
     [WebServiceManager performRequestWithUrl:url
-                                   andMethod:@"POST" andHttpBody:userData andHandler:handlerBlock];
+                                   andMethod:@"POST"
+                                 andHttpBody:nil
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
 }
 
-+ (void)performRequestWithUrl:(NSURL *)url andMethod:(NSString *)method andHttpBody:(NSString *)httpBody andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
++ (void)performRequestWithUrl:(NSURL *)url
+                    andMethod:(NSString *)method
+                  andHttpBody:(NSDictionary *)httpBody
+                 sessionToken:(NSString *)sessionToken
+                   andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:60.0];
+                                                       timeoutInterval:10.0];
     
     [request setHTTPMethod:method];
 
-    [request setHTTPBody:[httpBody dataUsingEncoding:NSUTF8StringEncoding]];
+    if (httpBody) {
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:httpBody
+                                                           options:0
+                                                             error:nil];
+        
+        [request setHTTPBody:jsonData];
+    }
+    
+    // Setting the parse headers
+    [request addValue:PARSE_APPLICATION_ID forHTTPHeaderField:@"X-Parse-Application-Id"];
+    [request addValue:PARSE_REST_ID forHTTPHeaderField:@"X-Parse-REST-API-Key"];
+    
+    if (sessionToken) {
+        [request addValue:sessionToken forHTTPHeaderField:@"X-Parse-Session-Token"];
+    }
     
     NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
                                                     completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {

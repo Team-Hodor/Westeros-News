@@ -2,7 +2,7 @@
 //  Article.m
 //  Westeros-News-App
 //
-//  Created by P. Mihaylov on 6/7/15.
+//  Created by P. Mihaylov on 6/12/15.
 //  Copyright (c) 2015 Team-Hodor. All rights reserved.
 //
 
@@ -11,14 +11,15 @@
 
 @implementation Article
 
-@dynamic title;
-@dynamic subtitle;
-@dynamic author;
-@dynamic createdAt;
+@dynamic authorID;
+@dynamic categoryID;
 @dynamic content;
-@dynamic category;
-@dynamic image;
-@dynamic updatedAt;
+@dynamic createdAt;
 @dynamic identifier;
+@dynamic imageURL;
+@dynamic subtitle;
+@dynamic title;
+@dynamic updatedAt;
+@dynamic thumbnailURL;
 
 @end

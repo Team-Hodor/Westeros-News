@@ -40,19 +40,28 @@
 - (IBAction)loginButtonTouchUpInside:(id)sender {
     
     [WebServiceManager loginUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-            if ( ![resultData objectForKey:@"id"] ) {
-                NSDictionary *errors =[resultData objectForKey:@"errors"];
+            if ( [resultData objectForKey:@"error"] ) {
                 [UIAlertController showAlertWithTitle:@"Error"
                                            andMessage:@"Invalid username or password."
                                      inViewController:self
                                           withHandler:nil];
                 
-            } else if( [resultData objectForKey:@"id"] ){
-                NSString *sessionId = [resultData objectForKey:@"id"];
+            } else if( [resultData objectForKey:@"createdAt"] ){
+                NSString *sessionId = [resultData objectForKey:@"sessionToken"];
                 NSString *username = self.usernameTextField.text;
-                NSString *uniqueId = [resultData objectForKey:@"uid"];
+                NSString *uniqueId = [resultData objectForKey:@"objectId"];
+                NSMutableArray *favouriteNews = [[NSMutableArray alloc] init];
                 
-                User *loggedUser = [[User alloc] initWithUsername:username andSessionId:sessionId andUniqueId:uniqueId];
+                for (id favourite in [resultData objectForKey:@"favourites"]) {
+                    [favouriteNews addObject:[favourite objectForKey:@"objectId"]];
+                }
+                
+                User *loggedUser = [[User alloc] initWithUsername:username
+                                                     andSessionId:sessionId
+                                                      andUniqueId:uniqueId];
+                
+                loggedUser.favouriteNews = favouriteNews;
+                loggedUser.isAdmin = [resultData objectForKey:@"isAdmin"];
                 
                 [DataRepository sharedInstance].loggedUser = loggedUser;
                 

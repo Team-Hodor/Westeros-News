@@ -18,7 +18,7 @@
 
 - (void)logoutLoggedUserInViewController:(UIViewController *)viewController;
 
-#define BASE_URL @"http://78.90.132.242:2403"
+#define BASE_URL @"https://api.parse.com/1"
 
 // http://78.90.132.242:2403/news?{"id":{"$in":["be51ab58a31d4831"]}}
 @end

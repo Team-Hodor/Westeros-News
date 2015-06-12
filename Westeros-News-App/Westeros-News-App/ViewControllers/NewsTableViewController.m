@@ -122,10 +122,11 @@ typedef enum {
     
     id  sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:indexPath.section];
     
+    cell.textLabel.text = @"YES";
     
     if ([sectionInfo numberOfObjects] > indexPath.row) {
         Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
-        [cell setArticle:article];
+        // [cell setArticle:article];
     } else {
         cell.textLabel.text = @"Show more";
     }
@@ -225,8 +226,6 @@ typedef enum {
 */
 
 - (void)performInitialConfiguration {
-    [self loadFullUserDataForUser:[DataRepository sharedInstance].loggedUser];
-    
     self.currentWebRequestSkipCount = 0;
     self.selectedSection = FeaturedNewsSection;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -251,7 +250,7 @@ typedef enum {
 }
 
 #pragma mark - Web service managers
-
+// Probably useless
 - (void)loadFullUserDataForUser:(User *)user {
     [WebServiceManager loadFullUserDataForUserWithID:user.uniqueId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
         
@@ -267,8 +266,11 @@ typedef enum {
 }
 
 - (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip {
-    [WebServiceManager loadNewsWithLimit:limit skip:skip completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-            if (![resultData count]) {
+    [WebServiceManager loadNewsWithLimit:limit
+                                    skip:skip
+                            sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
+                              completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+            if (![[resultData valueForKey:@"results"] count]) {
                 self.hasFinishedPaging = YES;
                 [self.tableView beginUpdates];
                 NSInteger lastSection = [self.tableView numberOfSections] - 1;
@@ -288,16 +290,25 @@ typedef enum {
     NSManagedObjectContext *workerContext = [[DatabaseManager sharedInstance] workerContext];
     
     [workerContext performBlock:^() {
-        for (id news in newsData) {
-            NSString *author = [news valueForKey:@"author"];
-            NSString *category = [news valueForKey:@"category"];
+        for (id news in [newsData valueForKey:@"results"]) {
+            NSString *authorID = [[news valueForKey:@"author"] valueForKey:@"objectId"];
+            NSString *categoryID = [[news valueForKey:@"category"] valueForKey:@"objectId"];
             NSString *content = [news valueForKey:@"content"];
-            NSString *identifier = [news valueForKey:@"id"];
-            NSData *imageData = [[news valueForKey:@"image"] dataUsingEncoding:NSUTF8StringEncoding];
+            NSString *identifier = [news valueForKey:@"objectId"];
+            NSString *imageURL = [[news valueForKey:@"image"] valueForKey:@"url"];
+            NSString *thumbnailURL = [[news valueForKey:@"thumbnail"] valueForKey:@"url"];
             NSString *title = [news valueForKey:@"title"];
             NSString *subtitle = [news valueForKey:@"subtitle"];
-            NSDate *createdAt = ((NSString *)[news valueForKey:@"createdAt"]).dateValue;
-            NSDate *updatedAt = ((NSString *)[news valueForKey:@"updatedAt"]).dateValue;
+            
+            NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
+            
+            [dateFormat setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];
+            [dateFormat setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+//            NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+//            [dateFormat setLocale:posix];
+            NSDate *temp = ((NSString *)[news valueForKey:@"createdAt"]).dateValue;
+            NSDate *createdAt = [dateFormat dateFromString:((NSString *)[news valueForKey:@"createdAt"])];
+            NSDate *updatedAt = [dateFormat dateFromString:((NSString *)[news valueForKey:@"updatedAt"])];
             
             NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Article"];
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier = %@", identifier];
@@ -308,11 +319,12 @@ typedef enum {
                 Article *article = [NSEntityDescription insertNewObjectForEntityForName:@"Article"
                                                                  inManagedObjectContext:workerContext];
                 
-                article.author = author;
-                article.category = category;
+                article.authorID = authorID;
+                article.categoryID = categoryID;
                 article.content = content;
                 article.identifier = identifier;
-                article.image = imageData;
+                article.imageURL = imageURL;
+                article.thumbnailURL = thumbnailURL;
                 article.title = title;
                 article.subtitle = subtitle;
                 article.createdAt = createdAt;

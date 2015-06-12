@@ -38,26 +38,28 @@
 - (IBAction)submitButtonTouchUpInside:(id)sender {
     if ([self areFieldsValidated]) {
         [WebServiceManager registerUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text andName:self.nameTextField.text completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-                if ([resultData objectForKey:@"errors"]) {
-                    NSDictionary *errors =[resultData objectForKey:@"errors"];
+                if ([[resultData objectForKey:@"error"] isEqualToString:@"Invalid JSON"]) {
+                    // INTERNAL ERROR
+                    NSLog(@"Internal error");
+                    
                     [UIAlertController showAlertWithTitle:@"Error"
-                                               andMessage:@"Invalid username. The specified username is already taken."
+                                               andMessage:@"There was an error saving the data on the server. Please try again later."
                                          inViewController:self
                                               withHandler:nil];
                     
-                } else if ( [resultData objectForKey:@"id"] ) {
-                    [UIAlertController showAlertWithTitle:@"Success"
-                                               andMessage:@"You have registered successfully."
+                } else if ( [resultData objectForKey:@"error"] ) {
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"Username already taken."
                                          inViewController:self
-                                              withHandler:^(void) {
+                                              withHandler:nil];
+                } else {
+                    [UIAlertController showAlertWithTitle:@"Success"
+                                               andMessage:@"Username registered successfully."
+                                         inViewController:self
+                                              withHandler:^() {
                                                   [self.view endEditing:YES];
                                                   [self dismissViewControllerAnimated:YES completion:nil];
                                               }];
-                } else {
-                    [UIAlertController showAlertWithTitle:@"Error"
-                                               andMessage:@"There was an error saving the data on the server."
-                                         inViewController:self
-                                              withHandler:nil];
                 }
         }];
     }

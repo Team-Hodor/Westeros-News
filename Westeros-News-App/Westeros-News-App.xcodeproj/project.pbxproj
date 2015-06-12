@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2858A2011B2B2FEB0025FF81 /* Article.m in Sources */ = {isa = PBXBuildFile; fileRef = 2858A2001B2B2FEB0025FF81 /* Article.m */; };
 		2865D87F1B235B4500D84EE5 /* DataRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 2865D87E1B235B4500D84EE5 /* DataRepository.m */; };
 		287EC97B1B245BCD001B1C19 /* NewsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 287EC97A1B245BCD001B1C19 /* NewsTableViewController.m */; };
 		287EC97F1B245E66001B1C19 /* WebServiceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 287EC97E1B245E66001B1C19 /* WebServiceManager.m */; };
-		287EC9881B246FCC001B1C19 /* Article.m in Sources */ = {isa = PBXBuildFile; fileRef = 287EC9871B246FCC001B1C19 /* Article.m */; };
 		287EC98E1B24B1D8001B1C19 /* NSString+DateValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 287EC98D1B24B1D8001B1C19 /* NSString+DateValue.m */; };
 		28C2DF871B1C8D740001E968 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DF861B1C8D740001E968 /* main.m */; };
 		28C2DF8A1B1C8D740001E968 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DF891B1C8D740001E968 /* AppDelegate.m */; };
@@ -43,14 +43,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2858A1FF1B2B2FEB0025FF81 /* Article.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Article.h; sourceTree = "<group>"; };
+		2858A2001B2B2FEB0025FF81 /* Article.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Article.m; sourceTree = "<group>"; };
 		2865D87D1B235B4500D84EE5 /* DataRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRepository.h; sourceTree = "<group>"; };
 		2865D87E1B235B4500D84EE5 /* DataRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataRepository.m; sourceTree = "<group>"; };
 		287EC9791B245BCD001B1C19 /* NewsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsTableViewController.h; sourceTree = "<group>"; };
 		287EC97A1B245BCD001B1C19 /* NewsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsTableViewController.m; sourceTree = "<group>"; };
 		287EC97D1B245E66001B1C19 /* WebServiceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServiceManager.h; sourceTree = "<group>"; };
 		287EC97E1B245E66001B1C19 /* WebServiceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServiceManager.m; sourceTree = "<group>"; };
-		287EC9861B246FCC001B1C19 /* Article.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Article.h; sourceTree = "<group>"; };
-		287EC9871B246FCC001B1C19 /* Article.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Article.m; sourceTree = "<group>"; };
 		287EC98C1B24B1D8001B1C19 /* NSString+DateValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DateValue.h"; sourceTree = "<group>"; };
 		287EC98D1B24B1D8001B1C19 /* NSString+DateValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+DateValue.m"; sourceTree = "<group>"; };
 		28C2DF811B1C8D740001E968 /* Westeros-News-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Westeros-News-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -236,8 +236,8 @@
 		28C2DFC21B1C91840001E968 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				287EC9861B246FCC001B1C19 /* Article.h */,
-				287EC9871B246FCC001B1C19 /* Article.m */,
+				2858A1FF1B2B2FEB0025FF81 /* Article.h */,
+				2858A2001B2B2FEB0025FF81 /* Article.m */,
 				28C2DFC31B1C91910001E968 /* User.h */,
 				28C2DFC41B1C91910001E968 /* User.m */,
 			);
@@ -362,12 +362,12 @@
 				28C2DFC51B1C91910001E968 /* User.m in Sources */,
 				2865D87F1B235B4500D84EE5 /* DataRepository.m in Sources */,
 				28C2DFB31B1C8DCF0001E968 /* DatabaseManager.m in Sources */,
+				2858A2011B2B2FEB0025FF81 /* Article.m in Sources */,
 				28C2DF8A1B1C8D740001E968 /* AppDelegate.m in Sources */,
 				31CF4C111B2991D900F3D9C4 /* UserProfileTableViewController.m in Sources */,
 				28C2DFBD1B1C8FCB0001E968 /* LoginViewController.m in Sources */,
 				28C2DF8D1B1C8D740001E968 /* Westeros_News_App.xcdatamodeld in Sources */,
 				287EC97B1B245BCD001B1C19 /* NewsTableViewController.m in Sources */,
-				287EC9881B246FCC001B1C19 /* Article.m in Sources */,
 				3110BCE61B2AF11600307CAF /* NewsTableViewCell.m in Sources */,
 				28C2DFBE1B1C8FCB0001E968 /* RegisterViewController.m in Sources */,
 				28C2DFB71B1C8F560001E968 /* UIAlertController+ShowAlert.m in Sources */,

@@ -10,7 +10,7 @@
 
 @interface User()
 
-@property (nonatomic, strong, readwrite) NSString *sessionId;
+@property (nonatomic, strong, readwrite) NSString *sessionToken;
 @property (nonatomic, strong, readwrite) NSString *uniqueId;
 @property (nonatomic, strong, readwrite) NSString *username;
 
@@ -23,7 +23,7 @@
     
     if (self) {
         self.username = username;
-        self.sessionId = sessionId;
+        self.sessionToken = sessionId;
         self.uniqueId = uniqueId;
     }
     

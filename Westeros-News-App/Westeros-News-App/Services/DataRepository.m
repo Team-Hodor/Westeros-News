@@ -43,7 +43,7 @@ static DataRepository *sharedInst = nil;
 
 - (void)logoutLoggedUserInViewController:(UIViewController *)viewController {
     if (self.loggedUser) {
-        [WebServiceManager logoutUserWithSessionId:self.loggedUser.sessionId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+        [WebServiceManager logoutUserWithSessionId:self.loggedUser.sessionToken completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
             if (!error) {
                 NSLog(@"Logged out");
                 

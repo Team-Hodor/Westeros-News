@@ -22,6 +22,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     // [self generateRandomNewsToTheServer];
+    // [self changePassword];
     return YES;
 }
 
@@ -76,6 +77,15 @@
             
         }];
     }
+}
+
+- (void)changePassword {
+    NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/users/a3f41982e6ecba41"]];
+    NSString *userData = [NSString stringWithFormat:@"password=%@&sid=%@", @"asd", @"ec11eeb1cfde476a4bd2f5cd2d8d29f35df317c348dfaeff7921c0abceef71e95e592502f40ad055810924d91966849b8a8ce23d48fa10f8de392948b03d4930"];
+    
+    [WebServiceManager performRequestWithUrl:url andMethod:@"PUT" andHttpBody:userData andHandler:^(NSDictionary *dict, NSURLResponse *response, NSError *error) {
+        NSLog(@"Changed");
+    }];
 }
 
 @end

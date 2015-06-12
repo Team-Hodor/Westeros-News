@@ -12,6 +12,7 @@
 #import "DatabaseManager.h"
 #import "Article.h"
 #import "NSString+DateValue.h"
+#import "NewsTableViewCell.h"
 
 typedef enum {
     FeaturedNewsSection,
@@ -119,14 +120,14 @@ typedef enum {
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_ID forIndexPath:indexPath];
+    NewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_ID forIndexPath:indexPath];
     
     id  sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:indexPath.section];
     
     
     if ([sectionInfo numberOfObjects] > indexPath.row) {
         Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
-        cell.textLabel.text = article.title;
+        [cell setArticle:article];
     } else {
         cell.textLabel.text = @"Show more";
     }

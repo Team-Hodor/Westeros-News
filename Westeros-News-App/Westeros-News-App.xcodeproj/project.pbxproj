@@ -24,6 +24,7 @@
 		28C2DFBD1B1C8FCB0001E968 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFBA1B1C8FCB0001E968 /* LoginViewController.m */; };
 		28C2DFBE1B1C8FCB0001E968 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFBC1B1C8FCB0001E968 /* RegisterViewController.m */; };
 		28C2DFC51B1C91910001E968 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFC41B1C91910001E968 /* User.m */; };
+		3110BCE61B2AF11600307CAF /* NewsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3110BCE51B2AF11600307CAF /* NewsTableViewCell.m */; };
 		31CF4C111B2991D900F3D9C4 /* UserProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CF4C101B2991D900F3D9C4 /* UserProfileTableViewController.m */; };
 		31CF4C191B299B8E00F3D9C4 /* profile-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C161B299B8E00F3D9C4 /* profile-icon.png */; };
 		31CF4C1A1B299B8E00F3D9C4 /* profile-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C171B299B8E00F3D9C4 /* profile-icon@3x.png */; };
@@ -74,6 +75,8 @@
 		28C2DFBC1B1C8FCB0001E968 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
 		28C2DFC31B1C91910001E968 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		28C2DFC41B1C91910001E968 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		3110BCE41B2AF11600307CAF /* NewsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsTableViewCell.h; sourceTree = "<group>"; };
+		3110BCE51B2AF11600307CAF /* NewsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsTableViewCell.m; sourceTree = "<group>"; };
 		31CF4C0F1B2991D900F3D9C4 /* UserProfileTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileTableViewController.h; sourceTree = "<group>"; };
 		31CF4C101B2991D900F3D9C4 /* UserProfileTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileTableViewController.m; sourceTree = "<group>"; };
 		31CF4C161B299B8E00F3D9C4 /* profile-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-icon.png"; sourceTree = "<group>"; };
@@ -132,6 +135,7 @@
 				28C2DFC21B1C91840001E968 /* Models */,
 				28C2DFB41B1C8F560001E968 /* Extensions */,
 				28C2DFB01B1C8DAF0001E968 /* UIElements */,
+				3110BCE31B2AEDF000307CAF /* Views */,
 				28C2DFAF1B1C8D9F0001E968 /* ViewControllers */,
 				28C2DFAE1B1C8D920001E968 /* Services */,
 				28C2DF881B1C8D740001E968 /* AppDelegate.h */,
@@ -238,6 +242,15 @@
 				28C2DFC41B1C91910001E968 /* User.m */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		3110BCE31B2AEDF000307CAF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3110BCE41B2AF11600307CAF /* NewsTableViewCell.h */,
+				3110BCE51B2AF11600307CAF /* NewsTableViewCell.m */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -355,6 +368,7 @@
 				28C2DF8D1B1C8D740001E968 /* Westeros_News_App.xcdatamodeld in Sources */,
 				287EC97B1B245BCD001B1C19 /* NewsTableViewController.m in Sources */,
 				287EC9881B246FCC001B1C19 /* Article.m in Sources */,
+				3110BCE61B2AF11600307CAF /* NewsTableViewCell.m in Sources */,
 				28C2DFBE1B1C8FCB0001E968 /* RegisterViewController.m in Sources */,
 				28C2DFB71B1C8F560001E968 /* UIAlertController+ShowAlert.m in Sources */,
 				28C2DF871B1C8D740001E968 /* main.m in Sources */,

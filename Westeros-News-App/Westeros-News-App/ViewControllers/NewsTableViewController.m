@@ -38,6 +38,13 @@ typedef enum {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //set navigationBar colour
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f]];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
+    //set tabBar colour
+    [self.tabBarController.tabBar setBackgroundColor:[UIColor redColor]];
+    
     UIBarButtonItem *profileButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"profile-icon@3x.png"] landscapeImagePhone:[UIImage imageNamed:@"profile-icon@3x.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showUserProfileButtonTapped)];
     self.navigationItem.rightBarButtonItem = profileButton;
     
@@ -118,19 +125,30 @@ typedef enum {
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_ID forIndexPath:indexPath];
     
     id  sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:indexPath.section];
     
+    UIView *bgColorView = [[UIView alloc] init];
+    bgColorView.backgroundColor = [UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f];
     
     if ([sectionInfo numberOfObjects] > indexPath.row) {
+        NewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_ID forIndexPath:indexPath];
         Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
         [cell setArticle:article];
+        
+        //set cell background color on selection
+        [cell setSelectedBackgroundView:bgColorView];
+        
+            return cell;
     } else {
-        cell.textLabel.text = @"Show more";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"showMoreCell" forIndexPath:indexPath];
+        
+        //set cell background color on selection
+        [cell setSelectedBackgroundView:bgColorView];
+            return cell;
     }
     
-    return cell;
+
 }
 
 #pragma mark - Controller
@@ -186,6 +204,16 @@ typedef enum {
     if ( !( [sectionInfo numberOfObjects] > indexPath.row ) ) {
         [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
         self.currentWebRequestSkipCount += WEB_REQUEST_LIMIT;
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
+    }else{
+        Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        [[DataRepository sharedInstance] setCurrentArticle:article];
+        UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+        UIViewController *showUserProfileViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"NewsDetailView"];
+        
+        [self.navigationController pushViewController:showUserProfileViewController animated:YES];
     }
 }
 

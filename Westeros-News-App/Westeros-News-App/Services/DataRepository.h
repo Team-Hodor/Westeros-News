@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "User.h"
+#import "Article.h"
 #import <UIKit/UIKit.h>
 
 @interface DataRepository : NSObject
 
 @property (nonatomic, strong) User *loggedUser;
+@property (nonatomic, strong) Article *currentArticle;
 
 + (DataRepository *)sharedInstance;
 

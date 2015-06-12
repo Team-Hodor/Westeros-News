@@ -36,7 +36,7 @@
 
 - (void)cancelButtonTapped {
     
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Table view data source

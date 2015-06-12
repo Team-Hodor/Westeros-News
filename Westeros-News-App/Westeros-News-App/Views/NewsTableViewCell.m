@@ -23,7 +23,11 @@
     _article = article;
     self.titleLabel.text = article.title;
     self.subtitleLabel.text = article.subtitle;
-    //self.dateLabel.text = article.createdAt;
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"dd-MM-yyyy HH:mm"];
+    
+    self.dateLabel.text = [formatter stringFromDate:article.createdAt];
 
 }
 

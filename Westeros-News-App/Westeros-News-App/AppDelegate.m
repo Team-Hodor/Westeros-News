@@ -23,6 +23,7 @@
     // Override point for customization after application launch.
     // [self generateRandomNewsToTheServer];
     // [self changePassword];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
     return YES;
 }
 

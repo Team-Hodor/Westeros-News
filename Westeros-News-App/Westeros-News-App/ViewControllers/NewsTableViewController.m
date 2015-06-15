@@ -268,9 +268,9 @@ typedef enum {
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
     }
     
-    if (!self.currentWebRequestSkipCount) {
-        self.currentWebRequestSkipCount = 0;
-        
+    self.currentWebRequestSkipCount = self.currentWebRequestSkipCount ? self.currentWebRequestSkipCount : 0;
+    
+    if (self.currentWebRequestSkipCount < 5) {
         [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
         
         self.currentWebRequestSkipCount += WEB_REQUEST_LIMIT;

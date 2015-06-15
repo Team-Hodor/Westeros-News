@@ -8,23 +8,40 @@
 
 #import <Foundation/Foundation.h>
 #import "User.h"
+#import <UIKit/UIKit.h>
 
 @interface WebServiceManager : NSObject
 
-+ (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
++ (void)postNewArticleWithTitle:(NSString *)title
+                       subtitle:(NSString *)subtitle
+                     categoryID:(NSString *)categoryID
+                       authorID:(NSString *)authorID
+                   previewImage:(UIImage *)previewImage
+                      mainImage:(UIImage *)mainImage
+                        content:(NSString *)content
+                   sessionToken:(NSString *)sessionToken
+                     completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
-+ (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
++ (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
-+ (void)loginUserWithUsername:(NSString *)username andPassword:(NSString *)password completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
++ (void)loadFavouriteNewsForUser:(User *)user
+                      completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
-+ (void)registerUserWithUsername:(NSString *)username andPassword:(NSString *)password andName:(NSString *)name completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
++ (void)loadNewsWithLimit:(NSInteger)limit
+                     skip:(NSInteger)skip
+             sessionToken:(NSString *)sessionToken
+               completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
-+ (void)logoutUserWithSessionId:(NSString *)sessionId completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
++ (void)loginUserWithUsername:(NSString *)username
+                  andPassword:(NSString *)password
+                   completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
-+ (void)performRequestWithUrl:(NSURL *)url
-                    andMethod:(NSString *)method
-                  andHttpBody:(NSDictionary *)httpBody
-                 sessionToken:(NSString *)sessionToken
-                   andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
++ (void)registerUserWithUsername:(NSString *)username
+                     andPassword:(NSString *)password
+                         andName:(NSString *)name
+                      completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
+
++ (void)logoutUserWithSessionId:(NSString *)sessionId
+                     completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
 @end

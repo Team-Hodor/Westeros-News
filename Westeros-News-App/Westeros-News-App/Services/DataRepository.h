@@ -14,7 +14,7 @@
 @interface DataRepository : NSObject
 
 @property (nonatomic, strong) User *loggedUser;
-@property (nonatomic, strong) Article *currentArticle;
+@property (nonatomic, strong) Article *selectedArticle;
 
 + (DataRepository *)sharedInstance;
 

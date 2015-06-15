@@ -30,9 +30,8 @@
     [self updateValues];
 }
 
-
 - (void) updateValues{
-    self.article = [[DataRepository sharedInstance] currentArticle];
+    self.article = [[DataRepository sharedInstance] selectedArticle];
     self.titleLabel.text = self.article.title;
     self.subtitleLabel.text = self.article.subtitle;
     self.contentLabel.text = self.article.content;

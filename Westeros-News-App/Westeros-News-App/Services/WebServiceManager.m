@@ -19,34 +19,6 @@
 
 @implementation WebServiceManager
 
-static WebServiceManager *sharedInst = nil;
-
-+ (WebServiceManager *)sharedInstance {
-    @synchronized( self ) {
-        if ( sharedInst == nil ) {
-            /* sharedInst set up in init */
-            [[self alloc] init];
-        }
-    }
-    
-    return sharedInst;
-}
-
-- (id)init {
-    if ( sharedInst != nil ) {
-        [NSException raise:NSInternalInconsistencyException
-                    format:@"[%@ %@] cannot be called; use +[%@ %@] instead",
-         NSStringFromClass([self class]),
-         NSStringFromSelector(_cmd),
-         NSStringFromClass([self class]),
-         NSStringFromSelector(@selector(sharedInstance))];
-    } else if ( self = [super init] ) {
-        sharedInst = self;
-    }
-    
-    return sharedInst;
-}
-
 // TODO:
 + (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
@@ -63,23 +35,10 @@ static WebServiceManager *sharedInst = nil;
                                   andHandler:handlerBlock];
 }
 
-// Probably useless
-+ (void)loadFullUserDataForUserWithID:(NSString *)identifier completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
-    NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/users/%@", identifier]];
-    
-    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    
-    [WebServiceManager performRequestWithUrl:url
-                                                    andMethod:@"GET"
-                                                  andHttpBody:nil
-                                                   andHandler:handlerBlock];
-}
-
 + (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/classes/News?limit=%ld&skip=%ld", limit, skip]];
+                            [NSString stringWithFormat:@"/classes/News?limit=%ld&skip=%ld", (long)limit, (long)skip]];
     
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     

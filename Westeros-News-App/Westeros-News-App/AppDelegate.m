@@ -74,9 +74,7 @@
         NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/news"]];
         NSString *userData = [NSString stringWithFormat:@"title=%@&subtitle=\"TEST\"&author=\"BOT\"&content=TEST&createdAt=\"2014-06-22 13:4%d\"&updatedAt=\"22-05-2014 13:40\"&image=\"asd\"&category=\"TEST\"", [NSString stringWithFormat:@"TEST NEWS AGAIN %d", index], index];
         
-        [WebServiceManager performRequestWithUrl:url andMethod:@"POST" andHttpBody:userData andHandler:^(NSDictionary *dict, NSURLResponse *response, NSError *error) {
-            
-        }];
+        
     }
 }
 
@@ -84,9 +82,6 @@
     NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/users/a3f41982e6ecba41"]];
     NSString *userData = [NSString stringWithFormat:@"password=%@&sid=%@", @"asd", @"ec11eeb1cfde476a4bd2f5cd2d8d29f35df317c348dfaeff7921c0abceef71e95e592502f40ad055810924d91966849b8a8ce23d48fa10f8de392948b03d4930"];
     
-    [WebServiceManager performRequestWithUrl:url andMethod:@"PUT" andHttpBody:userData andHandler:^(NSDictionary *dict, NSURLResponse *response, NSError *error) {
-        NSLog(@"Changed");
-    }];
 }
 
 @end

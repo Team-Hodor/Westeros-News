@@ -11,8 +11,6 @@
 
 @interface WebServiceManager : NSObject
 
-+(void)loadFullUserDataForUserWithID:(NSString *)identifier completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
-
 + (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
 + (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
@@ -23,10 +21,10 @@
 
 + (void)logoutUserWithSessionId:(NSString *)sessionId completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
-// TODO: Remove this upon deployment
-+ (void)performRequestWithUrl:(NSURL *)url andMethod:(NSString *)method andHttpBody:(NSDictionary *)httpBody andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
-
-// TODO: Remove
-+ (WebServiceManager *)sharedInstance;
++ (void)performRequestWithUrl:(NSURL *)url
+                    andMethod:(NSString *)method
+                  andHttpBody:(NSDictionary *)httpBody
+                 sessionToken:(NSString *)sessionToken
+                   andHandler:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
 @end

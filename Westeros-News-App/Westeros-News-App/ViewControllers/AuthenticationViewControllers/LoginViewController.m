@@ -38,8 +38,10 @@
 }
 
 - (IBAction)loginButtonTouchUpInside:(id)sender {
+    NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString *password = [self.passwordTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    [WebServiceManager loginUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+    [WebServiceManager loginUserWithUsername:username andPassword:password completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
             if ( [resultData objectForKey:@"error"] ) {
                 [UIAlertController showAlertWithTitle:@"Error"
                                            andMessage:@"Invalid username or password."
@@ -48,7 +50,6 @@
                 
             } else if( [resultData objectForKey:@"createdAt"] ){
                 NSString *sessionId = [resultData objectForKey:@"sessionToken"];
-                NSString *username = self.usernameTextField.text;
                 NSString *uniqueId = [resultData objectForKey:@"objectId"];
                 NSMutableArray *favouriteNews = [[NSMutableArray alloc] init];
                 
@@ -61,7 +62,7 @@
                                                       andUniqueId:uniqueId];
                 
                 loggedUser.favouriteNews = favouriteNews;
-                loggedUser.isAdmin = [resultData objectForKey:@"isAdmin"];
+                loggedUser.isAdmin = (BOOL)[resultData objectForKey:@"isAdmin"];
                 
                 [DataRepository sharedInstance].loggedUser = loggedUser;
                 
@@ -69,6 +70,8 @@
                                            andMessage:@"You have logged in successfully."
                                      inViewController:self
                                           withHandler:^(void) {
+                                              self.usernameTextField.text = @"";
+                                              self.passwordTextField.text = @"";
                                               [self showNewsViewController];
                                           }];
             } else {

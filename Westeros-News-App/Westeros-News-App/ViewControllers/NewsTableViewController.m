@@ -38,16 +38,6 @@ typedef enum {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //set navigationBar colour
-    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f]];
-    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
-    
-    //set tabBar colour
-    [self.tabBarController.tabBar setBackgroundColor:[UIColor redColor]];
-    
-    UIBarButtonItem *profileButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"profile-icon@3x.png"] landscapeImagePhone:[UIImage imageNamed:@"profile-icon@3x.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showUserProfileButtonTapped)];
-    self.navigationItem.rightBarButtonItem = profileButton;
-    
     [self performInitialConfiguration];
     
     NSError *error;
@@ -62,13 +52,6 @@ typedef enum {
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
--(void)showUserProfileButtonTapped{
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-    UIViewController *showUserProfileViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"userProfileView"];
-    
-    [self.navigationController pushViewController:showUserProfileViewController animated:YES];
 }
 
 #pragma mark - Fetch Results Controller
@@ -210,7 +193,7 @@ typedef enum {
         
     }else{
         Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
-        [[DataRepository sharedInstance] setCurrentArticle:article];
+        [[DataRepository sharedInstance] setSelectedArticle:article];
         UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
         UIViewController *showUserProfileViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"NewsDetailView"];
         
@@ -254,6 +237,23 @@ typedef enum {
 */
 
 - (void)performInitialConfiguration {
+    //set navigationBar colour
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f]];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
+    //set tabBar colour
+    [self.tabBarController.tabBar setBackgroundColor:[UIColor redColor]];
+    
+    UIBarButtonItem *profileButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"profile-icon@3x.png"] landscapeImagePhone:[UIImage imageNamed:@"profile-icon@3x.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showUserProfileButtonTapped)];
+    self.navigationItem.rightBarButtonItem = profileButton;
+    
+    // New Post button
+    if ([DataRepository sharedInstance].loggedUser.isAdmin) {
+        UIBarButtonItem *newArticleButton = [[UIBarButtonItem alloc] initWithTitle:@"New Article" style:UIBarButtonItemStylePlain target:self action:@selector(newArticleButtonTapped)];
+        
+        self.navigationItem.leftBarButtonItem = newArticleButton;
+    }
+    
     self.currentWebRequestSkipCount = 0;
     self.selectedSection = FeaturedNewsSection;
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
@@ -280,17 +280,17 @@ typedef enum {
 #pragma mark - Web service managers
 // Probably useless
 - (void)loadFullUserDataForUser:(User *)user {
-    [WebServiceManager loadFullUserDataForUserWithID:user.uniqueId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-        
-            User *loggedUser = [DataRepository sharedInstance].loggedUser;
-            if ([resultData valueForKey:@"isAdmin"]) {
-                loggedUser.isAdmin = YES;
-            } else {
-                loggedUser.isAdmin = NO;
-            }
-            
-            loggedUser.favouriteNews = [resultData valueForKey:@"favourites"];
-    }];
+//    [WebServiceManager loadFullUserDataForUserWithID:user.uniqueId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+//        
+//            User *loggedUser = [DataRepository sharedInstance].loggedUser;
+//            if ([resultData valueForKey:@"isAdmin"]) {
+//                loggedUser.isAdmin = YES;
+//            } else {
+//                loggedUser.isAdmin = NO;
+//            }
+//            
+//            loggedUser.favouriteNews = [resultData valueForKey:@"favourites"];
+//    }];
 }
 
 - (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip {
@@ -332,9 +332,7 @@ typedef enum {
             
             [dateFormat setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];
             [dateFormat setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
-//            NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-//            [dateFormat setLocale:posix];
-            NSDate *temp = ((NSString *)[news valueForKey:@"createdAt"]).dateValue;
+            
             NSDate *createdAt = [dateFormat dateFromString:((NSString *)[news valueForKey:@"createdAt"])];
             NSDate *updatedAt = [dateFormat dateFromString:((NSString *)[news valueForKey:@"updatedAt"])];
             
@@ -368,6 +366,20 @@ typedef enum {
 }
 
 #pragma mark - Event Handlers
+
+- (void)newArticleButtonTapped {
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UINavigationController *newArticleViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"newArticleViewController"];
+    
+    [self presentViewController:newArticleViewController animated:YES completion:nil];
+}
+
+-(void)showUserProfileButtonTapped{
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UIViewController *showUserProfileViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"userProfileView"];
+    
+    [self.navigationController pushViewController:showUserProfileViewController animated:YES];
+}
 
 - (IBAction)featuredBarButtonItemActionTriggered:(id)sender {
     if (self.selectedSection != FeaturedNewsSection) {

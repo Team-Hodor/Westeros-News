@@ -38,6 +38,11 @@
 }
 
 - (IBAction)loginButtonTouchUpInside:(id)sender {
+    UIButton *loginButton = ((UIButton *)sender);
+    loginButton.enabled = NO;
+    UIColor *defaultColor = loginButton.backgroundColor;
+    loginButton.layer.backgroundColor = [UIColor grayColor].CGColor;
+    
     NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *password = [self.passwordTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
@@ -47,7 +52,8 @@
                                            andMessage:@"Invalid username or password."
                                      inViewController:self
                                           withHandler:nil];
-                
+                loginButton.enabled = YES;
+                loginButton.layer.backgroundColor = defaultColor.CGColor;
             } else if( [resultData objectForKey:@"createdAt"] ){
                 NSString *sessionId = [resultData objectForKey:@"sessionToken"];
                 NSString *uniqueId = [resultData objectForKey:@"objectId"];
@@ -79,6 +85,8 @@
                                            andMessage:@"There was an error while processing your request. Please try again later."
                                      inViewController:self
                                           withHandler:nil];
+                loginButton.enabled = YES;
+                loginButton.layer.backgroundColor = defaultColor.CGColor;
             }
     }];
 }

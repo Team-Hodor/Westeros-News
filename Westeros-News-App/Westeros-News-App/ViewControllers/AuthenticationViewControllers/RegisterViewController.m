@@ -36,6 +36,11 @@
 }
 
 - (IBAction)submitButtonTouchUpInside:(id)sender {
+    UIButton *registerButton = ((UIButton *)sender);
+    UIColor *defaultColor = registerButton.backgroundColor;
+    registerButton.enabled = NO;
+    registerButton.layer.backgroundColor = [UIColor grayColor].CGColor;
+    
     if ([self areFieldsValidated]) {
         [WebServiceManager registerUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text andName:self.nameTextField.text completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
                 if ([[resultData objectForKey:@"error"] isEqualToString:@"Invalid JSON"]) {
@@ -46,12 +51,15 @@
                                                andMessage:@"There was an error saving the data on the server. Please try again later."
                                          inViewController:self
                                               withHandler:nil];
-                    
+                    registerButton.enabled = YES;
+                    registerButton.layer.backgroundColor = defaultColor.CGColor;
                 } else if ( [resultData objectForKey:@"error"] ) {
                     [UIAlertController showAlertWithTitle:@"Error"
                                                andMessage:@"Username already taken."
                                          inViewController:self
                                               withHandler:nil];
+                    registerButton.enabled = YES;
+                    registerButton.layer.backgroundColor = defaultColor.CGColor;
                 } else {
                     [UIAlertController showAlertWithTitle:@"Success"
                                                andMessage:@"Username registered successfully."
@@ -62,6 +70,9 @@
                                               }];
                 }
         }];
+    } else {
+        registerButton.enabled = YES;
+        registerButton.layer.backgroundColor = defaultColor.CGColor;
     }
 }
 

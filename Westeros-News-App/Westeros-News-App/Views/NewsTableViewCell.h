@@ -11,6 +11,6 @@
 
 @interface NewsTableViewCell : UITableViewCell
 
-@property (nonatomic, strong) Article *article;
+- (void)setArticle:(Article *)article;
 
 @end

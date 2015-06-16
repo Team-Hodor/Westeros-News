@@ -237,6 +237,8 @@ typedef enum {
 */
 
 - (void)performInitialConfiguration {
+    [DataRepository sharedInstance].selectedArticle = nil;
+    
     //set navigationBar colour
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f]];
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
@@ -323,8 +325,8 @@ typedef enum {
             NSString *categoryID = [[news valueForKey:@"category"] valueForKey:@"objectId"];
             NSString *content = [news valueForKey:@"content"];
             NSString *identifier = [news valueForKey:@"objectId"];
-            NSString *imageURL = [[news valueForKey:@"image"] valueForKey:@"url"];
-            NSString *thumbnailURL = [[news valueForKey:@"thumbnail"] valueForKey:@"url"];
+            NSString *imageURL = [[news valueForKey:@"mainImage"] valueForKey:@"url"];
+            NSString *thumbnailURL = [[news valueForKey:@"previewImage"] valueForKey:@"url"];
             NSString *title = [news valueForKey:@"title"];
             NSString *subtitle = [news valueForKey:@"subtitle"];
             
@@ -384,6 +386,7 @@ typedef enum {
 - (IBAction)featuredBarButtonItemActionTriggered:(id)sender {
     if (self.selectedSection != FeaturedNewsSection) {
         self.selectedSection = FeaturedNewsSection;
+        self.hasFinishedPaging = NO;
         
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
         [request setFetchLimit:5];
@@ -423,6 +426,7 @@ typedef enum {
 - (IBAction)favouritesBarButtonItemActionTriggered:(id)sender {
     if (self.selectedSection != FavouriteNewsSection) {
         self.selectedSection = FavouriteNewsSection;
+        self.hasFinishedPaging = NO;
         
         [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
                 [self saveNewsInDatabase:resultData];

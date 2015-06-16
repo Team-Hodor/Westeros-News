@@ -11,8 +11,9 @@
 #import "WebServiceManager.h"
 #import "UIAlertController+ShowAlert.h"
 
-@interface NewArticleViewController () <UIImagePickerControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface NewArticleViewController () <UIImagePickerControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate>
 
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UITextView *contentTextView;
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
 @property (weak, nonatomic) IBOutlet UITextField *subtitleTextField;
@@ -20,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *previewImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *mainImageView;
 
+@property (strong, nonatomic) UIView *activeField;
 @property (nonatomic) NSInteger chooseImageSenderTag;
 @property (strong, nonatomic) NSMutableArray *categoryTitles;
 @property (strong, nonatomic) NSMutableDictionary *categoriesByID;
@@ -31,6 +33,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self registerForKeyboardNotifications];
     [self performInitialConfiguration];
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonActionTriggered)];
@@ -122,6 +125,7 @@
 #pragma mark - Event Handlers
 
 - (void)cancelButtonActionTriggered {
+    [self.view endEditing:YES];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -137,6 +141,12 @@
 }
 
 - (IBAction)submitButtonTouchUpInside:(id)sender {
+    if (![self areFieldsValidated]) {
+        return;
+    } else {
+        ((UIButton *)sender).enabled = NO;
+    }
+    
     NSString *title = [self.titleTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *subtitle = [self.subtitleTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
@@ -174,12 +184,45 @@
                                                                             andMessage:@"An error occured while trying to post the article. Please try again later."
                                                                       inViewController:self
                                                                            withHandler:nil];
+                                                 ((UIButton *)sender).enabled = YES;
                                              }
         }];
     }
 }
 
 #pragma mark - Private methods
+
+-(BOOL) areFieldsValidated {
+    NSString *errorMessage;
+    
+    NSString *title = [self.titleTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSString *subtitle = [self.subtitleTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSString *category = [self.categoryTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSString *content = [self.contentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    if ([title length] == 0) {
+        errorMessage = @"The title cannot be left empty.";
+    } else if ([subtitle length] == 0) {
+        errorMessage = @"The subtitle cannot be left empty.";
+    } else if ([category length] == 0) {
+        errorMessage = @"The category cannot be left empty";
+    } else if ([content length] == 0) {
+        errorMessage = @"The content cannot be left empty";
+    }
+    
+    if (!errorMessage) {
+        return YES;
+    } else {
+        [UIAlertController showAlertWithTitle:@"Error"
+                                   andMessage:errorMessage
+                             inViewController:self
+                                  withHandler:nil];
+        return NO;
+    }
+}
 
 - (void)performInitialConfiguration {
     [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
@@ -208,6 +251,62 @@
     typePicker.dataSource = self;
     typePicker.delegate = self;
     self.categoryTextField.inputView = typePicker;
+}
+
+#pragma mark - Managing the keyboard
+
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWasShown:)
+                                                 name:UIKeyboardDidShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+    
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWasShown:(NSNotification*)aNotification
+{
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    self.scrollView.contentInset = contentInsets;
+    self.scrollView.scrollIndicatorInsets = contentInsets;
+    
+    // If active text field is hidden by keyboard, scroll it so it's visible
+    // Your app might not need or want this behavior.
+    CGRect aRect = self.view.frame;
+    aRect.size.height -= kbSize.height;
+    if (!CGRectContainsPoint(aRect, self.activeField.frame.origin) ) {
+        [self.scrollView scrollRectToVisible:self.activeField.frame animated:YES];
+    }
+}
+
+// Called when the UIKeyboardWillHideNotification is sent
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+{
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    self.scrollView.contentInset = contentInsets;
+    self.scrollView.scrollIndicatorInsets = contentInsets;
+}
+
+# pragma mark - Text Field Delegate
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    self.activeField = textField;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField{
+    self.activeField = nil;
+}
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
 }
 
 @end

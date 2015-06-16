@@ -66,6 +66,7 @@
 }
 
 - (IBAction)cancelButtonTouchUpInside:(id)sender {
+    [self.view endEditing:YES];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

@@ -84,7 +84,7 @@
 + (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/classes/News?where={\"objectId\":{\"$in\":[\"%@\"]}}",
+                            [NSString stringWithFormat:@"/classes/News?where={\"objectId\":{\"$in\":[\"%@\"]}}&order=-createdAt",
                              [user.favouriteNews componentsJoinedByString:@"\",\""]]];
 
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -100,7 +100,7 @@
 + (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/classes/News?limit=%ld&skip=%ld", (long)limit, (long)skip]];
+                            [NSString stringWithFormat:@"/classes/News?limit=%ld&skip=%ld&order=-createdAt", (long)limit, (long)skip]];
     
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     

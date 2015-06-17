@@ -38,10 +38,25 @@ typedef enum {
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    if (self.selectedSection == FavouriteNewsSection) {
+        NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%@ CONTAINS identifier", [DataRepository sharedInstance].loggedUser.favouriteNews];
+        
+        [request setPredicate:predicate];
+        [request setFetchLimit:2000];
+        
+        NSError *error;
+        [self.fetchedResultsController performFetch:&error];
+        
+        if (error) {
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        } else {
+            [self.tableView reloadData];
+        }
+    }
+    
     self.navigationController.toolbarHidden = NO;
     [DataRepository sharedInstance].selectedArticle = nil;
-    
-    [self.tableView reloadData];
 }
 
 - (void)viewDidLoad {
@@ -51,6 +66,8 @@ typedef enum {
     
     NSError *error;
     [[self fetchedResultsController] performFetch:&error];
+    
+    
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -248,6 +265,16 @@ typedef enum {
 */
 
 - (void)performInitialConfiguration {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveNoDuplicatedArticlesSavedNotification:)
+                                                 name:@"NoDuplicatedArticlesNotification"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveDuplicatedArticlesSavedNotification:)
+                                                 name:@"DuplicatedArticlesNotification"
+                                               object:nil];
+    
     [DataRepository sharedInstance].selectedArticle = nil;
     
     //set navigationBar colour
@@ -304,7 +331,7 @@ typedef enum {
                 return;
             }
             
-            [self saveNewsInDatabase:resultData];
+            [DatabaseManager saveNewsInDatabase:resultData];
     }];
 }
 
@@ -329,71 +356,9 @@ typedef enum {
                                       NSError *saveError = nil;
                                       [[DatabaseManager sharedInstance].masterContext save:&saveError];
                                       
-                                      [self saveNewsInDatabase:dataDictionary];
+                                      [DatabaseManager saveNewsInDatabase:dataDictionary];
                                   }
                               }];
-}
-
--(void)saveNewsInDatabase:(NSDictionary *)newsData {
-    NSManagedObjectContext *workerContext = [[DatabaseManager sharedInstance] workerContext];
-    
-    [workerContext performBlock:^() {
-        for (id news in [newsData valueForKey:@"results"]) {
-            NSString *authorID = [[news valueForKey:@"author"] valueForKey:@"objectId"];
-            NSString *categoryID = [[news valueForKey:@"category"] valueForKey:@"objectId"];
-            NSString *content = [news valueForKey:@"content"];
-            NSString *identifier = [news valueForKey:@"objectId"];
-            NSString *imageURL = [[news valueForKey:@"mainImage"] valueForKey:@"url"];
-            NSString *thumbnailURL = [[news valueForKey:@"previewImage"] valueForKey:@"url"];
-            NSString *title = [news valueForKey:@"title"];
-            NSString *subtitle = [news valueForKey:@"subtitle"];
-            
-            NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
-            
-            [dateFormat setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];
-            [dateFormat setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
-            
-            NSDate *createdAt = [dateFormat dateFromString:((NSString *)[news valueForKey:@"createdAt"])];
-            NSDate *updatedAt = [dateFormat dateFromString:((NSString *)[news valueForKey:@"updatedAt"])];
-            
-            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Article"];
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier = %@", identifier];
-            [request setPredicate:predicate];
-            
-            NSArray *result = [workerContext executeFetchRequest:request error:nil];
-            if (![result count]) {
-                Article *article = [NSEntityDescription insertNewObjectForEntityForName:@"Article"
-                                                                 inManagedObjectContext:workerContext];
-                
-                article.authorID = authorID;
-                article.categoryID = categoryID;
-                article.content = content;
-                article.identifier = identifier;
-                article.imageURL = imageURL;
-                article.thumbnailURL = thumbnailURL;
-                article.title = title;
-                article.subtitle = subtitle;
-                article.createdAt = createdAt;
-                article.updatedAt = updatedAt;
-            } else {
-                Article *article = result[0];
-                
-                article.authorID = authorID;
-                article.categoryID = categoryID;
-                article.content = content;
-                article.identifier = identifier;
-                article.imageURL = imageURL;
-                article.thumbnailURL = thumbnailURL;
-                article.title = title;
-                article.subtitle = subtitle;
-                article.createdAt = createdAt;
-                article.updatedAt = updatedAt;
-            }
-        }
-        
-        NSError *error;
-        [workerContext save:&error];
-    }];
 }
 
 #pragma mark - Event Handlers
@@ -450,7 +415,8 @@ typedef enum {
             [self.tableView reloadData];
         }
         
-        [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:0];
+        self.currentWebRequestSkipCount = 0;
+        [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
     }
 }
 
@@ -459,8 +425,9 @@ typedef enum {
         self.selectedSection = FavouriteNewsSection;
         self.hasFinishedPaging = NO;
         
+        
         [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-                [self saveNewsInDatabase:resultData];
+                [DatabaseManager saveNewsInDatabase:resultData];
         }];
         
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
@@ -480,5 +447,20 @@ typedef enum {
     }
 }
 
+
+- (void)receiveNoDuplicatedArticlesSavedNotification:(id)receivedNotification {
+    if (self.selectedSection == AllNewsSection &&
+            self.currentWebRequestSkipCount < [[self.fetchedResultsController fetchedObjects] count]) {
+        
+        self.currentWebRequestSkipCount += WEB_REQUEST_LIMIT;
+        [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
+    }
+}
+
+- (void)receiveDuplicatedArticlesSavedNotification:(id)receivedNotification {
+    if (self.selectedSection == AllNewsSection) {
+        self.currentWebRequestSkipCount = [[self.fetchedResultsController fetchedObjects] count];
+    }
+}
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "DatabaseManager.h"
+#import "Article.h"
 
 @implementation DatabaseManager
 
@@ -41,6 +42,80 @@ static DatabaseManager *sharedInst = nil;
     }
     
     return sharedInst;
+}
+
++ (void)saveNewsInDatabase:(NSDictionary *)newsData {
+    NSManagedObjectContext *workerContext = [[DatabaseManager sharedInstance] workerContext];
+    
+    [workerContext performBlock:^() {
+        int duplicatesCount = 0;
+        
+        for (id news in [newsData valueForKey:@"results"]) {
+            NSString *authorID = [[news valueForKey:@"author"] valueForKey:@"objectId"];
+            NSString *categoryID = [[news valueForKey:@"category"] valueForKey:@"objectId"];
+            NSString *content = [news valueForKey:@"content"];
+            NSString *identifier = [news valueForKey:@"objectId"];
+            NSString *imageURL = [[news valueForKey:@"mainImage"] valueForKey:@"url"];
+            NSString *thumbnailURL = [[news valueForKey:@"previewImage"] valueForKey:@"url"];
+            NSString *title = [news valueForKey:@"title"];
+            NSString *subtitle = [news valueForKey:@"subtitle"];
+            
+            NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
+            
+            [dateFormat setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];
+            [dateFormat setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+            
+            NSDate *createdAt = [dateFormat dateFromString:((NSString *)[news valueForKey:@"createdAt"])];
+            NSDate *updatedAt = [dateFormat dateFromString:((NSString *)[news valueForKey:@"updatedAt"])];
+            
+            NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Article"];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier = %@", identifier];
+            [request setPredicate:predicate];
+            
+            NSArray *result = [workerContext executeFetchRequest:request error:nil];
+            if (![result count]) {
+                Article *article = [NSEntityDescription insertNewObjectForEntityForName:@"Article"
+                                                                 inManagedObjectContext:workerContext];
+                
+                article.authorID = authorID;
+                article.categoryID = categoryID;
+                article.content = content;
+                article.identifier = identifier;
+                article.imageURL = imageURL;
+                article.thumbnailURL = thumbnailURL;
+                article.title = title;
+                article.subtitle = subtitle;
+                article.createdAt = createdAt;
+                article.updatedAt = updatedAt;
+            } else {
+                duplicatesCount++;
+                
+                Article *article = result[0];
+                
+                article.authorID = authorID;
+                article.categoryID = categoryID;
+                article.content = content;
+                article.identifier = identifier;
+                article.imageURL = imageURL;
+                article.thumbnailURL = thumbnailURL;
+                article.title = title;
+                article.subtitle = subtitle;
+                article.createdAt = createdAt;
+                article.updatedAt = updatedAt;
+            }
+        }
+        
+        if (duplicatesCount) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"DuplicatedArticlesNotification"
+                                                                object:nil];
+        } else {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"NoDuplicatedArticlesNotification"
+                                                                object:nil];
+        }
+        
+        NSError *error;
+        [workerContext save:&error];
+    }];
 }
 
 #pragma mark - Core Data stack

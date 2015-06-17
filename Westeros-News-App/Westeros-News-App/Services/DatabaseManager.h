@@ -20,4 +20,7 @@
 + (DatabaseManager *)sharedInstance;
 - (NSManagedObjectContext *)workerContext;
 - (void)saveContext;
+
++ (void)saveNewsInDatabase:(NSDictionary *)newsData;
+
 @end

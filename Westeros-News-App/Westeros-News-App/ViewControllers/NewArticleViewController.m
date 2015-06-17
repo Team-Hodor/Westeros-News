@@ -215,43 +215,9 @@
 - (void)saveArticleInDatabaseWithObjectId:(NSString *)objectId {
     [WebServiceManager loadArticleWithObjectId:objectId
                                     completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-                                        NSString *authorID = [[resultData valueForKey:@"author"] valueForKey:@"objectId"];
-                                        NSString *categoryID = [[resultData valueForKey:@"category"] valueForKey:@"objectId"];
-                                        NSString *content = [resultData valueForKey:@"content"];
-                                        NSString *identifier = [resultData valueForKey:@"objectId"];
-                                        NSString *imageURL = [[resultData valueForKey:@"mainImage"] valueForKey:@"url"];
-                                        NSString *thumbnailURL = [[resultData valueForKey:@"previewImage"] valueForKey:@"url"];
-                                        NSString *title = [resultData valueForKey:@"title"];
-                                        NSString *subtitle = [resultData valueForKey:@"subtitle"];
+                                        NSDictionary *newsData = @{@"results": resultData};
                                         
-                                        NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
-                                        
-                                        [dateFormat setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];
-                                        [dateFormat setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
-                                        
-                                        NSDate *createdAt = [dateFormat dateFromString:((NSString *)[resultData valueForKey:@"createdAt"])];
-                                        NSDate *updatedAt = [dateFormat dateFromString:((NSString *)[resultData valueForKey:@"updatedAt"])];
-                                        
-                                        NSManagedObjectContext *workerContext = [[DatabaseManager sharedInstance] workerContext];
-                                        
-                                        [workerContext performBlock:^() {
-                                            Article *article =
-                                            [NSEntityDescription insertNewObjectForEntityForName:@"Article" inManagedObjectContext:workerContext];
-                                            
-                                            article.authorID = authorID;
-                                            article.categoryID = categoryID;
-                                            article.content = content;
-                                            article.identifier = identifier;
-                                            article.imageURL = imageURL;
-                                            article.thumbnailURL = thumbnailURL;
-                                            article.title = title;
-                                            article.subtitle = subtitle;
-                                            article.createdAt = createdAt;
-                                            article.updatedAt = updatedAt;
-                                            
-                                            NSError *error;
-                                            [workerContext save:&error];
-                                        }];
+                                        [DatabaseManager saveNewsInDatabase:newsData];
                                     }];
 }
 

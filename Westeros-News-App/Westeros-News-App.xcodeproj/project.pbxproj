@@ -27,6 +27,9 @@
 		28C2DFC51B1C91910001E968 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DFC41B1C91910001E968 /* User.m */; };
 		3110BCE61B2AF11600307CAF /* NewsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3110BCE51B2AF11600307CAF /* NewsTableViewCell.m */; };
 		3110BCEC1B2B0AEE00307CAF /* NewsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3110BCEB1B2B0AEE00307CAF /* NewsDetailViewController.m */; };
+		31281D311B31B9B6008176A3 /* fav.png in Resources */ = {isa = PBXBuildFile; fileRef = 31281D2E1B31B9B6008176A3 /* fav.png */; };
+		31281D321B31B9B6008176A3 /* fav@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31281D2F1B31B9B6008176A3 /* fav@2x.png */; };
+		31281D331B31B9B6008176A3 /* fav@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31281D301B31B9B6008176A3 /* fav@3x.png */; };
 		31CF4C111B2991D900F3D9C4 /* UserProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CF4C101B2991D900F3D9C4 /* UserProfileTableViewController.m */; };
 		31CF4C191B299B8E00F3D9C4 /* profile-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C161B299B8E00F3D9C4 /* profile-icon.png */; };
 		31CF4C1A1B299B8E00F3D9C4 /* profile-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C171B299B8E00F3D9C4 /* profile-icon@3x.png */; };
@@ -83,6 +86,9 @@
 		3110BCE51B2AF11600307CAF /* NewsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsTableViewCell.m; sourceTree = "<group>"; };
 		3110BCEA1B2B0AEE00307CAF /* NewsDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsDetailViewController.h; sourceTree = "<group>"; };
 		3110BCEB1B2B0AEE00307CAF /* NewsDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsDetailViewController.m; sourceTree = "<group>"; };
+		31281D2E1B31B9B6008176A3 /* fav.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fav.png; sourceTree = "<group>"; };
+		31281D2F1B31B9B6008176A3 /* fav@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fav@2x.png"; sourceTree = "<group>"; };
+		31281D301B31B9B6008176A3 /* fav@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fav@3x.png"; sourceTree = "<group>"; };
 		31CF4C0F1B2991D900F3D9C4 /* UserProfileTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileTableViewController.h; sourceTree = "<group>"; };
 		31CF4C101B2991D900F3D9C4 /* UserProfileTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileTableViewController.m; sourceTree = "<group>"; };
 		31CF4C161B299B8E00F3D9C4 /* profile-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-icon.png"; sourceTree = "<group>"; };
@@ -158,6 +164,9 @@
 		28C2DF841B1C8D740001E968 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				31281D2E1B31B9B6008176A3 /* fav.png */,
+				31281D2F1B31B9B6008176A3 /* fav@2x.png */,
+				31281D301B31B9B6008176A3 /* fav@3x.png */,
 				31CF4C1C1B29A66800F3D9C4 /* game_of_thrones_bg.png */,
 				31CF4C161B299B8E00F3D9C4 /* profile-icon.png */,
 				31CF4C171B299B8E00F3D9C4 /* profile-icon@3x.png */,
@@ -345,11 +354,14 @@
 			files = (
 				28C2DF931B1C8D740001E968 /* Main.storyboard in Resources */,
 				28C2DF981B1C8D740001E968 /* LaunchScreen.xib in Resources */,
+				31281D321B31B9B6008176A3 /* fav@2x.png in Resources */,
 				31CF4C191B299B8E00F3D9C4 /* profile-icon.png in Resources */,
 				28C2DF951B1C8D740001E968 /* Images.xcassets in Resources */,
 				31CF4C1A1B299B8E00F3D9C4 /* profile-icon@3x.png in Resources */,
 				31CF4C1B1B299B8E00F3D9C4 /* profile-icon@2x.png in Resources */,
+				31281D331B31B9B6008176A3 /* fav@3x.png in Resources */,
 				31CF4C1D1B29A66800F3D9C4 /* game_of_thrones_bg.png in Resources */,
+				31281D311B31B9B6008176A3 /* fav.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

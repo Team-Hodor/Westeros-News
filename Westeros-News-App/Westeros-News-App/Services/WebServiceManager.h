@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "User.h"
+#import "Article.h"
 #import <UIKit/UIKit.h>
 
 @interface WebServiceManager : NSObject
@@ -43,5 +44,12 @@
 
 + (void)logoutUserWithSessionId:(NSString *)sessionId
                      completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
+
++ (void)addArticleToFavorites:(Article *)article
+                 sessionToken:(NSString *)sessionToken
+                   completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
++ (void)removeArticleFromFavorites:(Article *)article
+                 sessionToken:(NSString *)sessionToken
+                   completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
 @end

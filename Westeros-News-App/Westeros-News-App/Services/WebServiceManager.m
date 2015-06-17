@@ -155,6 +155,64 @@
                                   andHandler:handlerBlock];
 }
 
++ (void)addArticleToFavorites:(Article *)article sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSURLResponse *, NSError *))handlerBlock{
+    User *user = [[DataRepository sharedInstance] loggedUser];
+    NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
+    NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    
+    NSDictionary *data = @{ @"favourites": @{
+                                    
+                                    @"__op": @"AddUnique",
+                                    @"objects":
+                                        @[
+                                            @{
+                                                @"__type": @"Pointer",
+                                                @"className": @"News",
+                                                @"objectId": article.identifier
+                                                }
+                                            ]
+                                    }
+                            };
+
+
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"PUT"
+                                 andHttpBody:data
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
+}
+
++ (void) removeArticleFromFavorites:(Article *)article sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSURLResponse *, NSError *))handlerBlock{
+    User *user = [[DataRepository sharedInstance] loggedUser];
+    NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
+    NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    
+    NSDictionary *data = @{ @"favourites": @{
+                                    
+                                    @"__op": @"Remove",
+                                    @"objects":
+                                        @[
+                                            @{
+                                                @"__type": @"Pointer",
+                                                @"className": @"News",
+                                                @"objectId": article.identifier
+                                                }
+                                            ]
+                                    }
+                            };
+    
+    
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"PUT"
+                                 andHttpBody:data
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
+}
+
 #pragma mark - Private methods
 
 + (void)uploadArticlePreviewImage:(UIImage *)previewImage

@@ -43,7 +43,7 @@
     [indicator setCenter:self.articleImageView.center];
     [self.contentView addSubview:indicator];
     
-    NSURL *imageURL = [NSURL URLWithString:self.article.thumbnailURL];
+    NSURL *imageURL = [NSURL URLWithString:self.article.imageURL];
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration];

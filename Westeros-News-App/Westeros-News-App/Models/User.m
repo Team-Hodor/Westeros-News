@@ -18,6 +18,16 @@
 
 @implementation User
 
+- (instancetype)init {
+    self = [super init];
+    
+    if (self) {
+        self.favouriteNews = [[NSMutableArray alloc] init];
+    }
+    
+    return self;
+}
+
 - (instancetype)initWithUsername:(NSString *)username andSessionId:(NSString *)sessionId andUniqueId:(NSString *)uniqueId {
     self = [super init];
     

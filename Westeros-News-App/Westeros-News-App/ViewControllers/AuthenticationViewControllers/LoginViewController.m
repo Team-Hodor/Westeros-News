@@ -44,7 +44,7 @@
     loginButton.layer.backgroundColor = [UIColor grayColor].CGColor;
     
     NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    NSString *password = [self.passwordTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString *password = self.passwordTextField.text;
     
     [WebServiceManager loginUserWithUsername:username andPassword:password completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
             if ( [resultData objectForKey:@"error"] ) {

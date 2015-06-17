@@ -42,34 +42,43 @@
     registerButton.layer.backgroundColor = [UIColor grayColor].CGColor;
     
     if ([self areFieldsValidated]) {
-        [WebServiceManager registerUserWithUsername:self.usernameTextField.text andPassword:self.passwordTextField.text andName:self.nameTextField.text completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-                if ([[resultData objectForKey:@"error"] isEqualToString:@"Invalid JSON"]) {
-                    // INTERNAL ERROR
-                    NSLog(@"Internal error");
+        NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        
+        NSString *name = [self.nameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        
+        NSString *password = self.passwordTextField.text;
+        
+        [WebServiceManager registerUserWithUsername:username
+                                        andPassword:password
+                                            andName:name
+                                         completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+                                             if ([[resultData objectForKey:@"error"] isEqualToString:@"Invalid JSON"]) {
+                                                 // INTERNAL ERROR
+                                                 NSLog(@"Internal error");
                     
-                    [UIAlertController showAlertWithTitle:@"Error"
-                                               andMessage:@"There was an error saving the data on the server. Please try again later."
-                                         inViewController:self
-                                              withHandler:nil];
-                    registerButton.enabled = YES;
-                    registerButton.layer.backgroundColor = defaultColor.CGColor;
-                } else if ( [resultData objectForKey:@"error"] ) {
-                    [UIAlertController showAlertWithTitle:@"Error"
-                                               andMessage:@"Username already taken."
-                                         inViewController:self
-                                              withHandler:nil];
-                    registerButton.enabled = YES;
-                    registerButton.layer.backgroundColor = defaultColor.CGColor;
-                } else {
-                    [UIAlertController showAlertWithTitle:@"Success"
-                                               andMessage:@"Username registered successfully."
-                                         inViewController:self
-                                              withHandler:^() {
-                                                  [self.view endEditing:YES];
-                                                  [self dismissViewControllerAnimated:YES completion:nil];
-                                              }];
-                }
-        }];
+                                                    [UIAlertController showAlertWithTitle:@"Error"
+                                                                            andMessage:@"There was an error saving the data on the server. Please try again later."
+                                                                      inViewController:self
+                                                                              withHandler:nil];
+                                                 registerButton.enabled = YES;
+                                                 registerButton.layer.backgroundColor = defaultColor.CGColor;
+                                             } else if ( [resultData objectForKey:@"error"] ) {
+                                                 [UIAlertController showAlertWithTitle:@"Error"
+                                                                            andMessage:@"Username already taken."
+                                                                      inViewController:self
+                                                                           withHandler:nil];
+                                                 registerButton.enabled = YES;
+                                                 registerButton.layer.backgroundColor = defaultColor.CGColor;
+                                             } else {
+                                                 [UIAlertController showAlertWithTitle:@"Success"
+                                                                            andMessage:@"Username registered successfully."
+                                                                      inViewController:self
+                                                                           withHandler:^() {
+                                                                               [self.view endEditing:YES];
+                                                                               [self dismissViewControllerAnimated:YES completion:nil];
+                                                                           }];
+                                             }
+                                         }];
     } else {
         registerButton.enabled = YES;
         registerButton.layer.backgroundColor = defaultColor.CGColor;
@@ -83,12 +92,17 @@
 
 -(BOOL) areFieldsValidated {
     NSString *errorMessage;
+    NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    if ([self.usernameTextField.text length] == 0) {
+    NSString *name = [self.nameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSString *password = self.passwordTextField.text;
+    
+    if ([username length] == 0) {
         errorMessage = @"The username text field cannot be empty.";
-    } else if ([self.passwordTextField.text length] == 0) {
+    } else if ([password length] == 0) {
         errorMessage = @"The password text field cannot be empty.";
-    } else if ([self.nameTextField.text length] == 0) {
+    } else if ([name length] == 0) {
         errorMessage = @"The name text field cannot be empty";
     }
     

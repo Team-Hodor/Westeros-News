@@ -28,49 +28,73 @@
                         content:(NSString *)content
                    sessionToken:(NSString *)sessionToken
                      completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
-    [WebServiceManager uploadArticlePreviewImage:previewImage
-                                    andMainImage:mainImage
-                                      completion:^(NSString *previewImageName, NSString *mainImageName, NSError *error) {
-                                          if (!error) {
-                                              NSDictionary *articleData = @{@"title":title,
-                                                                            @"subtitle":subtitle,
-                                                                            @"previewImage":@{
-                                                                                        @"name":previewImageName,
-                                                                                        @"__type":@"File"
-                                                                                    },
-                                                                            @"mainImage":@{
-                                                                                        @"name":mainImageName,
-                                                                                        @"__type":@"File"
-                                                                                    },
-                                                                            @"category":@{
-                                                                                        @"__type":@"Pointer",
-                                                                                        @"className":@"Category",
-                                                                                        @"objectId":categoryID
-                                                                                    },
-                                                                            @"author":@{
-                                                                                    @"__type":@"Pointer",
-                                                                                    @"className":@"_User",
-                                                                                    @"objectId":authorID
-                                                                                    },
-                                                                            @"content":content};
-                                              
-                                              NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/classes/News"]];
-                                              
-                                              [self performRequestWithUrl:url
-                                                              contentType:@"application/json"
-                                                                andMethod:@"POST"
-                                                              andHttpBody:articleData
-                                                             sessionToken:sessionToken
-                                                               andHandler:handlerBlock];
-                                          } else {
-                                              handlerBlock(nil, nil, error);
-                                          }
+    NSString *serviceURL = [BASE_URL stringByAppendingString:[NSString stringWithFormat:@"/classes/News?where={\"title\":\"%@\"}", title]];
+    
+    
+    NSURL *checkURL = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
+    [WebServiceManager performRequestWithUrl:checkURL contentType:@"application/json" andMethod:@"GET" andHttpBody:nil sessionToken:nil andHandler:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+        if ([[resultData valueForKey:@"results"] count] == 0) {
+            [WebServiceManager uploadArticlePreviewImage:previewImage
+                                            andMainImage:mainImage
+                                              completion:^(NSString *previewImageName, NSString *mainImageName, NSError *error) {
+                                                  if (!error) {
+                                                      NSDictionary *articleData = @{@"title":title,
+                                                                                    @"subtitle":subtitle,
+                                                                                    @"previewImage":@{
+                                                                                            @"name":previewImageName,
+                                                                                            @"__type":@"File"
+                                                                                            },
+                                                                                    @"mainImage":@{
+                                                                                            @"name":mainImageName,
+                                                                                            @"__type":@"File"
+                                                                                            },
+                                                                                    @"category":@{
+                                                                                            @"__type":@"Pointer",
+                                                                                            @"className":@"Category",
+                                                                                            @"objectId":categoryID
+                                                                                            },
+                                                                                    @"author":@{
+                                                                                            @"__type":@"Pointer",
+                                                                                            @"className":@"_User",
+                                                                                            @"objectId":authorID
+                                                                                            },
+                                                                                    @"content":content};
+                                                      
+                                                      NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/classes/News"]];
+                                                      
+                                                      [self performRequestWithUrl:url
+                                                                      contentType:@"application/json"
+                                                                        andMethod:@"POST"
+                                                                      andHttpBody:articleData
+                                                                     sessionToken:sessionToken
+                                                                       andHandler:handlerBlock];
+                                                  } else {
+                                                      handlerBlock(nil, nil, error);
+                                                  }
+                                              }];
+        } else {
+            handlerBlock(@{@"error":@"Article with such title already exists"}, nil, nil);
+        }
     }];
 }
 
 + (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/classes/Category"];
+    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"GET"
+                                 andHttpBody:nil
+                                sessionToken:nil
+                                  andHandler:handlerBlock];
+}
+
++ (void)loadArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock {
+    NSString *serviceURL = [BASE_URL stringByAppendingString:[NSString stringWithFormat:@"/classes/News/%@", objectId]];
+    
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     [WebServiceManager performRequestWithUrl:url

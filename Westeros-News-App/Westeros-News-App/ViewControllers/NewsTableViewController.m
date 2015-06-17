@@ -35,9 +35,12 @@ typedef enum {
 
 @implementation NewsTableViewController
 
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    self.navigationController.toolbarHidden = NO;
+    [DataRepository sharedInstance].selectedArticle = nil;
+    
     [self.tableView reloadData];
 }
 
@@ -196,9 +199,6 @@ typedef enum {
     if ( !( [sectionInfo numberOfObjects] > indexPath.row ) ) {
         [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
         self.currentWebRequestSkipCount += WEB_REQUEST_LIMIT;
-        if (self.currentWebRequestSkipCount > [[self.fetchedResultsController fetchedObjects] count]) {
-            self.currentWebRequestSkipCount = [[self.fetchedResultsController fetchedObjects] count];
-        }
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         

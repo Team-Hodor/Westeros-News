@@ -36,6 +36,34 @@
     self.subtitleLabel.text = self.article.subtitle;
     self.contentLabel.text = self.article.content;
     
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"dd.MM.yyyy HH:mm"];
+    
+    self.dateLabel.text = [formatter stringFromDate:self.article.createdAt];
+    
+    [self setArticleImage];
+}
+
+- (void)setArticleImage {
+
+    NSURL *imageURL = [NSURL URLWithString:self.article.thumbnailURL];
+    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration];
+    
+    NSURLSessionDataTask *imageTask = [session dataTaskWithURL:imageURL
+                                             completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                 dispatch_async(dispatch_get_main_queue(), ^() {
+                                                     UIImage *image = [UIImage imageWithData:data];
+                                                     self.articleImageView.image = image;
+                                                 });
+                                             }];
+    
+    dispatch_queue_t queue = dispatch_queue_create("taskQueue", NULL);
+    dispatch_async(queue, ^() {
+        [imageTask resume];
+    });
+    
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

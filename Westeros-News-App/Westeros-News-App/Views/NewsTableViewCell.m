@@ -27,7 +27,7 @@
     self.subtitleLabel.text = article.subtitle;
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"dd-MM-yyyy HH:mm"];
+    [formatter setDateFormat:@"dd.MM.yyyy HH:mm"];
     
     self.dateLabel.text = [formatter stringFromDate:article.createdAt];
 

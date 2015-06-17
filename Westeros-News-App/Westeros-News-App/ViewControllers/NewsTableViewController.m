@@ -35,6 +35,12 @@ typedef enum {
 
 @implementation NewsTableViewController
 
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.tableView reloadData];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -190,6 +196,9 @@ typedef enum {
     if ( !( [sectionInfo numberOfObjects] > indexPath.row ) ) {
         [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
         self.currentWebRequestSkipCount += WEB_REQUEST_LIMIT;
+        if (self.currentWebRequestSkipCount > [[self.fetchedResultsController fetchedObjects] count]) {
+            self.currentWebRequestSkipCount = [[self.fetchedResultsController fetchedObjects] count];
+        }
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         
@@ -258,27 +267,8 @@ typedef enum {
         self.navigationItem.leftBarButtonItem = newArticleButton;
     }
     
-    self.currentWebRequestSkipCount = 0;
-    self.selectedSection = FeaturedNewsSection;
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSManagedObjectContext *masterContext = [DatabaseManager sharedInstance].masterContext;
-    [request setEntity:[NSEntityDescription entityForName:@"Article" inManagedObjectContext:masterContext]];
-    
-    NSError *error;
-    NSUInteger totalEntitiesCount = [masterContext countForFetchRequest:request error:&error];
-    if (!error) {
-        self.currentWebRequestSkipCount = totalEntitiesCount;
-    } else {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-    }
-    
-    self.currentWebRequestSkipCount = self.currentWebRequestSkipCount ? self.currentWebRequestSkipCount : 0;
-    
-    if (self.currentWebRequestSkipCount < 5) {
-        [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
-        
-        self.currentWebRequestSkipCount += WEB_REQUEST_LIMIT;
-    }
+    self.currentWebRequestSkipCount = 5;
+    [self loadInitialNews];
 }
 
 #pragma mark - Web service managers
@@ -316,6 +306,32 @@ typedef enum {
             
             [self saveNewsInDatabase:resultData];
     }];
+}
+
+- (void)loadInitialNews {
+    [WebServiceManager loadNewsWithLimit:WEB_REQUEST_LIMIT
+                                    skip:0
+                            sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
+                              completion:^(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error) {
+                                  if ([dataDictionary count] > 0) {
+                                      NSFetchRequest *request = [[NSFetchRequest alloc] init];
+                                      [request setEntity:[NSEntityDescription entityForName:@"Article" inManagedObjectContext:[DatabaseManager sharedInstance].masterContext]];
+                                      
+                                      [request setIncludesPropertyValues:NO]; //only fetch the managedObjectID
+                                      
+                                      NSError * error = nil;
+                                      NSArray * result = [[DatabaseManager sharedInstance].masterContext executeFetchRequest:request error:&error];
+                                      
+                                      //error handling goes here
+                                      for (NSManagedObject * news in result) {
+                                          [[DatabaseManager sharedInstance].masterContext deleteObject:news];
+                                      }
+                                      NSError *saveError = nil;
+                                      [[DatabaseManager sharedInstance].masterContext save:&saveError];
+                                      
+                                      [self saveNewsInDatabase:dataDictionary];
+                                  }
+                              }];
 }
 
 -(void)saveNewsInDatabase:(NSDictionary *)newsData {
@@ -360,7 +376,18 @@ typedef enum {
                 article.createdAt = createdAt;
                 article.updatedAt = updatedAt;
             } else {
-                NSLog(@"Duplicate!");
+                Article *article = result[0];
+                
+                article.authorID = authorID;
+                article.categoryID = categoryID;
+                article.content = content;
+                article.identifier = identifier;
+                article.imageURL = imageURL;
+                article.thumbnailURL = thumbnailURL;
+                article.title = title;
+                article.subtitle = subtitle;
+                article.createdAt = createdAt;
+                article.updatedAt = updatedAt;
             }
         }
         
@@ -422,6 +449,8 @@ typedef enum {
         } else {
             [self.tableView reloadData];
         }
+        
+        [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:0];
     }
 }
 

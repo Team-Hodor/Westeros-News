@@ -10,6 +10,7 @@
 #import "DataRepository.h"
 #import "WebServiceManager.h"
 #import "UIAlertController+ShowAlert.h"
+#import "DatabaseManager.h"
 
 @interface NewArticleViewController () <UIImagePickerControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate>
 
@@ -173,12 +174,31 @@
                                        sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
                                          completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
                                              if (!error) {
-                                                 [UIAlertController showAlertWithTitle:@"Success"
-                                                                            andMessage:@"The article has been posted successfully."
-                                                                      inViewController:self
-                                                                           withHandler:^() {
-                                                                               [self dismissViewControllerAnimated:YES completion:nil];
-                                                                           }];
+                                                 if ([resultData valueForKey:@"error"]) {
+                                                     NSString *errorMessage = (NSString *)[resultData valueForKey:@"error"];
+                                                     ((UIButton *)sender).enabled = YES;
+                                                     
+                                                     if ([errorMessage isEqualToString:@"Article with such title already exists"]) {
+                                                         [UIAlertController showAlertWithTitle:@"Error"
+                                                                                    andMessage:@"An article with such title already exists."
+                                                                              inViewController:self
+                                                                                   withHandler:nil];
+                                                     } else {
+                                                         [UIAlertController showAlertWithTitle:@"Error"
+                                                                                    andMessage:@"An error occured while trying to post the article. Please try again later."
+                                                                              inViewController:self
+                                                                                   withHandler:nil];
+                                                     }
+                                                 } else {
+                                                     [self saveArticleInDatabaseWithObjectId:[resultData valueForKey:@"objectId"]];
+                                                     
+                                                     [UIAlertController showAlertWithTitle:@"Success"
+                                                                                andMessage:@"The article has been posted successfully."
+                                                                          inViewController:self
+                                                                               withHandler:^() {
+                                                                                   [self dismissViewControllerAnimated:YES completion:nil];
+                                                                               }];
+                                                 }
                                              } else {
                                                  [UIAlertController showAlertWithTitle:@"Error"
                                                                             andMessage:@"An error occured while trying to post the article. Please try again later."
@@ -191,6 +211,49 @@
 }
 
 #pragma mark - Private methods
+
+- (void)saveArticleInDatabaseWithObjectId:(NSString *)objectId {
+    [WebServiceManager loadArticleWithObjectId:objectId
+                                    completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+                                        NSString *authorID = [[resultData valueForKey:@"author"] valueForKey:@"objectId"];
+                                        NSString *categoryID = [[resultData valueForKey:@"category"] valueForKey:@"objectId"];
+                                        NSString *content = [resultData valueForKey:@"content"];
+                                        NSString *identifier = [resultData valueForKey:@"objectId"];
+                                        NSString *imageURL = [[resultData valueForKey:@"mainImage"] valueForKey:@"url"];
+                                        NSString *thumbnailURL = [[resultData valueForKey:@"previewImage"] valueForKey:@"url"];
+                                        NSString *title = [resultData valueForKey:@"title"];
+                                        NSString *subtitle = [resultData valueForKey:@"subtitle"];
+                                        
+                                        NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
+                                        
+                                        [dateFormat setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];
+                                        [dateFormat setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
+                                        
+                                        NSDate *createdAt = [dateFormat dateFromString:((NSString *)[resultData valueForKey:@"createdAt"])];
+                                        NSDate *updatedAt = [dateFormat dateFromString:((NSString *)[resultData valueForKey:@"updatedAt"])];
+                                        
+                                        NSManagedObjectContext *workerContext = [[DatabaseManager sharedInstance] workerContext];
+                                        
+                                        [workerContext performBlock:^() {
+                                            Article *article =
+                                            [NSEntityDescription insertNewObjectForEntityForName:@"Article" inManagedObjectContext:workerContext];
+                                            
+                                            article.authorID = authorID;
+                                            article.categoryID = categoryID;
+                                            article.content = content;
+                                            article.identifier = identifier;
+                                            article.imageURL = imageURL;
+                                            article.thumbnailURL = thumbnailURL;
+                                            article.title = title;
+                                            article.subtitle = subtitle;
+                                            article.createdAt = createdAt;
+                                            article.updatedAt = updatedAt;
+                                            
+                                            NSError *error;
+                                            [workerContext save:&error];
+                                        }];
+                                    }];
+}
 
 -(BOOL) areFieldsValidated {
     NSString *errorMessage;

@@ -25,6 +25,8 @@
 
 + (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 
++ (void)loadArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
+
 + (void)loadFavouriteNewsForUser:(User *)user
                       completion:(void (^)(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error))handlerBlock;
 

@@ -78,6 +78,8 @@
                                           withHandler:^(void) {
                                               self.usernameTextField.text = @"";
                                               self.passwordTextField.text = @"";
+                                              loginButton.enabled = YES;
+                                              loginButton.layer.backgroundColor = defaultColor.CGColor;
                                               [self showNewsViewController];
                                           }];
             } else {

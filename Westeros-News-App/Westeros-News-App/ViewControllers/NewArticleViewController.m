@@ -54,75 +54,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
-#pragma mark - Article Submissions
-
-- (void)postNewArticleWithTitle:(NSString *)title
-                       subtitle:(NSString *)subtitle
-                   previewImage:(UIImage *)previewImage
-                      mainImage:(UIImage *)mainImage
-                        content:(NSString *)content  {
-    
-}
-
-- (void)editSelectedArticleWithTitle:(NSString *)title
-                            subtitle:(NSString *)subtitle
-                        previewImage:(UIImage *)previewImage
-                           mainImage:(UIImage *)mainImage
-                             content:(NSString *)content {
-    
-}
-
-#pragma mark - UIImagePickerController Delegate
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
-    
-    if (self.chooseImageSenderTag == 1) {
-        self.previewImageView.image = chosenImage;
-    } else {
-        self.mainImageView.image = chosenImage;
-    }
-    
-    [picker dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    
-    [picker dismissViewControllerAnimated:YES completion:NULL];
-    
-}
-
-#pragma mark - UIPickerViewDataSource
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView*)thePickerView {
-    return 1;
-}
-
-- (NSInteger)pickerView:(UIPickerView *)thePickerView numberOfRowsInComponent:(NSInteger)component {
-    return [self.categoryTitles count];
-}
-
-#pragma mark - UIPickerViewDelegate
-- (NSString *)pickerView:(UIPickerView *)thePickerView
-             titleForRow:(NSInteger)row
-            forComponent:(NSInteger)component {
-    
-    return self.categoryTitles[row];
-}
-
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    self.categoryTextField.text = self.categoryTitles[row];
-}
-
 #pragma mark - Event Handlers
 
 - (void)cancelButtonActionTriggered {
@@ -172,7 +103,7 @@
                                           mainImage:mainImage
                                             content:content
                                        sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                                         completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+                                         completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
                                              if (!error) {
                                                  if ([resultData valueForKey:@"error"]) {
                                                      NSString *errorMessage = (NSString *)[resultData valueForKey:@"error"];
@@ -212,9 +143,17 @@
 
 #pragma mark - Private methods
 
+- (void)editSelectedArticleWithTitle:(NSString *)title
+                            subtitle:(NSString *)subtitle
+                        previewImage:(UIImage *)previewImage
+                           mainImage:(UIImage *)mainImage
+                             content:(NSString *)content {
+    // TODO:
+}
+
 - (void)saveArticleInDatabaseWithObjectId:(NSString *)objectId {
     [WebServiceManager loadArticleWithObjectId:objectId
-                                    completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+                                    completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
                                         NSDictionary *newsData = @{@"results": resultData};
                                         
                                         [DatabaseManager saveNewsInDatabase:newsData];
@@ -254,25 +193,32 @@
 }
 
 - (void)performInitialConfiguration {
-    [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-        if (!error) {
-            self.categoryTitles = [[NSMutableArray alloc] init];
-            self.categoriesByID = [[NSMutableDictionary alloc] init];
-            
-            for (id category in [resultData valueForKey:@"results"]) {
-                [self.categoryTitles addObject:[category valueForKey:@"name"]];
-                [self.categoriesByID setObject:[category valueForKey:@"objectId"]
-                                        forKey:[category valueForKey:@"name"]];
-            }
-            
-            [self initialiseTypePicker];
-        } else {
+    [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+        if (NO) {
             [UIAlertController showAlertWithTitle:@"Error"
                                        andMessage:@"An error occured while trying to get the available categories."
                                  inViewController:self
                                       withHandler:nil];
         }
+        
+        self.categoryTitles = [[NSMutableArray alloc] init];
+        self.categoriesByID = [[NSMutableDictionary alloc] init];
+        
+        for (id category in [resultData valueForKey:@"results"]) {
+            [self.categoryTitles addObject:[category valueForKey:@"name"]];
+            [self.categoriesByID setObject:[category valueForKey:@"objectId"]
+                                    forKey:[category valueForKey:@"name"]];
+        }
+        
+        [self initialiseTypePicker];
     }];
+    
+    Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
+    if (selectedArticle) {
+        self.titleTextField.text = selectedArticle.title;
+        self.subtitleTextField.text = selectedArticle.subtitle;
+        
+    }
 }
 
 - (void)initialiseTypePicker {
@@ -336,6 +282,47 @@
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
+}
+
+#pragma mark - UIImagePickerController Delegate
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
+    
+    if (self.chooseImageSenderTag == 1) {
+        self.previewImageView.image = chosenImage;
+    } else {
+        self.mainImageView.image = chosenImage;
+    }
+    
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    
+    [picker dismissViewControllerAnimated:YES completion:NULL];
+    
+}
+
+#pragma mark - UIPickerViewDataSource
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView*)thePickerView {
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)thePickerView numberOfRowsInComponent:(NSInteger)component {
+    return [self.categoryTitles count];
+}
+
+#pragma mark - UIPickerViewDelegate
+- (NSString *)pickerView:(UIPickerView *)thePickerView
+             titleForRow:(NSInteger)row
+            forComponent:(NSInteger)component {
+    
+    return self.categoryTitles[row];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    self.categoryTextField.text = self.categoryTitles[row];
 }
 
 @end

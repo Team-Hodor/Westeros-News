@@ -7,6 +7,7 @@
 //
 
 #import "NewsTableViewCell.h"
+#import "WebServiceManager.h"
 
 @interface NewsTableViewCell()
 
@@ -43,25 +44,12 @@
     [indicator setCenter:self.articleImageView.center];
     [self.contentView addSubview:indicator];
     
-    NSURL *imageURL = [NSURL URLWithString:self.article.imageURL];
-    NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration];
-    
-    NSURLSessionDataTask *imageTask = [session dataTaskWithURL:imageURL
-                                             completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                 dispatch_async(dispatch_get_main_queue(), ^() {
-                                                     [indicator removeFromSuperview];
-                                                     UIImage *image = [UIImage imageWithData:data];
-                                                     self.articleImageView.image = image;
-                                                 });
-                                             }];
-    
-    dispatch_queue_t queue = dispatch_queue_create("taskQueue", NULL);
-    dispatch_async(queue, ^() {
-        [imageTask resume];
-    });
-
+    [WebServiceManager downloadImageWithImageURL:self.article.thumbnailURL completion:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+        
+        [indicator removeFromSuperview];
+        UIImage *image = [UIImage imageWithData:[NSData dataWithData:data]];
+        self.articleImageView.image = image;
+    }];
 }
 
 @end

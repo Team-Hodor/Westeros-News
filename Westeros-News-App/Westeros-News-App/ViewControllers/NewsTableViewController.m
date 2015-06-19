@@ -13,6 +13,7 @@
 #import "Article.h"
 #import "NSString+DateValue.h"
 #import "NewsTableViewCell.h"
+#import "UIAlertController+ShowAlert.h"
 
 typedef enum {
     FeaturedNewsSection,
@@ -163,6 +164,83 @@ typedef enum {
 
 }
 
+#pragma mark - Table Cell Editing
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row < 0 || indexPath.section < 0) {
+        return UITableViewCellEditingStyleNone;
+    } else {
+        return UITableViewCellEditingStyleDelete;
+    }
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Return NO if you do not want the specified item to be editable.
+    
+    if ([DataRepository sharedInstance].loggedUser.isAdmin == NO || self.selectedSection == FeaturedNewsSection) {
+        return NO;
+    } else if (indexPath.row < 0 || indexPath.section < 0) {
+        return NO;
+    } else if (self.selectedSection == FavouriteNewsSection) {
+        return YES;
+    } else {
+        return YES;
+    }
+}
+
+- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row < 0 || indexPath.section < 0) {
+        return nil;
+    }
+    
+    if (self.selectedSection == FavouriteNewsSection) {
+        // TODO:
+        return nil;
+    } else {
+        UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive  title:@"Delete" handler:^(UITableViewRowAction *rowAction,NSIndexPath *indexPath) {
+            
+            Article *fetchedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            [WebServiceManager deleteArticleWithObjectId:fetchedObject.identifier completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+                if (![resultData valueForKey:@"error"]) {
+                    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+                    
+                    [context deleteObject:fetchedObject];
+                    [context save:nil];
+                } else {
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"There was an error deleting the article. Please try again later."
+                                         inViewController:self
+                                              withHandler:nil];
+                }
+            }];
+        }];
+        
+        UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal  title:@" Edit " handler:^(UITableViewRowAction *rowAction,NSIndexPath *indexPath) {
+            
+            Article *fetchedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            [DataRepository sharedInstance].selectedArticle = fetchedObject;
+            [self showNewArticleViewController];
+        }];
+        
+        editAction.backgroundColor = [UIColor orangeColor];
+        
+        return @[deleteAction, editAction];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+        
+        id objectToDelete = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        
+        [context deleteObject:objectToDelete];
+        
+        NSError *error;
+        [context save:&error];
+    }
+}
+
 #pragma mark - Controller
 
 - (void)controllerWillChangeContent:(NSFetchedResultsController *)controller {
@@ -229,40 +307,7 @@ typedef enum {
     }
 }
 
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
+#pragma mark - Private Methods
 
 - (void)performInitialConfiguration {
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -289,7 +334,7 @@ typedef enum {
     
     // New Post button
     if ([DataRepository sharedInstance].loggedUser.isAdmin) {
-        UIBarButtonItem *newArticleButton = [[UIBarButtonItem alloc] initWithTitle:@"New Article" style:UIBarButtonItemStylePlain target:self action:@selector(newArticleButtonTapped)];
+        UIBarButtonItem *newArticleButton = [[UIBarButtonItem alloc] initWithTitle:@"New Article" style:UIBarButtonItemStylePlain target:self action:@selector(showNewArticleViewController)];
         
         self.navigationItem.leftBarButtonItem = newArticleButton;
     }
@@ -298,27 +343,11 @@ typedef enum {
     [self loadInitialNews];
 }
 
-#pragma mark - Web service managers
-// Probably useless
-- (void)loadFullUserDataForUser:(User *)user {
-//    [WebServiceManager loadFullUserDataForUserWithID:user.uniqueId completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
-//        
-//            User *loggedUser = [DataRepository sharedInstance].loggedUser;
-//            if ([resultData valueForKey:@"isAdmin"]) {
-//                loggedUser.isAdmin = YES;
-//            } else {
-//                loggedUser.isAdmin = NO;
-//            }
-//            
-//            loggedUser.favouriteNews = [resultData valueForKey:@"favourites"];
-//    }];
-}
-
 - (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip {
     [WebServiceManager loadNewsWithLimit:limit
                                     skip:skip
                             sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                              completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+                              completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
             if (![[resultData valueForKey:@"results"] count]) {
                 self.hasFinishedPaging = YES;
                 [self.tableView beginUpdates];
@@ -339,7 +368,7 @@ typedef enum {
     [WebServiceManager loadNewsWithLimit:WEB_REQUEST_LIMIT
                                     skip:0
                             sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                              completion:^(NSDictionary *dataDictionary, NSURLResponse *response, NSError *error) {
+                              completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error) {
                                   if ([dataDictionary count] > 0) {
                                       NSFetchRequest *request = [[NSFetchRequest alloc] init];
                                       [request setEntity:[NSEntityDescription entityForName:@"Article" inManagedObjectContext:[DatabaseManager sharedInstance].masterContext]];
@@ -363,7 +392,7 @@ typedef enum {
 
 #pragma mark - Event Handlers
 
-- (void)newArticleButtonTapped {
+- (void)showNewArticleViewController {
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     UINavigationController *newArticleViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"newArticleViewController"];
     
@@ -426,7 +455,7 @@ typedef enum {
         self.hasFinishedPaging = NO;
         
         
-        [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+        [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
                 [DatabaseManager saveNewsInDatabase:resultData];
         }];
         

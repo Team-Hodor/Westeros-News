@@ -48,6 +48,12 @@
 
 + (void)logoutUserWithSessionId:(NSString *)sessionId
                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
++ (void)EditUserName:(NSString *)name
+                 sessionToken:(NSString *)sessionToken
+                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
++ (void)ChangeUserPassword:(NSString *)password
+        sessionToken:(NSString *)sessionToken
+          completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
 
 + (void)addArticleToFavorites:(Article *)article
                  sessionToken:(NSString *)sessionToken

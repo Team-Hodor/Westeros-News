@@ -79,7 +79,10 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if(indexPath.section == 0 && indexPath.row==0){
-        // EDIT
+        UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+        UIViewController *showUserProfileViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"changeUserNameView"];
+        
+        [self.navigationController pushViewController:showUserProfileViewController animated:YES];
     }
     else if(indexPath.section == 0 && indexPath.row==1){
         // CHANGE PASS
@@ -88,6 +91,8 @@
         [[DataRepository sharedInstance] logoutLoggedUserInViewController:self];
     }
 }
+
+
 
 /*
 // Override to support conditional editing of the table view.

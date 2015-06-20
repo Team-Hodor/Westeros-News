@@ -191,6 +191,42 @@
                                   andHandler:handlerBlock];
 }
 
++ (void) EditUserName:(NSString *)name sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
+    User *user = [[DataRepository sharedInstance] loggedUser];
+    NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
+    NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    
+    NSDictionary *data = @{ @"name": name
+                            };
+    
+    
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"PUT"
+                                 andHttpBody:data
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
+}
+
++ (void) ChangeUserPassword:(NSString *)password sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
+    User *user = [[DataRepository sharedInstance] loggedUser];
+    NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
+    NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    
+    NSDictionary *data = @{ @"password": password
+                            };
+    
+    
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"PUT"
+                                 andHttpBody:data
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
+}
+
 + (void)addArticleToFavorites:(Article *)article sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
     User *user = [[DataRepository sharedInstance] loggedUser];
     NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];

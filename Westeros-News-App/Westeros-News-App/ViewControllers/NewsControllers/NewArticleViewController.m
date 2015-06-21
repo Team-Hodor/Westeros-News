@@ -193,6 +193,8 @@
 }
 
 - (void)performInitialConfiguration {
+    Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
+    
     [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
         if (NO) {
             [UIAlertController showAlertWithTitle:@"Error"
@@ -208,15 +210,20 @@
             [self.categoryTitles addObject:[category valueForKey:@"name"]];
             [self.categoriesByID setObject:[category valueForKey:@"objectId"]
                                     forKey:[category valueForKey:@"name"]];
+            
+            if ([category valueForKey:@"objectId"] == selectedArticle.categoryID) {
+                self.categoryTextField.text = [category valueForKey:@"name"];
+            }
         }
         
         [self initialiseTypePicker];
     }];
     
-    Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
     if (selectedArticle) {
         self.titleTextField.text = selectedArticle.title;
         self.subtitleTextField.text = selectedArticle.subtitle;
+        self.contentTextView.text = selectedArticle.content;
+        
         
     }
 }

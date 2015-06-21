@@ -20,7 +20,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    [self performInitialConfiguration];
     
 }
 
@@ -28,6 +29,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 - (IBAction)editTapped:(id)sender {
     
     User *user = [[DataRepository sharedInstance] loggedUser];
@@ -43,6 +45,10 @@
         }
     }];
 
+}
+
+- (void)performInitialConfiguration {
+    self.nameTxtField.text = [DataRepository sharedInstance].loggedUser.name;
 }
 
 /*

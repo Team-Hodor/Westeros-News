@@ -28,11 +28,15 @@
     return self;
 }
 
-- (instancetype)initWithUsername:(NSString *)username andSessionId:(NSString *)sessionId andUniqueId:(NSString *)uniqueId {
+- (instancetype)initWithUsername:(NSString *)username
+                            name:(NSString *)name
+                    andSessionId:(NSString *)sessionId
+                     andUniqueId:(NSString *)uniqueId {
     self = [super init];
     
     if (self) {
         self.username = username;
+        self.name = name;
         self.sessionToken = sessionId;
         self.uniqueId = uniqueId;
     }

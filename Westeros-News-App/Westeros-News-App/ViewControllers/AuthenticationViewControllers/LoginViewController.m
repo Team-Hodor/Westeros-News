@@ -57,6 +57,7 @@
             } else if( [resultData objectForKey:@"createdAt"] ){
                 NSString *sessionId = [resultData objectForKey:@"sessionToken"];
                 NSString *uniqueId = [resultData objectForKey:@"objectId"];
+                NSString *name = [resultData objectForKey:@"name"];
                 NSMutableArray *favouriteNews = [[NSMutableArray alloc] init];
                 
                 for (id favourite in [resultData objectForKey:@"favourites"]) {
@@ -64,6 +65,7 @@
                 }
                 
                 User *loggedUser = [[User alloc] initWithUsername:username
+                                                             name:name
                                                      andSessionId:sessionId
                                                       andUniqueId:uniqueId];
                 

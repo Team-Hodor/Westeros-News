@@ -15,9 +15,10 @@
 @property (nonatomic, strong, readonly) NSString *sessionToken;
 @property (nonatomic, strong, readonly) NSString *uniqueId;
 @property (nonatomic, strong, readonly) NSString *username;
+@property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSMutableArray *favouriteNews;
 @property (nonatomic) BOOL isAdmin;
 
-- (instancetype)initWithUsername:(NSString *)username andSessionId:(NSString *)sessionId andUniqueId:(NSString *)uniqueId;
+- (instancetype)initWithUsername:(NSString *)username name:(NSString *)name andSessionId:(NSString *)sessionId andUniqueId:(NSString *)uniqueId;
 
 @end

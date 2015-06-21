@@ -58,10 +58,10 @@
 
 + (void)logoutUserWithSessionId:(NSString *)sessionId
                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
-+ (void)EditUserName:(NSString *)name
++ (void)editUserName:(NSString *)name
                  sessionToken:(NSString *)sessionToken
                    completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
-+ (void)ChangeUserPassword:(NSString *)password
++ (void)changeUserPassword:(NSString *)password
         sessionToken:(NSString *)sessionToken
           completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
 

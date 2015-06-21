@@ -22,11 +22,8 @@
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     [self.tableView setBackgroundColor:[UIColor colorWithRed:34.0f/255.0f green:34.0f/255.0f blue:34.0f/255.0f alpha:1.0f]];
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -37,6 +34,24 @@
 - (void)cancelButtonTapped {
     
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void) viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    [self performInitialConfiguration];
+}
+
+- (void)performInitialConfiguration {
+    //set title text color
+    NSDictionary *navbarTitleTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                               [UIColor whiteColor],
+                                               NSForegroundColorAttributeName,
+                                               nil];
+    [self.navigationController.navigationBar setTitleTextAttributes:navbarTitleTextAttributes];
+    
+    //set title to user name
+    self.title = @"User Profile";
 }
 
 #pragma mark - Table view data source
@@ -77,15 +92,14 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     if(indexPath.section == 0 && indexPath.row==0){
-        UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
-        UIViewController *showUserProfileViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"changeUserNameView"];
-        
-        [self.navigationController pushViewController:showUserProfileViewController animated:YES];
+        UIViewController *editUserNameViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"editUserNameView"];
+        [self.navigationController pushViewController:editUserNameViewController animated:YES];
     }
     else if(indexPath.section == 0 && indexPath.row==1){
-        // CHANGE PASS
+        UIViewController *changePasswordViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"changePasswordView"];
+        [self.navigationController pushViewController:changePasswordViewController animated:YES];
     }
     else if(indexPath.section == 1 && indexPath.row==0){
         [[DataRepository sharedInstance] logoutLoggedUserInViewController:self];

@@ -21,7 +21,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
 
 @property (weak, nonatomic) IBOutlet UIImageView *articleImageView;
-@property (weak, nonatomic) IBOutlet UILabel *contentLabel;
+@property (weak, nonatomic) IBOutlet UITextView *contentView;
+
 
 @end
 
@@ -47,7 +48,8 @@
     self.article = [[DataRepository sharedInstance] selectedArticle];
     self.titleLabel.text = self.article.title;
     self.subtitleLabel.text = self.article.subtitle;
-    self.contentLabel.text = self.article.content;
+    self.contentView.text = self.article.content;
+    self.contentView.scrollEnabled = NO;
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"dd.MM.yyyy HH:mm"];
@@ -68,7 +70,8 @@
 }
 
 - (void)performInitialConfiguration {
-    
+    [self.articleImageView.layer setBorderColor: [[UIColor whiteColor] CGColor]];
+    [self.articleImageView.layer setBorderWidth: 2.0];
     
     UIBarButtonItem *favButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"fav.png"] landscapeImagePhone:[UIImage imageNamed:@"fav.png"] style:UIBarButtonItemStylePlain target:self action:@selector(addToFavouritesButtonTapped:)];
     

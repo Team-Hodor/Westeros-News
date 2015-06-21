@@ -46,7 +46,7 @@
     NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *password = self.passwordTextField.text;
     
-    [WebServiceManager loginUserWithUsername:username andPassword:password completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+    [WebServiceManager loginUserWithUsername:username andPassword:password completion:^(NSDictionary *resultData, NSURLResponse *response) {
             if ( [resultData objectForKey:@"error"] ) {
                 [UIAlertController showAlertWithTitle:@"Error"
                                            andMessage:@"Invalid username or password."

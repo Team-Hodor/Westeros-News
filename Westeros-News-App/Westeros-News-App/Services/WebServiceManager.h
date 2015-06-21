@@ -21,7 +21,7 @@
                       mainImage:(UIImage *)mainImage
                         content:(NSString *)content
                    sessionToken:(NSString *)sessionToken
-                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)editArticleWithObjectId:(NSString *)objectId
                           title:(NSString *)title
@@ -31,47 +31,47 @@
                    previewImage:(UIImage *)previewImage
                       mainImage:(UIImage *)mainImage
                    sessionToken:(NSString *)sessionToken
-                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
-+ (void)deleteArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
++ (void)deleteArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
-+ (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
++ (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
-+ (void)loadArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
++ (void)loadArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)loadFavouriteNewsForUser:(User *)user
-                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)loadNewsWithLimit:(NSInteger)limit
                      skip:(NSInteger)skip
              sessionToken:(NSString *)sessionToken
-               completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+               completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)loginUserWithUsername:(NSString *)username
                   andPassword:(NSString *)password
-                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)registerUserWithUsername:(NSString *)username
                      andPassword:(NSString *)password
                          andName:(NSString *)name
-                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)logoutUserWithSessionId:(NSString *)sessionId
-                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 + (void)editUserName:(NSString *)name
                  sessionToken:(NSString *)sessionToken
-                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 + (void)changeUserPassword:(NSString *)password
         sessionToken:(NSString *)sessionToken
-          completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+          completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)addArticleToFavorites:(Article *)article
                  sessionToken:(NSString *)sessionToken
-                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 + (void)removeArticleFromFavorites:(Article *)article
                  sessionToken:(NSString *)sessionToken
-                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
-+ (void)downloadImageWithImageURL:(NSString *)imageURL completion:(void (^)(NSData *, NSHTTPURLResponse *, NSError *))handlerBlock;
++ (void)downloadImageWithImageURL:(NSString *)imageURL completion:(void (^)(NSData *, NSHTTPURLResponse *))handlerBlock;
 
 @end

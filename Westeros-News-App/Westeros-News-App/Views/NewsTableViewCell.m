@@ -44,7 +44,7 @@
     [indicator setCenter:self.articleImageView.center];
     [self.contentView addSubview:indicator];
     
-    [WebServiceManager downloadImageWithImageURL:self.article.previewImageURL completion:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+    [WebServiceManager downloadImageWithImageURL:self.article.previewImageURL completion:^(NSData *data, NSHTTPURLResponse *response) {
         
         [indicator removeFromSuperview];
         UIImage *image = [UIImage imageWithData:[NSData dataWithData:data]];

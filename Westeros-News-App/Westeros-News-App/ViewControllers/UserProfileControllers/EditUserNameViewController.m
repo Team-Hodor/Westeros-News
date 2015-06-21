@@ -44,7 +44,7 @@
     
     if([self areFieldsValidated]){
         
-        [WebServiceManager editUserName:self.nameTxtField.text sessionToken:user.sessionToken completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+        [WebServiceManager editUserName:self.nameTxtField.text sessionToken:user.sessionToken completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
             if ( [resultData objectForKey:@"error"] ) {
                 
                 [UIAlertController showAlertWithTitle:@"Error"

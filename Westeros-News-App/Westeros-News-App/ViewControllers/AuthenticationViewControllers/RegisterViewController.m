@@ -51,7 +51,7 @@
         [WebServiceManager registerUserWithUsername:username
                                         andPassword:password
                                             andName:name
-                                         completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+                                         completion:^(NSDictionary *resultData, NSURLResponse *response) {
                                              if ([[resultData objectForKey:@"error"] isEqualToString:@"Invalid JSON"]) {
                                                  // INTERNAL ERROR
                                                  NSLog(@"Internal error");

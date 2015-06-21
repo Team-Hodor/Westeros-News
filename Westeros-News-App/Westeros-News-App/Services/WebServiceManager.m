@@ -27,14 +27,14 @@
                       mainImage:(UIImage *)mainImage
                         content:(NSString *)content
                    sessionToken:(NSString *)sessionToken
-                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
+                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/classes/News?where={\"title\":\"%@\"}", title]];
     
     
     NSURL *checkURL = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
-    [WebServiceManager performRequestWithUrl:checkURL contentType:@"application/json" andMethod:@"GET" andHttpBody:nil sessionToken:nil andHandler:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+    [WebServiceManager performRequestWithUrl:checkURL contentType:@"application/json" andMethod:@"GET" andHttpBody:nil sessionToken:nil andHandler:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
         if ([[resultData valueForKey:@"results"] count] == 0) {
             __block NSString *previewImageName;
             __block NSString *mainImageName;
@@ -73,7 +73,7 @@
                                     }
                                 }];
         } else {
-            handlerBlock(@{@"error":@"Article with such title already exists"}, nil, nil);
+            handlerBlock(@{@"error":@"Article with such title already exists"}, nil);
         }
     }];
 }
@@ -86,7 +86,7 @@
                    previewImage:(UIImage *)previewImage
                       mainImage:(UIImage *)mainImage
                       sessionToken:(NSString *)sessionToken
-                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
+                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     __block NSString *previewImageName;
     __block NSString *mainImageName;
@@ -142,7 +142,7 @@
     }
 }
 
-+ (void)deleteArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
++ (void)deleteArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     NSString *serviceURL = [BASE_URL stringByAppendingString:[NSString stringWithFormat:@"/classes/News/%@", objectId]];
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
@@ -154,7 +154,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
++ (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/classes/Category"];
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -167,7 +167,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)loadArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
++ (void)loadArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     NSString *serviceURL = [BASE_URL stringByAppendingString:[NSString stringWithFormat:@"/classes/News/%@", objectId]];
     
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -180,7 +180,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
++ (void)loadFavouriteNewsForUser:(User *)user completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/classes/News?where={\"objectId\":{\"$in\":[\"%@\"]}}&order=-createdAt",
@@ -196,7 +196,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
++ (void)loadNewsWithLimit:(NSInteger)limit skip:(NSInteger)skip sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/classes/News?limit=%ld&skip=%ld&order=-createdAt", (long)limit, (long)skip]];
@@ -211,7 +211,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)loginUserWithUsername:(NSString *)username andPassword:(NSString *)password completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
++ (void)loginUserWithUsername:(NSString *)username andPassword:(NSString *)password completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
                             [NSString stringWithFormat:@"/login?username=%@&password=%@", username, password]];
@@ -226,7 +226,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)registerUserWithUsername:(NSString *)username andPassword:(NSString *)password andName:(NSString *)name completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
++ (void)registerUserWithUsername:(NSString *)username andPassword:(NSString *)password andName:(NSString *)name completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/users"];
     NSURL *url = [NSURL URLWithString:serviceURL];
@@ -241,7 +241,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)logoutUserWithSessionId:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
++ (void)logoutUserWithSessionId:(NSString *)sessionToken completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:@"/logout"];
     NSURL *url = [NSURL URLWithString:serviceURL];
@@ -254,7 +254,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void) editUserName:(NSString *)name sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
++ (void) editUserName:(NSString *)name sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock{
     User *user = [[DataRepository sharedInstance] loggedUser];
     NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
     NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
@@ -272,7 +272,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void) changeUserPassword:(NSString *)password sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
++ (void) changeUserPassword:(NSString *)password sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock{
     User *user = [[DataRepository sharedInstance] loggedUser];
     NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
     NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
@@ -290,7 +290,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)addArticleToFavorites:(Article *)article sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
++ (void)addArticleToFavorites:(Article *)article sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock{
     User *user = [[DataRepository sharedInstance] loggedUser];
     NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
     NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
@@ -319,7 +319,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void) removeArticleFromFavorites:(Article *)article sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock {
++ (void) removeArticleFromFavorites:(Article *)article sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock {
     User *user = [[DataRepository sharedInstance] loggedUser];
     NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
     NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
@@ -348,7 +348,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)downloadImageWithImageURL:(NSString *)imageURL completion:(void (^)(NSData *, NSHTTPURLResponse *, NSError *))handlerBlock {
++ (void)downloadImageWithImageURL:(NSString *)imageURL completion:(void (^)(NSData *, NSHTTPURLResponse *))handlerBlock {
     
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     
@@ -359,7 +359,7 @@
                                                      NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                                                      if (!error) {
                                                          dispatch_async(dispatch_get_main_queue(), ^() {
-                                                             handlerBlock(data, httpResponse, error);
+                                                             handlerBlock(data, httpResponse);
                                                          });
                                                      } else {
                                                          NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
@@ -385,20 +385,16 @@
                                    andMethod:@"POST"
                                  andHttpBody:binaryImageData
                                 sessionToken:nil
-                                  andHandler:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+                                  andHandler:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
                                       NSString *imageName = (NSString *)[resultData valueForKey:@"name"];
-                                      if (!error) {
-                                          handlerBlock(imageName);
-                                      } else {
-                                          NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-                                      }
+                                      handlerBlock(imageName);
                                   }];
 }
 
 + (void)performEditArticleRequestWithObjectID:(NSString *)objectID
                                  sessionToken:(NSString *)sessionToken
                                       options:(NSMutableDictionary *)options
-                                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
+                                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:[NSString stringWithFormat:@"/classes/News/%@", objectID]]];
     
@@ -418,7 +414,7 @@
                                        mainImageName:(NSString *)mainImageName
                                          content:(NSString *)content
                                     sessionToken:(NSString *)sessionToken
-                                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
+                                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSDictionary *articleData = @{@"title":title,
                                   @"subtitle":subtitle,
@@ -457,7 +453,7 @@
                     andMethod:(NSString *)method
                   andHttpBody:(NSObject *)httpBody
                  sessionToken:(NSString *)sessionToken
-                   andHandler:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
+                   andHandler:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock {
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
@@ -495,7 +491,7 @@
                                                         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                                                         if (!error) {
                                                             dispatch_async(dispatch_get_main_queue(), ^{
-                                                                handlerBlock(dictionary, httpResponse, error);
+                                                                handlerBlock(dictionary, httpResponse);
                                                             });
                                                         } else {
                                                             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);

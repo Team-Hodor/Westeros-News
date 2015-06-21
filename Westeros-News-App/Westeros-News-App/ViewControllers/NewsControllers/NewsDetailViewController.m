@@ -59,8 +59,7 @@
 
 - (void)setArticleImage {
 
-    [WebServiceManager downloadImageWithImageURL:self.article.mainImageURL completion:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
-        
+    [WebServiceManager downloadImageWithImageURL:self.article.mainImageURL completion:^(NSData *data, NSHTTPURLResponse *response) {
         UIImage *image = [UIImage imageWithData:data];
         self.articleImageView.image = image;
     }];
@@ -93,9 +92,9 @@
         UIAlertAction* ok = [UIAlertAction
                              actionWithTitle:@"OK"
                              style:UIAlertActionStyleDefault
-                             handler:^(UIAlertAction * action)
-                             {
-                                 [WebServiceManager removeArticleFromFavorites:self.article sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+                             handler:^(UIAlertAction * action) {
+                                 
+                                 [WebServiceManager removeArticleFromFavorites:self.article sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
                                      if ( [resultData objectForKey:@"error"] ) {
                                          
                                          [UIAlertController showAlertWithTitle:@"Error"
@@ -112,6 +111,7 @@
                                  [alert dismissViewControllerAnimated:YES completion:nil];
                                  
                              }];
+        
         UIAlertAction* cancel = [UIAlertAction
                                  actionWithTitle:@"Cancel"
                                  style:UIAlertActionStyleDefault
@@ -129,7 +129,7 @@
     
     }else{
         
-        [WebServiceManager addArticleToFavorites:self.article sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+        [WebServiceManager addArticleToFavorites:self.article sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
             if ( [resultData objectForKey:@"error"] ) {
                 
                 [UIAlertController showAlertWithTitle:@"Error"

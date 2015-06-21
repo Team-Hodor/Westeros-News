@@ -146,39 +146,31 @@
                                      mainImage:mainImage
                                        content:content
                                   sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                                    completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
-                                        if (!error) {
-                                            if ([resultData valueForKey:@"error"]) {
-                                                NSString *errorMessage = (NSString *)[resultData valueForKey:@"error"];
-                                                self.submitButton.enabled = YES;
-                                                
-                                                if ([errorMessage isEqualToString:@"Article with such title already exists"]) {
-                                                    [UIAlertController showAlertWithTitle:@"Error"
-                                                                               andMessage:@"An article with such title already exists."
-                                                                         inViewController:self
-                                                                              withHandler:nil];
-                                                } else {
-                                                    [UIAlertController showAlertWithTitle:@"Error"
-                                                                               andMessage:@"An error occured while trying to post the article. Please try again later."
-                                                                         inViewController:self
-                                                                              withHandler:nil];
-                                                }
-                                            } else {
-                                                [self saveArticleInDatabaseWithObjectId:[resultData valueForKey:@"objectId"]];
-                                                
-                                                [UIAlertController showAlertWithTitle:@"Success"
-                                                                           andMessage:@"The article has been posted successfully."
+                                    completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
+                                        if ([resultData valueForKey:@"error"]) {
+                                            NSString *errorMessage = (NSString *)[resultData valueForKey:@"error"];
+                                            self.submitButton.enabled = YES;
+                                            
+                                            if ([errorMessage isEqualToString:@"Article with such title already exists"]) {
+                                                [UIAlertController showAlertWithTitle:@"Error"
+                                                                           andMessage:@"An article with such title already exists."
                                                                      inViewController:self
-                                                                          withHandler:^() {
-                                                                              [self dismissViewControllerAnimated:YES completion:nil];
-                                                                          }];
+                                                                          withHandler:nil];
+                                            } else {
+                                                [UIAlertController showAlertWithTitle:@"Error"
+                                                                           andMessage:@"An error occured while trying to post the article. Please try again later."
+                                                                     inViewController:self
+                                                                          withHandler:nil];
                                             }
                                         } else {
-                                            [UIAlertController showAlertWithTitle:@"Error"
-                                                                       andMessage:@"An error occured while trying to post the article. Please try again later."
+                                            [self saveArticleInDatabaseWithObjectId:[resultData valueForKey:@"objectId"]];
+                                            
+                                            [UIAlertController showAlertWithTitle:@"Success"
+                                                                       andMessage:@"The article has been posted successfully."
                                                                  inViewController:self
-                                                                      withHandler:nil];
-                                            self.submitButton.enabled = YES;
+                                                                      withHandler:^() {
+                                                                          [self dismissViewControllerAnimated:YES completion:nil];
+                                                                      }];
                                         }
                                     }];
 }
@@ -201,8 +193,7 @@
                                      mainImage:mainImage
                                   sessionToken:sessionToken
                                     completion:^(NSDictionary *dataDictionary,
-                                                 NSHTTPURLResponse *response,
-                                                 NSError *error) {
+                                                 NSHTTPURLResponse *response) {
                                         
                                         // The OK Status codes
                                         if ([response statusCode] >= 200 && [response statusCode] < 300) {
@@ -228,7 +219,7 @@
 
 - (void)saveArticleInDatabaseWithObjectId:(NSString *)objectId {
     [WebServiceManager loadArticleWithObjectId:objectId
-                                    completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+                                    completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
                                         NSDictionary *newsData = @{@"results": @[resultData]};
                                         
                                         [DatabaseManager saveNewsInDatabase:newsData];
@@ -270,7 +261,7 @@
 - (void)performInitialConfiguration {
     Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
     
-    [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+    [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
         if (NO) {
             [UIAlertController showAlertWithTitle:@"Error"
                                        andMessage:@"An error occured while trying to get the available categories."
@@ -299,13 +290,13 @@
         self.subtitleTextField.text = selectedArticle.subtitle;
         self.contentTextView.text = selectedArticle.content;
         
-        [WebServiceManager downloadImageWithImageURL:selectedArticle.mainImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response, NSError *error) {
+        [WebServiceManager downloadImageWithImageURL:selectedArticle.mainImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response) {
             UIImage *image = [UIImage imageWithData:imageData];
             self.mainImageView.image = image;
             self.initialMainImage = image;
         }];
         
-        [WebServiceManager downloadImageWithImageURL:selectedArticle.previewImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response, NSError *error) {
+        [WebServiceManager downloadImageWithImageURL:selectedArticle.previewImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response) {
             UIImage *image = [UIImage imageWithData:imageData];
             self.previewImageView.image = image;
             self.initialPreviewImage = image;

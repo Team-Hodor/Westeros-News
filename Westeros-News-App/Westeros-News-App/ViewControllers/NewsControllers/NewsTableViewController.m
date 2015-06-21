@@ -202,7 +202,7 @@ typedef enum {
         UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive  title:@"Delete" handler:^(UITableViewRowAction *rowAction,NSIndexPath *indexPath) {
             
             Article *fetchedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
-            [WebServiceManager deleteArticleWithObjectId:fetchedObject.identifier completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+            [WebServiceManager deleteArticleWithObjectId:fetchedObject.identifier completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
                 if (![resultData valueForKey:@"error"]) {
                     NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
                     
@@ -351,7 +351,7 @@ typedef enum {
     [WebServiceManager loadNewsWithLimit:limit
                                     skip:skip
                             sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                              completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+                              completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
             if (![[resultData valueForKey:@"results"] count]) {
                 self.hasFinishedPaging = YES;
                 [self.tableView beginUpdates];
@@ -372,7 +372,7 @@ typedef enum {
     [WebServiceManager loadNewsWithLimit:WEB_REQUEST_LIMIT
                                     skip:0
                             sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                              completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error) {
+                              completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response) {
                                   if ([dataDictionary count] > 0) {
                                       NSFetchRequest *request = [[NSFetchRequest alloc] init];
                                       [request setEntity:[NSEntityDescription entityForName:@"Article" inManagedObjectContext:[DatabaseManager sharedInstance].masterContext]];
@@ -459,7 +459,7 @@ typedef enum {
         self.hasFinishedPaging = NO;
         
         
-        [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+        [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
                 [DatabaseManager saveNewsInDatabase:resultData];
         }];
         

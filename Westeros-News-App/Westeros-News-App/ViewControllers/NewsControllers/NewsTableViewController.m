@@ -24,6 +24,8 @@ typedef enum {
 @interface NewsTableViewController () <NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
+
 @property (nonatomic) NewsSection selectedSection;
 @property (nonatomic) NSInteger currentWebRequestSkipCount;
 @property (nonatomic) NSInteger currentNumberOfInsertions;
@@ -69,13 +71,6 @@ typedef enum {
     
     NSError *error;
     [[self fetchedResultsController] performFetch:&error];
-    
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 
@@ -149,7 +144,7 @@ typedef enum {
         NewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_ID forIndexPath:indexPath];
         Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
         
-        [cell setArticle:article];
+        cell.article = article;
         
         //set cell background color on selection
         [cell setSelectedBackgroundView:bgColorView];
@@ -314,6 +309,18 @@ typedef enum {
 #pragma mark - Private Methods
 
 - (void)performInitialConfiguration {
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    
+    NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor whiteColor] };
+    NSAttributedString *attributeString = [[NSAttributedString alloc] initWithString:@"Please Wait..." attributes:attributes];
+    
+    refreshControl.attributedTitle = attributeString;
+    [refreshControl addTarget:self action:@selector(checkForNewArticles:) forControlEvents:UIControlEventValueChanged];
+    
+    self.refreshControl = refreshControl;
+    
+    [self.refreshControl removeFromSuperview];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(receiveNoDuplicatedArticlesSavedNotification:)
                                                  name:@"NoDuplicatedArticlesNotification"
@@ -394,6 +401,15 @@ typedef enum {
                               }];
 }
 
+- (void)checkForNewArticles:(UIRefreshControl *)refreshControl {
+    if (self.selectedSection == AllNewsSection) {
+        self.currentWebRequestSkipCount = 0;
+        [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
+    } else {
+        [refreshControl endRefreshing];
+    }
+}
+
 #pragma mark - Event Handlers
 
 - (void)showNewArticleViewController {
@@ -415,10 +431,13 @@ typedef enum {
         self.selectedSection = FeaturedNewsSection;
         self.hasFinishedPaging = NO;
         
+        if (self.refreshControl.superview == self.tableView) {
+            [self.refreshControl removeFromSuperview];
+        }
+        
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
         [request setFetchLimit:5];
         [request setPredicate:nil];
-        
         
         NSError *error;
         [self.fetchedResultsController performFetch:&error];
@@ -434,6 +453,8 @@ typedef enum {
 - (IBAction)allNewsBarButtonItemActionTriggered:(id)sender {
     if (self.selectedSection != AllNewsSection) {
         self.selectedSection = AllNewsSection;
+        
+        [self.tableView addSubview:self.refreshControl];
         
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
         [request setFetchLimit:2000];
@@ -458,6 +479,9 @@ typedef enum {
         self.selectedSection = FavouriteNewsSection;
         self.hasFinishedPaging = NO;
         
+        if (self.refreshControl.superview == self.tableView) {
+            [self.refreshControl removeFromSuperview];
+        }
         
         [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
                 [DatabaseManager saveNewsInDatabase:resultData];
@@ -492,6 +516,10 @@ typedef enum {
 
 - (void)receiveDuplicatedArticlesSavedNotification:(id)receivedNotification {
     if (self.selectedSection == AllNewsSection) {
+        if ([self.refreshControl isRefreshing]) {
+            [self.refreshControl endRefreshing];
+        }
+        
         self.currentWebRequestSkipCount = [[self.fetchedResultsController fetchedObjects] count];
     }
 }

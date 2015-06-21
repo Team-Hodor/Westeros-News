@@ -191,8 +191,33 @@ typedef enum {
     }
     
     if (self.selectedSection == FavouriteNewsSection) {
-        // TODO:
-        return nil;
+        UITableViewRowAction *unfavouriteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive  title:@"Remove" handler:^(UITableViewRowAction *rowAction,NSIndexPath *indexPath) {
+            
+            Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
+            User *loggedUser = [DataRepository sharedInstance].loggedUser;
+            
+            [WebServiceManager removeArticleFromFavorites:article sessionToken:loggedUser.sessionToken completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
+                if ( [resultData objectForKey:@"error"] ) {
+                    
+                    [UIAlertController showAlertWithTitle:@"Error"
+                                               andMessage:@"Couldn't remove article from favourites."
+                                         inViewController:self
+                                              withHandler:nil];
+                } else {
+                    [loggedUser.favouriteNews removeObject:article.identifier];
+                    
+                    [self.tableView beginUpdates];
+                    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
+                                          withRowAnimation:UITableViewRowAnimationFade];
+                    [self.fetchedResultsController performFetch:nil];
+                    
+                    [self.tableView endUpdates];
+                    
+                }
+            }];
+        }];
+        
+        return @[unfavouriteAction];
     } else {
         UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive  title:@"Delete" handler:^(UITableViewRowAction *rowAction,NSIndexPath *indexPath) {
             
@@ -309,6 +334,8 @@ typedef enum {
 #pragma mark - Private Methods
 
 - (void)performInitialConfiguration {
+    // self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
     
     NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor whiteColor] };

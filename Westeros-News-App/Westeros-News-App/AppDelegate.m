@@ -14,6 +14,8 @@
 
 @interface AppDelegate ()
 
+
+#define TOTAL_ARTICLES_TO_SAVE 10
 @end
 
 @implementation AppDelegate
@@ -24,6 +26,7 @@
     // [self generateRandomNewsToTheServer];
     // [self changePassword];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
+    
     return YES;
 }
 
@@ -46,6 +49,26 @@
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
+    User *loggedUser = [DataRepository sharedInstance].loggedUser;
+    
+    if (loggedUser) {
+        [[NSUserDefaults standardUserDefaults] setObject:loggedUser.username forKey:@"username"];
+        [[NSUserDefaults standardUserDefaults] setObject:loggedUser.uniqueId forKey:@"uniqueID"];
+        [[NSUserDefaults standardUserDefaults] setObject:loggedUser.name forKey:@"name"];
+        [[NSUserDefaults standardUserDefaults] setObject:loggedUser.sessionToken forKey:@"sessionToken"];
+        [[NSUserDefaults standardUserDefaults] setObject:loggedUser.favouriteNews forKey:@"favouriteNews"];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:loggedUser.isAdmin] forKey:@"isAdmin"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    } else {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"username"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"uniqueID"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"name"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"sessionToken"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"favouriteNews"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"isAdmin"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
     NSManagedObjectContext *context = [DatabaseManager sharedInstance].masterContext;
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -62,7 +85,10 @@
     NSArray *results = [context executeFetchRequest:fetchRequest error:&error];
     
     if (!error) {
-        for (int index = 0; index < [results count] - 10; index++) {
+        
+        NSUInteger resultsCount = TOTAL_ARTICLES_TO_SAVE > [results count] ? [results count] : TOTAL_ARTICLES_TO_SAVE;
+        
+        for (int index = 0; index < resultsCount; index++) {
             [context deleteObject:results[index]];
         }
         [context save:&error];

@@ -370,6 +370,19 @@
 
 }
 
++ (void)checkUserSessionWithID:(NSString *)sessionToken
+                    completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock {
+    
+    NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/sessions/me"]];
+    
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"GET"
+                                 andHttpBody:nil
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
+}
+
 #pragma mark - Private methods
 
 + (void)uploadImage:(UIImage *)image

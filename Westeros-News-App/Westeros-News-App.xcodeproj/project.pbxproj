@@ -14,6 +14,7 @@
 		287A85B01B36E7DE009EB581 /* NewsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 287A85AD1B36E7DE009EB581 /* NewsTableViewController.m */; };
 		287A85B61B36E821009EB581 /* EditUserNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 287A85B31B36E821009EB581 /* EditUserNameViewController.m */; };
 		287A85B71B36E821009EB581 /* UserProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 287A85B51B36E821009EB581 /* UserProfileTableViewController.m */; };
+		287A85BA1B372950009EB581 /* InitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 287A85B91B372950009EB581 /* InitialViewController.m */; };
 		287EC97F1B245E66001B1C19 /* WebServiceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 287EC97E1B245E66001B1C19 /* WebServiceManager.m */; };
 		287EC98E1B24B1D8001B1C19 /* NSString+DateValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 287EC98D1B24B1D8001B1C19 /* NSString+DateValue.m */; };
 		28C2DF871B1C8D740001E968 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C2DF861B1C8D740001E968 /* main.m */; };
@@ -64,6 +65,8 @@
 		287A85B31B36E821009EB581 /* EditUserNameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditUserNameViewController.m; sourceTree = "<group>"; };
 		287A85B41B36E821009EB581 /* UserProfileTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileTableViewController.h; sourceTree = "<group>"; };
 		287A85B51B36E821009EB581 /* UserProfileTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileTableViewController.m; sourceTree = "<group>"; };
+		287A85B81B372950009EB581 /* InitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitialViewController.h; sourceTree = "<group>"; };
+		287A85B91B372950009EB581 /* InitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InitialViewController.m; sourceTree = "<group>"; };
 		287EC97D1B245E66001B1C19 /* WebServiceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServiceManager.h; sourceTree = "<group>"; };
 		287EC97E1B245E66001B1C19 /* WebServiceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServiceManager.m; sourceTree = "<group>"; };
 		287EC98C1B24B1D8001B1C19 /* NSString+DateValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DateValue.h"; sourceTree = "<group>"; };
@@ -244,6 +247,8 @@
 				287A85B11B36E821009EB581 /* UserProfileControllers */,
 				287A85A71B36E7B7009EB581 /* NewsControllers */,
 				28C2DFB81B1C8FCB0001E968 /* AuthenticationViewControllers */,
+				287A85B81B372950009EB581 /* InitialViewController.h */,
+				287A85B91B372950009EB581 /* InitialViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -412,6 +417,7 @@
 				287A85B01B36E7DE009EB581 /* NewsTableViewController.m in Sources */,
 				28C2DF8D1B1C8D740001E968 /* Westeros_News_App.xcdatamodeld in Sources */,
 				287A85B61B36E821009EB581 /* EditUserNameViewController.m in Sources */,
+				287A85BA1B372950009EB581 /* InitialViewController.m in Sources */,
 				3110BCE61B2AF11600307CAF /* NewsTableViewCell.m in Sources */,
 				28C2DFBE1B1C8FCB0001E968 /* RegisterViewController.m in Sources */,
 				28C2DFB71B1C8F560001E968 /* UIAlertController+ShowAlert.m in Sources */,

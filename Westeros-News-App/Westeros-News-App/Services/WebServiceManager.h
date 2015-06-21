@@ -33,11 +33,13 @@
                    sessionToken:(NSString *)sessionToken
                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
-+ (void)deleteArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
++ (void)deleteArticleWithObjectId:(NSString *)objectId
+                       completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
-+ (void)loadArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
++ (void)loadArticleWithObjectId:(NSString *)objectId
+                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)loadFavouriteNewsForUser:(User *)user
                       completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
@@ -58,9 +60,11 @@
 
 + (void)logoutUserWithSessionId:(NSString *)sessionId
                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
+
 + (void)editUserName:(NSString *)name
                  sessionToken:(NSString *)sessionToken
                    completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
+
 + (void)changeUserPassword:(NSString *)password
         sessionToken:(NSString *)sessionToken
           completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
@@ -72,6 +76,10 @@
                  sessionToken:(NSString *)sessionToken
                    completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
-+ (void)downloadImageWithImageURL:(NSString *)imageURL completion:(void (^)(NSData *, NSHTTPURLResponse *))handlerBlock;
++ (void)downloadImageWithImageURL:(NSString *)imageURL
+                       completion:(void (^)(NSData *, NSHTTPURLResponse *))handlerBlock;
+
++ (void)checkUserSessionWithID:(NSString *)sessionToken
+                    completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock;
 
 @end

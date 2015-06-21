@@ -82,7 +82,7 @@
 }
 
 - (void) addToFavouritesButtonTapped: (UIBarButtonItem*)btn{
-    
+    btn.enabled = NO;
     
     User *user = [[DataRepository sharedInstance] loggedUser];
     if([user.favouriteNews containsObject:self.article.identifier]){
@@ -109,6 +109,8 @@
                                          [user.favouriteNews removeObject:self.article.identifier];
                                          btn.tintColor = [UIColor whiteColor];
                                      }
+                                     
+                                     btn.enabled = YES;
                                  }];
                                  
                                  [alert dismissViewControllerAnimated:YES completion:nil];
@@ -144,8 +146,9 @@
                 [user.favouriteNews addObject:self.article.identifier];
                 btn.tintColor = [UIColor redColor];
             }
-        }
-         ];
+            
+            btn.enabled = YES;
+        }];
         
     }
 

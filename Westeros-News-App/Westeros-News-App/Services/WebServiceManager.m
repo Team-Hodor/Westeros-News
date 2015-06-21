@@ -254,6 +254,43 @@
                                   andHandler:handlerBlock];
 }
 
++ (void)getUserWithUserId:(NSString *)userId
+               completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock{
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:
+                            [NSString stringWithFormat:@"/users/%@", userId]];
+    
+    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"GET"
+                                 andHttpBody:nil
+                                sessionToken:nil
+                                  andHandler:handlerBlock];
+}
+
++ (void)getCommentsForArticleWithId:(NSString *)articleId sessionToken:(NSString *)sessionToken
+                         completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock{
+    
+    NSString *serviceURL = [BASE_URL stringByAppendingString:
+                            [NSString stringWithFormat:@"/classes/Comments"]];
+    
+    NSDictionary *data = @{ @"articleID": articleId
+                            };
+    
+    NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"GET"
+                                 andHttpBody:data
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
+    
+}
+
+
 + (void) editUserName:(NSString *)name sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock{
     User *user = [[DataRepository sharedInstance] loggedUser];
     NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];

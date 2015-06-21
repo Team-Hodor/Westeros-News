@@ -65,6 +65,13 @@
                  sessionToken:(NSString *)sessionToken
                    completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
++ (void)getUserWithUserId:(NSString *)userId
+          completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
+
++ (void)getCommentsForArticleWithId:(NSString *)articleId
+                       sessionToken:(NSString *)sessionToken
+                         completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
+
 + (void)changeUserPassword:(NSString *)password
         sessionToken:(NSString *)sessionToken
           completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
@@ -72,6 +79,7 @@
 + (void)addArticleToFavorites:(Article *)article
                  sessionToken:(NSString *)sessionToken
                    completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
+
 + (void)removeArticleFromFavorites:(Article *)article
                  sessionToken:(NSString *)sessionToken
                    completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;

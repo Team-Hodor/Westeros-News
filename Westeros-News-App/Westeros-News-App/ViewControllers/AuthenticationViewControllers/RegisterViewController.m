@@ -158,6 +158,7 @@
     self.scrollView.scrollIndicatorInsets = contentInsets;
 }
 
+
 # pragma mark - Text Field Delegate
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {

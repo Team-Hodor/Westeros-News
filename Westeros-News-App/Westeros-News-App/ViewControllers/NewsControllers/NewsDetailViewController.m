@@ -22,6 +22,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *articleImageView;
 @property (weak, nonatomic) IBOutlet UITextView *contentView;
+@property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 
 
 @end
@@ -51,10 +52,21 @@
     self.contentView.text = self.article.content;
     self.contentView.scrollEnabled = NO;
     
+    [WebServiceManager getUserWithUserId:self.article.authorID completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response) {
+        if ( [dataDictionary objectForKey:@"error"] ) {
+            self.authorLabel.text = [NSString stringWithFormat:@"%@ %@",self.authorLabel.text, @"Unknown"];
+        }
+        else{
+            self.authorLabel.text = [NSString stringWithFormat:@"%@ %@",self.authorLabel.text, [dataDictionary objectForKey:@"name"]];
+        }
+        
+
+    }];
+    
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"dd.MM.yyyy HH:mm"];
     
-    self.dateLabel.text = [formatter stringFromDate:self.article.createdAt];
+    self.dateLabel.text = [NSString stringWithFormat:@"%@ %@",self.dateLabel.text,[formatter stringFromDate:self.article.createdAt]];
     
     [self setArticleImage];
 }

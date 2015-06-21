@@ -47,7 +47,7 @@
     NSString *newPassword = self.passwordTxtField.text;
     
     if([self areFieldsValidated]){
-        [WebServiceManager loginUserWithUsername:user.username andPassword:oldPassword completion:^(NSDictionary *resultData, NSURLResponse *response, NSError *error) {
+        [WebServiceManager loginUserWithUsername:user.username andPassword:oldPassword completion:^(NSDictionary *resultData, NSURLResponse *response) {
             
             if ( [resultData objectForKey:@"error"] ) {
                 self.oldPasswordTxtField.text = @"";
@@ -60,7 +60,7 @@
                 sender.layer.backgroundColor = defaultColor.CGColor;
             } else if( [resultData objectForKey:@"createdAt"] ){
                 
-                [WebServiceManager changeUserPassword:newPassword sessionToken:user.sessionToken completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error) {
+                [WebServiceManager changeUserPassword:newPassword sessionToken:user.sessionToken completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response) {
                     self.oldPasswordTxtField.text = @"";
                     self.passwordTxtField.text = @"";
                     if ( [resultData objectForKey:@"error"] ) {

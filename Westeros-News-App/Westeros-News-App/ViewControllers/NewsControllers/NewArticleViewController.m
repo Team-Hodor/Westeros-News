@@ -12,8 +12,9 @@
 #import "UIAlertController+ShowAlert.h"
 #import "DatabaseManager.h"
 
-@interface NewArticleViewController () <UIImagePickerControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate>
+@interface NewArticleViewController () <UIImagePickerControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate, UINavigationControllerDelegate>
 
+// IBOutlets
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UITextView *contentTextView;
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
@@ -21,11 +22,19 @@
 @property (weak, nonatomic) IBOutlet UITextField *categoryTextField;
 @property (weak, nonatomic) IBOutlet UIImageView *previewImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *mainImageView;
+@property (weak, nonatomic) IBOutlet UIButton *submitButton;
 
+// View management properties
 @property (strong, nonatomic) UIView *activeField;
 @property (nonatomic) NSInteger chooseImageSenderTag;
+
+// Category management properties
 @property (strong, nonatomic) NSMutableArray *categoryTitles;
 @property (strong, nonatomic) NSMutableDictionary *categoriesByID;
+
+// Edit Article properties
+@property (strong, nonatomic) UIImage *initialMainImage;
+@property (strong, nonatomic) UIImage *initialPreviewImage;
 
 @end
 
@@ -88,73 +97,130 @@
     NSString *content = self.contentTextView.text;
     NSString *categoryID = self.categoriesByID[self.categoryTextField.text];
     
-    if ([DataRepository sharedInstance].selectedArticle) {
-        [self editSelectedArticleWithTitle:title
-                                  subtitle:subtitle
-                              previewImage:previewImage
-                                 mainImage:mainImage
-                                   content:content];
+    Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
+    User *currentUser = [DataRepository sharedInstance].loggedUser;
+    
+    if (selectedArticle) {
+        if (self.initialMainImage == mainImage) {
+            mainImage = nil;
+        }
+        
+        if (self.initialPreviewImage == previewImage) {
+            previewImage = nil;
+        }
+        
+        [self editSelectedArticleWithObjectID:selectedArticle.identifier
+                                        title:title
+                                     subtitle:subtitle
+                                   categoryID:categoryID
+                                 previewImage:previewImage
+                                    mainImage:mainImage
+                                      content:content
+                                 sessionToken:currentUser.sessionToken];
     } else {
-        [WebServiceManager postNewArticleWithTitle:title
-                                          subtitle:subtitle
-                                        categoryID:categoryID
-                                          authorID:[DataRepository sharedInstance].loggedUser.uniqueId
-                                      previewImage:previewImage
-                                          mainImage:mainImage
-                                            content:content
-                                       sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                                         completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
-                                             if (!error) {
-                                                 if ([resultData valueForKey:@"error"]) {
-                                                     NSString *errorMessage = (NSString *)[resultData valueForKey:@"error"];
-                                                     ((UIButton *)sender).enabled = YES;
-                                                     
-                                                     if ([errorMessage isEqualToString:@"Article with such title already exists"]) {
-                                                         [UIAlertController showAlertWithTitle:@"Error"
-                                                                                    andMessage:@"An article with such title already exists."
-                                                                              inViewController:self
-                                                                                   withHandler:nil];
-                                                     } else {
-                                                         [UIAlertController showAlertWithTitle:@"Error"
-                                                                                    andMessage:@"An error occured while trying to post the article. Please try again later."
-                                                                              inViewController:self
-                                                                                   withHandler:nil];
-                                                     }
-                                                 } else {
-                                                     [self saveArticleInDatabaseWithObjectId:[resultData valueForKey:@"objectId"]];
-                                                     
-                                                     [UIAlertController showAlertWithTitle:@"Success"
-                                                                                andMessage:@"The article has been posted successfully."
-                                                                          inViewController:self
-                                                                               withHandler:^() {
-                                                                                   [self dismissViewControllerAnimated:YES completion:nil];
-                                                                               }];
-                                                 }
-                                             } else {
-                                                 [UIAlertController showAlertWithTitle:@"Error"
-                                                                            andMessage:@"An error occured while trying to post the article. Please try again later."
-                                                                      inViewController:self
-                                                                           withHandler:nil];
-                                                 ((UIButton *)sender).enabled = YES;
-                                             }
-        }];
+        [self postArticleWithTitle:title
+                          subtitle:subtitle
+                        categoryID:categoryID
+                      previewImage:previewImage
+                         mainImage:mainImage
+                           content:content
+                      sessionToken:currentUser.sessionToken];
     }
 }
 
 #pragma mark - Private methods
 
-- (void)editSelectedArticleWithTitle:(NSString *)title
-                            subtitle:(NSString *)subtitle
+- (void)postArticleWithTitle:(NSString *)title
+                    subtitle:(NSString *)subtitle
+                  categoryID:(NSString *)categoryID
+                previewImage:(UIImage *)previewImage
+                   mainImage:(UIImage *)mainImage
+                     content:(NSString *)content
+                sessionToken:(NSString *)sessionToken {
+    
+    [WebServiceManager postNewArticleWithTitle:title
+                                      subtitle:subtitle
+                                    categoryID:categoryID
+                                      authorID:[DataRepository sharedInstance].loggedUser.uniqueId
+                                  previewImage:previewImage
+                                     mainImage:mainImage
+                                       content:content
+                                  sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
+                                    completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
+                                        if ([resultData valueForKey:@"error"]) {
+                                            NSString *errorMessage = (NSString *)[resultData valueForKey:@"error"];
+                                            self.submitButton.enabled = YES;
+                                            
+                                            if ([errorMessage isEqualToString:@"Article with such title already exists"]) {
+                                                [UIAlertController showAlertWithTitle:@"Error"
+                                                                           andMessage:@"An article with such title already exists."
+                                                                     inViewController:self
+                                                                          withHandler:nil];
+                                            } else {
+                                                [UIAlertController showAlertWithTitle:@"Error"
+                                                                           andMessage:@"An error occured while trying to post the article. Please try again later."
+                                                                     inViewController:self
+                                                                          withHandler:nil];
+                                            }
+                                        } else {
+                                            [self saveArticleInDatabaseWithObjectId:[resultData valueForKey:@"objectId"]];
+                                            
+                                            [UIAlertController showAlertWithTitle:@"Success"
+                                                                       andMessage:@"The article has been posted successfully."
+                                                                 inViewController:self
+                                                                      withHandler:^() {
+                                                                          [self dismissViewControllerAnimated:YES completion:nil];
+                                                                      }];
+                                        }
+                                    }];
+}
+
+- (void)editSelectedArticleWithObjectID:(NSString *)objectID
+                                  title:(NSString *)title
+                               subtitle:(NSString *)subtitle
+                             categoryID:(NSString *)categoryID
                         previewImage:(UIImage *)previewImage
                            mainImage:(UIImage *)mainImage
-                             content:(NSString *)content {
-    // TODO:
+                             content:(NSString *)content
+                           sessionToken:(NSString *)sessionToken {
+    
+    [WebServiceManager editArticleWithObjectId:objectID
+                                         title:title
+                                      subtitle:subtitle
+                                    categoryID:categoryID
+                                       content:content
+                                  previewImage:previewImage
+                                     mainImage:mainImage
+                                  sessionToken:sessionToken
+                                    completion:^(NSDictionary *dataDictionary,
+                                                 NSHTTPURLResponse *response) {
+                                        
+                                        // The OK Status codes
+                                        if ([response statusCode] >= 200 && [response statusCode] < 300) {
+                                            [self saveArticleInDatabaseWithObjectId:objectID];
+                                            
+                                            [UIAlertController showAlertWithTitle:@"Success"
+                                                                       andMessage:@"The article has been edited successfully."
+                                                                 inViewController:self
+                                                                      withHandler:^() {
+                                                                          [self dismissViewControllerAnimated:YES completion:nil];
+                                                                      }];
+                                        } else {
+                                            [UIAlertController showAlertWithTitle:@"Error"
+                                                                       andMessage:@"An error occured while trying to post the article. Please try again later."
+                                                                 inViewController:self
+                                                                      withHandler:nil];
+                                            self.submitButton.enabled = YES;
+                                        }
+                                        
+        
+    }];
 }
 
 - (void)saveArticleInDatabaseWithObjectId:(NSString *)objectId {
     [WebServiceManager loadArticleWithObjectId:objectId
-                                    completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
-                                        NSDictionary *newsData = @{@"results": resultData};
+                                    completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
+                                        NSDictionary *newsData = @{@"results": @[resultData]};
                                         
                                         [DatabaseManager saveNewsInDatabase:newsData];
                                     }];
@@ -195,7 +261,7 @@
 - (void)performInitialConfiguration {
     Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
     
-    [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+    [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
         if (NO) {
             [UIAlertController showAlertWithTitle:@"Error"
                                        andMessage:@"An error occured while trying to get the available categories."
@@ -224,14 +290,16 @@
         self.subtitleTextField.text = selectedArticle.subtitle;
         self.contentTextView.text = selectedArticle.content;
         
-        [WebServiceManager downloadImageWithImageURL:selectedArticle.mainImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response, NSError *error) {
+        [WebServiceManager downloadImageWithImageURL:selectedArticle.mainImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response) {
             UIImage *image = [UIImage imageWithData:imageData];
             self.mainImageView.image = image;
+            self.initialMainImage = image;
         }];
         
-        [WebServiceManager downloadImageWithImageURL:selectedArticle.previewImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response, NSError *error) {
+        [WebServiceManager downloadImageWithImageURL:selectedArticle.previewImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response) {
             UIImage *image = [UIImage imageWithData:imageData];
             self.previewImageView.image = image;
+            self.initialPreviewImage = image;
         }];
     }
 }

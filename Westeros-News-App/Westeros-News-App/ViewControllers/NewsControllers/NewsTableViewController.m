@@ -24,6 +24,8 @@ typedef enum {
 @interface NewsTableViewController () <NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
+
 @property (nonatomic) NewsSection selectedSection;
 @property (nonatomic) NSInteger currentWebRequestSkipCount;
 @property (nonatomic) NSInteger currentNumberOfInsertions;
@@ -54,6 +56,8 @@ typedef enum {
         } else {
             [self.tableView reloadData];
         }
+    } else if (self.selectedSection == AllNewsSection) {
+        //[self.tableView reloadData];
     }
     
     self.navigationController.toolbarHidden = NO;
@@ -67,13 +71,6 @@ typedef enum {
     
     NSError *error;
     [[self fetchedResultsController] performFetch:&error];
-    
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 
@@ -147,7 +144,7 @@ typedef enum {
         NewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_ID forIndexPath:indexPath];
         Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
         
-        [cell setArticle:article];
+        cell.article = article;
         
         //set cell background color on selection
         [cell setSelectedBackgroundView:bgColorView];
@@ -200,7 +197,7 @@ typedef enum {
         UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive  title:@"Delete" handler:^(UITableViewRowAction *rowAction,NSIndexPath *indexPath) {
             
             Article *fetchedObject = [self.fetchedResultsController objectAtIndexPath:indexPath];
-            [WebServiceManager deleteArticleWithObjectId:fetchedObject.identifier completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+            [WebServiceManager deleteArticleWithObjectId:fetchedObject.identifier completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
                 if (![resultData valueForKey:@"error"]) {
                     NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
                     
@@ -266,6 +263,8 @@ typedef enum {
                              withRowAnimation:UITableViewRowAnimationFade];
             break;
         case NSFetchedResultsChangeUpdate:
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
             break;
         case NSFetchedResultsChangeMove:
             [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
@@ -310,6 +309,18 @@ typedef enum {
 #pragma mark - Private Methods
 
 - (void)performInitialConfiguration {
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    
+    NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor whiteColor] };
+    NSAttributedString *attributeString = [[NSAttributedString alloc] initWithString:@"Please Wait..." attributes:attributes];
+    
+    refreshControl.attributedTitle = attributeString;
+    [refreshControl addTarget:self action:@selector(checkForNewArticles:) forControlEvents:UIControlEventValueChanged];
+    
+    self.refreshControl = refreshControl;
+    
+    [self.refreshControl removeFromSuperview];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(receiveNoDuplicatedArticlesSavedNotification:)
                                                  name:@"NoDuplicatedArticlesNotification"
@@ -347,7 +358,7 @@ typedef enum {
     [WebServiceManager loadNewsWithLimit:limit
                                     skip:skip
                             sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                              completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+                              completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
             if (![[resultData valueForKey:@"results"] count]) {
                 self.hasFinishedPaging = YES;
                 [self.tableView beginUpdates];
@@ -368,7 +379,7 @@ typedef enum {
     [WebServiceManager loadNewsWithLimit:WEB_REQUEST_LIMIT
                                     skip:0
                             sessionToken:[DataRepository sharedInstance].loggedUser.sessionToken
-                              completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error) {
+                              completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response) {
                                   if ([dataDictionary count] > 0) {
                                       NSFetchRequest *request = [[NSFetchRequest alloc] init];
                                       [request setEntity:[NSEntityDescription entityForName:@"Article" inManagedObjectContext:[DatabaseManager sharedInstance].masterContext]];
@@ -388,6 +399,15 @@ typedef enum {
                                       [DatabaseManager saveNewsInDatabase:dataDictionary];
                                   }
                               }];
+}
+
+- (void)checkForNewArticles:(UIRefreshControl *)refreshControl {
+    if (self.selectedSection == AllNewsSection) {
+        self.currentWebRequestSkipCount = 0;
+        [self loadNewsWithLimit:WEB_REQUEST_LIMIT skip:self.currentWebRequestSkipCount];
+    } else {
+        [refreshControl endRefreshing];
+    }
 }
 
 #pragma mark - Event Handlers
@@ -411,10 +431,13 @@ typedef enum {
         self.selectedSection = FeaturedNewsSection;
         self.hasFinishedPaging = NO;
         
+        if (self.refreshControl.superview == self.tableView) {
+            [self.refreshControl removeFromSuperview];
+        }
+        
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
         [request setFetchLimit:5];
         [request setPredicate:nil];
-        
         
         NSError *error;
         [self.fetchedResultsController performFetch:&error];
@@ -430,6 +453,8 @@ typedef enum {
 - (IBAction)allNewsBarButtonItemActionTriggered:(id)sender {
     if (self.selectedSection != AllNewsSection) {
         self.selectedSection = AllNewsSection;
+        
+        [self.tableView addSubview:self.refreshControl];
         
         NSFetchRequest *request = [self.fetchedResultsController fetchRequest];
         [request setFetchLimit:2000];
@@ -454,8 +479,11 @@ typedef enum {
         self.selectedSection = FavouriteNewsSection;
         self.hasFinishedPaging = NO;
         
+        if (self.refreshControl.superview == self.tableView) {
+            [self.refreshControl removeFromSuperview];
+        }
         
-        [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
+        [WebServiceManager loadFavouriteNewsForUser:[DataRepository sharedInstance].loggedUser completion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
                 [DatabaseManager saveNewsInDatabase:resultData];
         }];
         
@@ -488,6 +516,10 @@ typedef enum {
 
 - (void)receiveDuplicatedArticlesSavedNotification:(id)receivedNotification {
     if (self.selectedSection == AllNewsSection) {
+        if ([self.refreshControl isRefreshing]) {
+            [self.refreshControl endRefreshing];
+        }
+        
         self.currentWebRequestSkipCount = [[self.fetchedResultsController fetchedObjects] count];
     }
 }

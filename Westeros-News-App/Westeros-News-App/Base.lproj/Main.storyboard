@@ -832,6 +832,7 @@
                         <outlet property="mainImageView" destination="Q3O-AR-6A2" id="Kc8-HR-Mca"/>
                         <outlet property="previewImageView" destination="JpQ-th-enx" id="DYX-mA-0KQ"/>
                         <outlet property="scrollView" destination="E4n-hV-dng" id="x3D-AV-4RW"/>
+                        <outlet property="submitButton" destination="qkf-tj-HXI" id="SRT-oU-GNW"/>
                         <outlet property="subtitleTextField" destination="pVA-3A-6GQ" id="kS1-DC-6p1"/>
                         <outlet property="titleTextField" destination="7hc-kr-9lW" id="hdU-HK-IId"/>
                     </connections>

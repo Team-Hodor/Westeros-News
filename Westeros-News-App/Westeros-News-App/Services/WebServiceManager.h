@@ -23,6 +23,16 @@
                    sessionToken:(NSString *)sessionToken
                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
 
++ (void)editArticleWithObjectId:(NSString *)objectId
+                          title:(NSString *)title
+                       subtitle:(NSString *)subtitle
+                     categoryID:(NSString *)categoryID
+                        content:(NSString *)content
+                   previewImage:(UIImage *)previewImage
+                      mainImage:(UIImage *)mainImage
+                   sessionToken:(NSString *)sessionToken
+                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
+
 + (void)deleteArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;
 
 + (void)loadAvailableCategoriesWithCompletion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock;

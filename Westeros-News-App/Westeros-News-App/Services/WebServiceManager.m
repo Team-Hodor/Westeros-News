@@ -28,55 +28,118 @@
                         content:(NSString *)content
                    sessionToken:(NSString *)sessionToken
                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
-    NSString *serviceURL = [BASE_URL stringByAppendingString:[NSString stringWithFormat:@"/classes/News?where={\"title\":\"%@\"}", title]];
+    NSString *serviceURL = [BASE_URL stringByAppendingString:
+                            [NSString stringWithFormat:@"/classes/News?where={\"title\":\"%@\"}", title]];
     
     
     NSURL *checkURL = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     [WebServiceManager performRequestWithUrl:checkURL contentType:@"application/json" andMethod:@"GET" andHttpBody:nil sessionToken:nil andHandler:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
         if ([[resultData valueForKey:@"results"] count] == 0) {
-            [WebServiceManager uploadArticlePreviewImage:previewImage
-                                            andMainImage:mainImage
-                                              completion:^(NSString *previewImageName, NSString *mainImageName, NSError *error) {
-                                                  if (!error) {
-                                                      NSDictionary *articleData = @{@"title":title,
-                                                                                    @"subtitle":subtitle,
-                                                                                    @"previewImage":@{
-                                                                                            @"name":previewImageName,
-                                                                                            @"__type":@"File"
-                                                                                            },
-                                                                                    @"mainImage":@{
-                                                                                            @"name":mainImageName,
-                                                                                            @"__type":@"File"
-                                                                                            },
-                                                                                    @"category":@{
-                                                                                            @"__type":@"Pointer",
-                                                                                            @"className":@"Category",
-                                                                                            @"objectId":categoryID
-                                                                                            },
-                                                                                    @"author":@{
-                                                                                            @"__type":@"Pointer",
-                                                                                            @"className":@"_User",
-                                                                                            @"objectId":authorID
-                                                                                            },
-                                                                                    @"content":content};
-                                                      
-                                                      NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/classes/News"]];
-                                                      
-                                                      [self performRequestWithUrl:url
-                                                                      contentType:@"application/json"
-                                                                        andMethod:@"POST"
-                                                                      andHttpBody:articleData
-                                                                     sessionToken:sessionToken
-                                                                       andHandler:handlerBlock];
-                                                  } else {
-                                                      handlerBlock(nil, nil, error);
-                                                  }
-                                              }];
+            __block NSString *previewImageName;
+            __block NSString *mainImageName;
+            
+            [WebServiceManager uploadImage:previewImage
+                                  withName:@"previewImage"
+                                completion:^(NSString *imageName) {
+                                    previewImageName = imageName;
+                                    if (mainImageName) {
+                                        [WebServiceManager performNewArticleRequestWithArticleTitle:title
+                                                                                           subtitle:subtitle
+                                                                                         categoryID:categoryID
+                                                                                           authorID:authorID
+                                                                                   previewImageName:previewImageName
+                                                                                      mainImageName:mainImageName
+                                                                                            content:content
+                                                                                       sessionToken:sessionToken
+                                                                                         completion:handlerBlock];
+                                    }
+            }];
+            
+            [WebServiceManager uploadImage:mainImage
+                                  withName:@"mainImage"
+                                completion:^(NSString *imageName) {
+                                    mainImageName = imageName;
+                                    if (previewImageName) {
+                                        [WebServiceManager performNewArticleRequestWithArticleTitle:title
+                                                                                           subtitle:subtitle
+                                                                                         categoryID:categoryID
+                                                                                           authorID:authorID
+                                                                                   previewImageName:previewImageName
+                                                                                      mainImageName:mainImageName
+                                                                                            content:content
+                                                                                       sessionToken:sessionToken
+                                                                                         completion:handlerBlock];
+                                    }
+                                }];
         } else {
             handlerBlock(@{@"error":@"Article with such title already exists"}, nil, nil);
         }
     }];
+}
+
++ (void)editArticleWithObjectId:(NSString *)objectId
+                          title:(NSString *)title
+                       subtitle:(NSString *)subtitle
+                     categoryID:(NSString *)categoryID
+                        content:(NSString *)content
+                   previewImage:(UIImage *)previewImage
+                      mainImage:(UIImage *)mainImage
+                      sessionToken:(NSString *)sessionToken
+                     completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
+    
+    __block NSString *previewImageName;
+    __block NSString *mainImageName;
+    
+    __block NSMutableDictionary *articleData = [[NSMutableDictionary alloc] init];
+  
+    articleData[@"title"] = title;
+    articleData[@"subtitle"] = subtitle;
+    articleData[@"category"] = @{@"__type":@"Pointer", @"className":@"Category", @"objectId":categoryID};
+    
+    articleData[@"content"] = content;
+    
+    if (previewImage) {
+        [WebServiceManager uploadImage:previewImage
+                              withName:@"previewImage"
+                            completion:^(NSString *imageName) {
+                                previewImageName = imageName;
+                                articleData[@"previewImage"] = @{@"name":previewImageName, @"__type":@"File"};
+                                if (mainImageName || [mainImageName isEqualToString:@"missing"]) {
+                                    [WebServiceManager performEditArticleRequestWithObjectID:objectId
+                                                                                sessionToken:sessionToken
+                                                                                     options:articleData
+                                                                                  completion:handlerBlock];
+                                }
+                            }];
+    } else {
+        previewImageName = @"missing";
+    }
+    
+    if (mainImage) {
+        [WebServiceManager uploadImage:mainImage
+                              withName:@"mainImage"
+                            completion:^(NSString *imageName) {
+                                mainImageName = imageName;
+                                articleData[@"mainImage"] = @{@"name":mainImageName, @"__type":@"File"};
+                                if (previewImageName || [previewImageName isEqualToString:@"missing"]) {
+                                    [WebServiceManager performEditArticleRequestWithObjectID:objectId
+                                                                                sessionToken:sessionToken
+                                                                                     options:articleData
+                                                                                  completion:handlerBlock];
+                                }
+                            }];
+    } else {
+        mainImageName = @"missing";
+    }
+    
+    if ([mainImageName isEqualToString:@"missing"] &&
+            [previewImageName isEqualToString:@"missing"]) {
+        [WebServiceManager performEditArticleRequestWithObjectID:objectId
+                                                    sessionToken:sessionToken
+                                                         options:articleData
+                                                      completion:handlerBlock];
+    }
 }
 
 + (void)deleteArticleWithObjectId:(NSString *)objectId completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
@@ -309,43 +372,84 @@
 
 #pragma mark - Private methods
 
-+ (void)uploadArticlePreviewImage:(UIImage *)previewImage
-                     andMainImage:(UIImage *)mainImage
-                       completion:(void (^)(NSString *previewImageName, NSString *mainImageName, NSError *error))handlerBlock {
++ (void)uploadImage:(UIImage *)image
+           withName:(NSString *)name
+         completion:(void (^)(NSString *imageName))handlerBlock {
     
-    NSData *binaryPreviewImageData = UIImageJPEGRepresentation(previewImage, 1.0);
-    NSData *binaryMainImageData = UIImageJPEGRepresentation(mainImage, 1.0);
-    
-    NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/files/previewImage.jpg"]];
-    
-    __block NSString *previewImageName;
-    __block NSString *mainImageName;
+    NSData *binaryImageData = UIImageJPEGRepresentation(image, 1.0);
+    NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:
+                                       [NSString stringWithFormat:@"/files/%@.jpg", name]]];
     
     [WebServiceManager performRequestWithUrl:url
                                  contentType:@"image/jpeg"
                                    andMethod:@"POST"
-                                 andHttpBody:binaryPreviewImageData
+                                 andHttpBody:binaryImageData
                                 sessionToken:nil
                                   andHandler:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
-                                      previewImageName = (NSString *)[resultData valueForKey:@"name"];
-                                      if (mainImageName) {
-                                          handlerBlock(previewImageName, mainImageName, error);
+                                      NSString *imageName = (NSString *)[resultData valueForKey:@"name"];
+                                      if (!error) {
+                                          handlerBlock(imageName);
+                                      } else {
+                                          NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
                                       }
                                   }];
+}
+
++ (void)performEditArticleRequestWithObjectID:(NSString *)objectID
+                                 sessionToken:(NSString *)sessionToken
+                                      options:(NSMutableDictionary *)options
+                                   completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
     
-    url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/files/mainImage.jpg"]];
+    NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:[NSString stringWithFormat:@"/classes/News/%@", objectID]]];
     
-    [WebServiceManager performRequestWithUrl:url
-                                 contentType:@"image/jpeg"
-                                   andMethod:@"POST"
-                                 andHttpBody:binaryMainImageData
-                                sessionToken:nil
-                                  andHandler:^(NSDictionary *resultData, NSHTTPURLResponse *response, NSError *error) {
-                                      mainImageName = (NSString *)[resultData valueForKey:@"name"];
-                                      if (previewImageName) {
-                                          handlerBlock(previewImageName, mainImageName, error);
-                                      }
-                                  }];
+    [self performRequestWithUrl:url
+                    contentType:@"application/json"
+                      andMethod:@"PUT"
+                    andHttpBody:options
+                   sessionToken:sessionToken
+                     andHandler:handlerBlock];
+}
+
++ (void)performNewArticleRequestWithArticleTitle:(NSString *)title
+                                        subtitle:(NSString *)subtitle
+                                      categoryID:(NSString *)categoryID
+                                        authorID:(NSString *)authorID
+                                    previewImageName:(NSString *)previewImageName
+                                       mainImageName:(NSString *)mainImageName
+                                         content:(NSString *)content
+                                    sessionToken:(NSString *)sessionToken
+                                      completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response, NSError *error))handlerBlock {
+    
+    NSDictionary *articleData = @{@"title":title,
+                                  @"subtitle":subtitle,
+                                  @"previewImage":@{
+                                          @"name":previewImageName,
+                                          @"__type":@"File"
+                                          },
+                                  @"mainImage":@{
+                                          @"name":mainImageName,
+                                          @"__type":@"File"
+                                          },
+                                  @"category":@{
+                                          @"__type":@"Pointer",
+                                          @"className":@"Category",
+                                          @"objectId":categoryID
+                                          },
+                                  @"author":@{
+                                          @"__type":@"Pointer",
+                                          @"className":@"_User",
+                                          @"objectId":authorID
+                                          },
+                                  @"content":content};
+    
+    NSURL *url = [NSURL URLWithString:[BASE_URL stringByAppendingString:@"/classes/News"]];
+    
+    [self performRequestWithUrl:url
+                    contentType:@"application/json"
+                      andMethod:@"POST"
+                    andHttpBody:articleData
+                   sessionToken:sessionToken
+                     andHandler:handlerBlock];
 }
 
 + (void)performRequestWithUrl:(NSURL *)url

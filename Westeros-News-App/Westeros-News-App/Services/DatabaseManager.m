@@ -60,6 +60,7 @@ static DatabaseManager *sharedInst = nil;
             NSString *title = [news valueForKey:@"title"];
             NSString *subtitle = [news valueForKey:@"subtitle"];
             
+            
             NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
             
             [dateFormat setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];

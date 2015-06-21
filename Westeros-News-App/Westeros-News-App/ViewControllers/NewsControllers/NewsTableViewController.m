@@ -54,6 +54,8 @@ typedef enum {
         } else {
             [self.tableView reloadData];
         }
+    } else if (self.selectedSection == AllNewsSection) {
+        //[self.tableView reloadData];
     }
     
     self.navigationController.toolbarHidden = NO;
@@ -266,6 +268,8 @@ typedef enum {
                              withRowAnimation:UITableViewRowAnimationFade];
             break;
         case NSFetchedResultsChangeUpdate:
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath]
+                                  withRowAnimation:UITableViewRowAnimationFade];
             break;
         case NSFetchedResultsChangeMove:
             [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]

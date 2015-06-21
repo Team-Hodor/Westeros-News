@@ -191,7 +191,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void) EditUserName:(NSString *)name sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
++ (void) editUserName:(NSString *)name sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
     User *user = [[DataRepository sharedInstance] loggedUser];
     NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
     NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
@@ -209,7 +209,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void) ChangeUserPassword:(NSString *)password sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
++ (void) changeUserPassword:(NSString *)password sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *, NSError *))handlerBlock{
     User *user = [[DataRepository sharedInstance] loggedUser];
     NSString *appString = [NSString stringWithFormat:@"/users/%@",user.uniqueId];
     NSString *serviceURL = [BASE_URL stringByAppendingString:appString];

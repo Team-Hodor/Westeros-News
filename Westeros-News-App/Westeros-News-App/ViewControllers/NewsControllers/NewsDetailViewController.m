@@ -59,7 +59,7 @@
 
 - (void)setArticleImage {
 
-    [WebServiceManager downloadImageWithImageURL:self.article.imageURL completion:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
+    [WebServiceManager downloadImageWithImageURL:self.article.mainImageURL completion:^(NSData *data, NSHTTPURLResponse *response, NSError *error) {
         
         UIImage *image = [UIImage imageWithData:data];
         self.articleImageView.image = image;

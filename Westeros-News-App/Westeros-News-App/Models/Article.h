@@ -17,10 +17,10 @@
 @property (nonatomic, retain) NSString * content;
 @property (nonatomic, retain) NSDate * createdAt;
 @property (nonatomic, retain) NSString * identifier;
-@property (nonatomic, retain) NSString * imageURL;
+@property (nonatomic, retain) NSString * mainImageURL;
 @property (nonatomic, retain) NSString * subtitle;
 @property (nonatomic, retain) NSString * title;
 @property (nonatomic, retain) NSDate * updatedAt;
-@property (nonatomic, retain) NSString * thumbnailURL;
+@property (nonatomic, retain) NSString * previewImageURL;
 
 @end

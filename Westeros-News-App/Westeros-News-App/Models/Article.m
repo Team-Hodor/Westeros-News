@@ -16,10 +16,10 @@
 @dynamic content;
 @dynamic createdAt;
 @dynamic identifier;
-@dynamic imageURL;
+@dynamic mainImageURL;
 @dynamic subtitle;
 @dynamic title;
 @dynamic updatedAt;
-@dynamic thumbnailURL;
+@dynamic previewImageURL;
 
 @end

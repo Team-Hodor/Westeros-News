@@ -224,7 +224,15 @@
         self.subtitleTextField.text = selectedArticle.subtitle;
         self.contentTextView.text = selectedArticle.content;
         
+        [WebServiceManager downloadImageWithImageURL:selectedArticle.mainImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response, NSError *error) {
+            UIImage *image = [UIImage imageWithData:imageData];
+            self.mainImageView.image = image;
+        }];
         
+        [WebServiceManager downloadImageWithImageURL:selectedArticle.previewImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response, NSError *error) {
+            UIImage *image = [UIImage imageWithData:imageData];
+            self.previewImageView.image = image;
+        }];
     }
 }
 

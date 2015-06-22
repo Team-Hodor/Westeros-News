@@ -274,21 +274,51 @@
                          completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock{
     
     NSString *serviceURL = [BASE_URL stringByAppendingString:
-                            [NSString stringWithFormat:@"/classes/Comments"]];
-    
-    NSDictionary *data = @{ @"articleID": articleId
-                            };
+                            [NSString stringWithFormat:@"/classes/Comments?where={\"articleID\":{\"__type\":\"Pointer\",\"className\":\"News\",\"objectId\":\"%@\"}}",articleId]];
     
     NSURL *url = [NSURL URLWithString:[serviceURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     [WebServiceManager performRequestWithUrl:url
                                  contentType:@"application/json"
                                    andMethod:@"GET"
-                                 andHttpBody:data
+                                 andHttpBody:nil
                                 sessionToken:sessionToken
                                   andHandler:handlerBlock];
     
 }
++ (void)addComment:(NSString *)comment forArticleWithId:(NSString *)articleId
+      sessionToken:(NSString *)sessionToken
+        completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock{
+    User *user = [[DataRepository sharedInstance] loggedUser];
+    
+    NSString *appString = [NSString stringWithFormat:@"/classes/Comments"];
+    NSString *serviceURL = [BASE_URL stringByAppendingString:appString];
+    NSURL *url = [NSURL URLWithString:serviceURL];
+    
+    NSDictionary *data = @{ @"articleID":
+                                @{
+                                    @"__type": @"Pointer",
+                                    @"className": @"News",
+                                    @"objectId": articleId
+                                    },
+                            @"authorID":
+                                @{
+                                    @"__type": @"Pointer",
+                                    @"className": @"_User",
+                                    @"objectId": user.uniqueId
+                                    },
+                            @"content":comment
+                            };
+    
+    
+    [WebServiceManager performRequestWithUrl:url
+                                 contentType:@"application/json"
+                                   andMethod:@"POST"
+                                 andHttpBody:data
+                                sessionToken:sessionToken
+                                  andHandler:handlerBlock];
+}
+
 
 
 + (void) editUserName:(NSString *)name sessionToken:(NSString *)sessionToken completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock{

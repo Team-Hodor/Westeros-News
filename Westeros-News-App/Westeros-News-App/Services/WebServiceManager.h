@@ -72,6 +72,10 @@
                        sessionToken:(NSString *)sessionToken
                          completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
++ (void)addComment:(NSString *)comment forArticleWithId:(NSString *)articleId
+                       sessionToken:(NSString *)sessionToken
+                         completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
+
 + (void)changeUserPassword:(NSString *)password
         sessionToken:(NSString *)sessionToken
           completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;

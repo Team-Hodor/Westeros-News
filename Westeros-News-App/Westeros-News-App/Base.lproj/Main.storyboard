@@ -828,7 +828,7 @@
                     </tableView>
                     <toolbarItems>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="CU6-CE-Pco"/>
-                        <barButtonItem title="Featured" id="gl2-yz-q9z">
+                        <barButtonItem title="Latest" id="gl2-yz-q9z">
                             <connections>
                                 <action selector="featuredBarButtonItemActionTriggered:" destination="icG-EK-FGE" id="wxm-HI-2GA"/>
                             </connections>

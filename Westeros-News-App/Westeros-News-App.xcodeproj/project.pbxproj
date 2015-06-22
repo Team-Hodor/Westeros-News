@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2858A2011B2B2FEB0025FF81 /* Article.m in Sources */ = {isa = PBXBuildFile; fileRef = 2858A2001B2B2FEB0025FF81 /* Article.m */; };
 		2865D87F1B235B4500D84EE5 /* DataRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 2865D87E1B235B4500D84EE5 /* DataRepository.m */; };
+		286A13FE1B3879E0000551E2 /* KeyboardBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 286A13FD1B3879E0000551E2 /* KeyboardBar.m */; };
 		287A85AE1B36E7DE009EB581 /* NewArticleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 287A85A91B36E7DE009EB581 /* NewArticleViewController.m */; };
 		287A85AF1B36E7DE009EB581 /* NewsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 287A85AB1B36E7DE009EB581 /* NewsDetailViewController.m */; };
 		287A85B01B36E7DE009EB581 /* NewsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 287A85AD1B36E7DE009EB581 /* NewsTableViewController.m */; };
@@ -58,6 +59,8 @@
 		2858A2001B2B2FEB0025FF81 /* Article.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Article.m; sourceTree = "<group>"; };
 		2865D87D1B235B4500D84EE5 /* DataRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRepository.h; sourceTree = "<group>"; };
 		2865D87E1B235B4500D84EE5 /* DataRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataRepository.m; sourceTree = "<group>"; };
+		286A13FC1B3879E0000551E2 /* KeyboardBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardBar.h; sourceTree = "<group>"; };
+		286A13FD1B3879E0000551E2 /* KeyboardBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardBar.m; sourceTree = "<group>"; };
 		287A85A81B36E7DE009EB581 /* NewArticleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewArticleViewController.h; sourceTree = "<group>"; };
 		287A85A91B36E7DE009EB581 /* NewArticleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewArticleViewController.m; sourceTree = "<group>"; };
 		287A85AA1B36E7DE009EB581 /* NewsDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsDetailViewController.h; sourceTree = "<group>"; };
@@ -302,6 +305,8 @@
 		3110BCE31B2AEDF000307CAF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				286A13FC1B3879E0000551E2 /* KeyboardBar.h */,
+				286A13FD1B3879E0000551E2 /* KeyboardBar.m */,
 				3110BCE41B2AF11600307CAF /* NewsTableViewCell.h */,
 				3110BCE51B2AF11600307CAF /* NewsTableViewCell.m */,
 				319D6BF21B38379B00B776BA /* CommentTableViewCell.h */,
@@ -439,6 +444,7 @@
 				3110BCE61B2AF11600307CAF /* NewsTableViewCell.m in Sources */,
 				28C2DFBE1B1C8FCB0001E968 /* RegisterViewController.m in Sources */,
 				28C2DFB71B1C8F560001E968 /* UIAlertController+ShowAlert.m in Sources */,
+				286A13FE1B3879E0000551E2 /* KeyboardBar.m in Sources */,
 				28C2DF871B1C8D740001E968 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -421,6 +421,11 @@
     
     NSURLSession *session = [NSURLSession sessionWithConfiguration:sessionConfiguration];
     
+    if (!imageURL) {
+        handlerBlock(nil, nil);
+        return;
+    }
+    
     NSURLSessionDataTask *imageTask = [session dataTaskWithURL:[NSURL URLWithString:imageURL]
                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                      NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;

@@ -14,6 +14,7 @@
 @property (nonatomic, strong) NSDate *createdAt;
 @property (nonatomic, strong) NSString *content;
 @property (nonatomic, strong) NSString *uniqueId;
+@property (nonatomic, strong) NSString *authorName;
 
 - (instancetype)initWithContent:(NSString *)content
                        authorId:(NSString *)authorId

@@ -104,7 +104,26 @@
     [formatter setDateFormat:@"dd.MM.yyyy HH:mm"];
     cell.dateLabel.text = [NSString stringWithFormat:@"Commented on %@ ",[formatter stringFromDate:comment.createdAt]];
     
-    cell.authorLabel.text =[NSString stringWithFormat:@"by %@", comment.authorId];
+    if(comment.authorName == nil){
+        cell.authorLabel.text =[NSString stringWithFormat:@"by %@", @""];
+        
+        [WebServiceManager getUserWithUserId:comment.authorId completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response) {
+            if ( [dataDictionary objectForKey:@"error"] ) {
+                
+                cell.authorLabel.text =[NSString stringWithFormat:@"by %@", @"Unknown"];
+            }
+            else{
+                comment.authorName = [dataDictionary objectForKey:@"name"];
+                cell.authorLabel.text =[NSString stringWithFormat:@"by %@", comment.authorName];
+            }
+            
+        }];
+    }else{
+        cell.authorLabel.text =[NSString stringWithFormat:@"by %@", comment.authorName];
+    }
+    
+    
+    
 }
 
 - (void)setContentForCell:(CommentTableViewCell *)cell comment:(Comment *)comment {

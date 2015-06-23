@@ -51,6 +51,7 @@
     self.subtitleLabel.text = self.article.subtitle;
     self.contentView.text = self.article.content;
     self.contentView.scrollEnabled = NO;
+    self.authorLabel.text = @"";
     
     [WebServiceManager getUserWithUserId:self.article.authorID completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response) {
         if ( [dataDictionary objectForKey:@"error"] ) {

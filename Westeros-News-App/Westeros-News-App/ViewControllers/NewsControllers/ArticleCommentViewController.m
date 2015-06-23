@@ -51,6 +51,9 @@
 
     [self.tableView becomeFirstResponder];
     
+    self.tableView.estimatedRowHeight = 300;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
     // Pass the current controller as the keyboardBarDelegate
     ((CustomTableView *)self.tableView).keyboardBarDelegate = self;
     
@@ -128,6 +131,7 @@
 
 - (void)setContentForCell:(CommentTableViewCell *)cell comment:(Comment *)comment {
     cell.contentTextView.text = comment.content;
+     cell.contentTextView.frame = CGRectMake(cell.contentTextView.frame.origin.x, cell.contentTextView.frame.origin.y, cell.contentTextView.contentSize.width, cell.contentTextView.contentSize.height);
     cell.contentTextView.scrollEnabled = NO;
     cell.contentTextView.layer.cornerRadius = 10.0;
     cell.contentTextView.clipsToBounds = YES;

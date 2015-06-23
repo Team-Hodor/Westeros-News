@@ -10,6 +10,7 @@
 #import "Comment.h"
 
 @interface CommentTableViewCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UILabel *dateAndAuthorLabel;
-@property (weak, nonatomic) IBOutlet UILabel *contentTextView;
+@property (weak, nonatomic) IBOutlet UILabel *dateLabel;
+@property (weak, nonatomic) IBOutlet UILabel *authorLabel;
+@property (weak, nonatomic) IBOutlet UITextView *contentTextView;
 @end

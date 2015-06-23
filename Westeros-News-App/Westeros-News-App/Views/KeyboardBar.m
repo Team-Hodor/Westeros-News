@@ -35,7 +35,7 @@
         [self addSubview:self.textView];
         
         self.actionButton = [[UIButton alloc]initWithFrame:CGRectMake(frame.size.width - 60, 5, 55, frame.size.height - 10)];
-        self.actionButton.backgroundColor = [UIColor colorWithWhite:0.5f alpha:1.0f];
+        self.actionButton.backgroundColor = [UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f];
         self.actionButton.layer.cornerRadius = 2.0;
         self.actionButton.layer.borderWidth = 1.0;
         self.actionButton.layer.borderColor = [[UIColor colorWithWhite:0.45 alpha:1.0f] CGColor];

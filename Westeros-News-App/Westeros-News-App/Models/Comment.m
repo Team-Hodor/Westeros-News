@@ -10,4 +10,21 @@
 
 @implementation Comment
 
+
+- (instancetype)initWithContent:(NSString *)content
+                       authorId:(NSString *)authorId
+                        createdAt:(NSDate *)createdAt
+                     andUniqueId:(NSString *)uniqueId {
+    self = [super init];
+    
+    if (self) {
+        self.content = content;
+        self.authorId = authorId;
+        self.createdAt = createdAt;
+        self.uniqueId = uniqueId;
+    }
+    
+    return self;
+}
+
 @end

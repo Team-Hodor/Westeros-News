@@ -14,4 +14,17 @@
 
 @implementation CommentTableViewCell
 
+-(void)prepareForReuse{
+    self.dateLabel.text = @"";
+    self.authorLabel.text = @"";
+    self.contentTextView.text = @"";
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    [self.contentView layoutIfNeeded];
+    self.dateLabel.preferredMaxLayoutWidth = CGRectGetWidth(self.dateLabel.frame);
+}
+
 @end

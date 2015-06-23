@@ -165,6 +165,12 @@
     }
 
 }
+- (IBAction)showCommentTapped:(id)sender {
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UINavigationController *commentsViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"commentsViewController"];
+    
+    [self presentViewController:commentsViewController animated:YES completion:nil];
+}
 
 - (void) setFavouriteButtonState:(UIBarButtonItem *)btn{
     

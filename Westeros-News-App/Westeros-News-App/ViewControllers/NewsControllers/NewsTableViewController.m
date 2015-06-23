@@ -21,7 +21,7 @@ typedef enum {
     FavouriteNewsSection
 } NewsSection;
 
-@interface NewsTableViewController () <NSFetchedResultsControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface NewsTableViewController () <NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
@@ -30,7 +30,6 @@ typedef enum {
 @property (nonatomic) NSInteger currentWebRequestSkipCount;
 @property (nonatomic) NSInteger currentNumberOfInsertions;
 @property (nonatomic) BOOL hasFinishedPaging;
-@property (nonatomic, readwrite) UIView *inputAccessoryView;
 
 #define CELL_ID @"ArticleCell"
 #define WEB_REQUEST_LIMIT 5
@@ -337,8 +336,6 @@ typedef enum {
 - (void)performInitialConfiguration {
     // self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
-    self.keyboardBarDelegate = self;
-    
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
     
     NSDictionary *attributes = @{ NSForegroundColorAttributeName : [UIColor whiteColor] };
@@ -554,26 +551,5 @@ typedef enum {
     }
 }
 
-#pragma mark - Keyboard
-
-- (BOOL)canBecomeFirstResponder {
-    return YES;
-}
-
-- (UIView *)inputAccessoryView {
-    if (!_inputAccessoryView) {
-        _inputAccessoryView = [[KeyboardBar alloc] initWithDelegate:self.keyboardBarDelegate];
-    }
-    
-    UIPickerView *typePicker = [[UIPickerView alloc] init];
-    typePicker.dataSource = self;
-    typePicker.delegate = self;
-    return _inputAccessoryView;
-}
-
-- (void)keyboardBar:(KeyboardBar *)keyboardBar sendText:(NSString *)text {
-    [keyboardBar.textView resignFirstResponder];
-    [keyboardBar.textView setText:@""];
-}
 
 @end

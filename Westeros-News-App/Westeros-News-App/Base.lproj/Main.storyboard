@@ -301,6 +301,8 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="innerView" destination="eN8-K8-Hje" id="Gmv-xj-0ge"/>
+                        <outlet property="loginButton" destination="Z8e-Gm-fbZ" id="tyw-Pg-gkb"/>
                         <outlet property="messageLabel" destination="Hzj-Hl-prO" id="Wjt-gQ-w9e"/>
                         <outlet property="passwordTextField" destination="IBs-v0-uCn" id="bf9-Lf-7i5"/>
                         <outlet property="scrollView" destination="fVe-SE-Hee" id="K75-GN-jKk"/>
@@ -374,7 +376,7 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                             </textView>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yyr-fh-5R2">
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-placeholder.png" translatesAutoresizingMaskIntoConstraints="NO" id="yyr-fh-5R2">
                                                 <rect key="frame" x="8" y="136" width="584" height="235"/>
                                                 <color key="backgroundColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
@@ -407,11 +409,13 @@
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X6a-Jd-PRp">
                                                 <rect key="frame" x="260" y="562" width="81" height="30"/>
+                                                <color key="backgroundColor" red="0.23137254901960785" green="0.43137254901960786" blue="0.6470588235294118" alpha="1" colorSpace="calibratedRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="81" id="33o-Rz-sY5"/>
                                                     <constraint firstAttribute="height" constant="30" id="iWn-nX-boY"/>
                                                 </constraints>
                                                 <state key="normal" title="Comments">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
@@ -478,6 +482,7 @@
                         <outlet property="authorLabel" destination="ukO-Md-o5i" id="ozq-mN-vmE"/>
                         <outlet property="contentView" destination="1iw-2l-GMV" id="AJD-uJ-r7o"/>
                         <outlet property="dateLabel" destination="4Di-7x-Jk1" id="1Vn-at-dw5"/>
+                        <outlet property="showCommentsButton" destination="X6a-Jd-PRp" id="gCQ-zA-TjL"/>
                         <outlet property="subtitleLabel" destination="Iqx-IJ-NzY" id="C4S-Wz-q2e"/>
                         <outlet property="titleLabel" destination="Lfc-f5-0IA" id="YuB-dQ-jhk"/>
                     </connections>
@@ -696,6 +701,7 @@
                     </view>
                     <connections>
                         <outlet property="nameTxtField" destination="fy2-Jr-6ca" id="frs-M8-YuX"/>
+                        <outlet property="saveButton" destination="TN4-wu-LOb" id="EXr-bL-G3M"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hEs-S7-AqR" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -776,6 +782,7 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="changeButton" destination="G1O-PG-wb6" id="7V5-kT-Q2M"/>
                         <outlet property="oldPasswordTxtField" destination="haV-00-pWy" id="UHb-As-PuI"/>
                         <outlet property="passwordTxtField" destination="vH9-BO-Og4" id="Sqj-RI-kBY"/>
                     </connections>
@@ -1123,6 +1130,8 @@
                     <navigationItem key="navigationItem" id="ggZ-in-95o"/>
                     <connections>
                         <outlet property="categoryTextField" destination="xP8-im-4P7" id="ZRt-aH-sND"/>
+                        <outlet property="chooseMainImageButton" destination="bbX-vi-bDE" id="1bl-18-Hbx"/>
+                        <outlet property="choosePreviewImageButton" destination="h0s-cB-bNL" id="FSi-JO-FMr"/>
                         <outlet property="contentTextView" destination="aej-q7-AfT" id="5h7-a2-i1a"/>
                         <outlet property="mainImageView" destination="Q3O-AR-6A2" id="Kc8-HR-Mca"/>
                         <outlet property="previewImageView" destination="JpQ-th-enx" id="DYX-mA-0KQ"/>
@@ -1396,6 +1405,14 @@
                                                     <action selector="submitButtonTouchUpInside:" destination="oWX-EZ-9ck" eventType="touchUpInside" id="ICq-dS-Dmc"/>
                                                 </connections>
                                             </button>
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2na-aM-Ad0">
+                                                <rect key="frame" x="53" y="163" width="422" height="30"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                                <connections>
+                                                    <outlet property="delegate" destination="oWX-EZ-9ck" id="NQd-O0-hHm"/>
+                                                </connections>
+                                            </textField>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Error/Succes message" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r96-ei-SBS">
                                                 <rect key="frame" x="53" y="64" width="422" height="21"/>
                                                 <constraints>
@@ -1405,14 +1422,6 @@
                                                 <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2na-aM-Ad0">
-                                                <rect key="frame" x="53" y="163" width="422" height="30"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
-                                                <connections>
-                                                    <outlet property="delegate" destination="oWX-EZ-9ck" id="NQd-O0-hHm"/>
-                                                </connections>
-                                            </textField>
                                         </subviews>
                                         <color key="backgroundColor" red="0.23137254900000001" green="0.43137254899999999" blue="0.64705882349999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -1500,9 +1509,11 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="innerView" destination="UmE-31-Yqx" id="QUp-mu-fGj"/>
                         <outlet property="messageLabel" destination="r96-ei-SBS" id="Fqo-2T-Bpe"/>
                         <outlet property="nameTextField" destination="2na-aM-Ad0" id="4ic-EO-jYB"/>
                         <outlet property="passwordTextField" destination="oC3-Ql-Nz0" id="PZN-Xb-6zd"/>
+                        <outlet property="registerButton" destination="5jV-CR-vXh" id="trb-Zu-aBj"/>
                         <outlet property="scrollView" destination="9Of-Cv-rw6" id="Dbe-Ei-eDM"/>
                         <outlet property="usernameTextField" destination="b0Y-cB-Pwq" id="m2a-TU-wCg"/>
                     </connections>

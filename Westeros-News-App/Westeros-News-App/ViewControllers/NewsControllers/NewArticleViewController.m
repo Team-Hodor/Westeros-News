@@ -23,6 +23,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *previewImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *mainImageView;
 @property (weak, nonatomic) IBOutlet UIButton *submitButton;
+@property (weak, nonatomic) IBOutlet UIButton *choosePreviewImageButton;
+@property (weak, nonatomic) IBOutlet UIButton *chooseMainImageButton;
 
 // View management properties
 @property (strong, nonatomic) UIView *activeField;
@@ -273,10 +275,7 @@
         self.title = @"New Article";
     }
     
-    
-    //rounded corners
-    self.contentTextView.layer.cornerRadius = 10.0;
-    self.contentTextView.clipsToBounds = YES;
+    [self changeBorderRadius];
     
     //register for gesture and hide keyboard when view touched
     UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyboard)];
@@ -332,6 +331,28 @@
     typePicker.dataSource = self;
     typePicker.delegate = self;
     self.categoryTextField.inputView = typePicker;
+}
+
+- (void)changeBorderRadius{
+    //rounded corners
+    self.contentTextView.layer.cornerRadius = 4.0;
+    self.contentTextView.clipsToBounds = YES;
+    
+    self.previewImageView.layer.cornerRadius = 4.0;
+    self.previewImageView.clipsToBounds = YES;
+    
+    self.mainImageView.layer.cornerRadius = 4.0;
+    self.mainImageView.clipsToBounds = YES;
+    
+    self.submitButton.layer.cornerRadius = 4.0;
+    self.submitButton.clipsToBounds = YES;
+    
+    self.choosePreviewImageButton.layer.cornerRadius = 4.0;
+    self.choosePreviewImageButton.clipsToBounds = YES;
+    
+    self.chooseMainImageButton.layer.cornerRadius = 4.0;
+    self.chooseMainImageButton.clipsToBounds = YES;
+
 }
 
 #pragma mark - Managing the keyboard

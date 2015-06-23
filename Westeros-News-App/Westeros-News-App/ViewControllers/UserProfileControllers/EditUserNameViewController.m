@@ -15,6 +15,7 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *nameTxtField;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIButton *saveButton;
 
 @end
 
@@ -77,6 +78,10 @@
     
     //set text field value to user name
     self.nameTxtField.text = [DataRepository sharedInstance].loggedUser.name;
+    
+    //rounded corners
+    self.saveButton.layer.cornerRadius = 4.0;
+    self.saveButton.clipsToBounds = YES;
 }
 
 -(BOOL) areFieldsValidated {

@@ -21,6 +21,7 @@
 
 @property (strong, nonatomic) UIView *activeField;
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+@property (weak, nonatomic) IBOutlet UIButton *registerButton;
 
 @end
 
@@ -29,14 +30,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
-    self.messageLabel.text = @"";
-    
     //register for gesture and hide keyboard when view touched
     UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyboard)];
     [self.view addGestureRecognizer:recognizer];
     
     [self registerForKeyboardNotifications];
+    
+    //clear message label text
+    self.messageLabel.text = @"";
+    
+    //button rounded corners
+    self.registerButton.layer.cornerRadius = 4.0;
+    self.registerButton.clipsToBounds = YES;
+    
+    self.innerView.layer.cornerRadius = 4.0;
+    self.innerView.clipsToBounds = YES;
 }
 
 -(void)hideKeyboard{

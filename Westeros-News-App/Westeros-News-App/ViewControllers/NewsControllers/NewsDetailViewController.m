@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UITextView *contentView;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 
+@property (weak, nonatomic) IBOutlet UIButton *showCommentsButton;
 
 @end
 
@@ -91,6 +92,14 @@
     
     self.navigationItem.rightBarButtonItem = favButton;
     
+    
+    //button rounded corners
+    self.showCommentsButton.layer.cornerRadius = 4.0;
+    self.showCommentsButton.clipsToBounds = YES;
+    
+    //image rounded corners
+    self.articleImageView.layer.cornerRadius = 4.0;
+    self.articleImageView.clipsToBounds = YES;
     
 }
 

@@ -103,6 +103,10 @@
     [self.navigationController.navigationBar setTitleTextAttributes:navbarTitleTextAttributes];
     
     self.title = @"Change Password";
+    
+    //rounded corners
+    self.changeButton.layer.cornerRadius = 4.0;
+    self.changeButton.clipsToBounds = YES;
 }
 
 -(BOOL) areFieldsValidated {

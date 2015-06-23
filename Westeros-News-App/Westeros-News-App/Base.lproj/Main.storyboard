@@ -228,24 +228,44 @@
                                                     <action selector="loginButtonTouchUpInside:" destination="rZ5-oI-fbd" eventType="touchUpInside" id="vPO-VA-QQa"/>
                                                 </connections>
                                             </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Error/Succes message" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hzj-Hl-prO">
+                                                <rect key="frame" x="53" y="90" width="422" height="21"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="21" id="0ce-Xw-WfR"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" red="0.23137254901960785" green="0.43137254901960786" blue="0.6470588235294118" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="Hzj-Hl-prO" secondAttribute="trailing" constant="53" id="F9a-hv-kXS"/>
                                             <constraint firstAttribute="centerX" secondItem="IBs-v0-uCn" secondAttribute="centerX" id="QMX-v0-X03"/>
                                             <constraint firstAttribute="bottom" secondItem="IV8-75-8uD" secondAttribute="bottom" constant="36" id="RrL-xK-L7g"/>
                                             <constraint firstAttribute="width" secondItem="IBs-v0-uCn" secondAttribute="width" multiplier="5:4" id="Tge-hF-3FO"/>
                                             <constraint firstAttribute="bottom" secondItem="Z8e-Gm-fbZ" secondAttribute="bottom" constant="36" id="UGZ-wi-3KE"/>
                                             <constraint firstAttribute="height" constant="350" id="UJV-nd-cum"/>
                                             <constraint firstAttribute="width" secondItem="BvV-BA-BC4" secondAttribute="width" multiplier="5:4" id="Ugu-3j-Z1U"/>
+                                            <constraint firstItem="Hzj-Hl-prO" firstAttribute="width" secondItem="BvV-BA-BC4" secondAttribute="width" id="Y3D-WH-XSe"/>
                                             <constraint firstAttribute="centerY" secondItem="IBs-v0-uCn" secondAttribute="centerY" constant="-28.5" id="eIS-wE-L7x"/>
                                             <constraint firstItem="nry-ua-MdL" firstAttribute="top" secondItem="eN8-K8-Hje" secondAttribute="top" constant="20" id="gk1-22-usL"/>
                                             <constraint firstAttribute="centerX" secondItem="BvV-BA-BC4" secondAttribute="centerX" id="kU6-Sv-SlM"/>
+                                            <constraint firstItem="BvV-BA-BC4" firstAttribute="top" secondItem="Hzj-Hl-prO" secondAttribute="bottom" constant="8" id="mgv-Rs-o24"/>
+                                            <constraint firstItem="Hzj-Hl-prO" firstAttribute="centerX" secondItem="BvV-BA-BC4" secondAttribute="centerX" id="nlf-ge-Djw"/>
                                             <constraint firstAttribute="centerY" secondItem="BvV-BA-BC4" secondAttribute="centerY" constant="41" id="q4Z-yy-m8M"/>
+                                            <constraint firstItem="Hzj-Hl-prO" firstAttribute="leading" secondItem="eN8-K8-Hje" secondAttribute="leading" constant="53" id="udx-cU-upb"/>
                                             <constraint firstAttribute="centerX" secondItem="nry-ua-MdL" secondAttribute="centerX" constant="0.25" id="vBN-pX-rdg"/>
                                             <constraint firstAttribute="centerX" secondItem="IV8-75-8uD" secondAttribute="centerX" constant="-47" id="xeH-Ui-7F0"/>
                                             <constraint firstAttribute="centerX" secondItem="Z8e-Gm-fbZ" secondAttribute="centerX" constant="49" id="yA1-IW-92q"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="F9a-hv-kXS"/>
+                                                <exclude reference="udx-cU-upb"/>
+                                            </mask>
+                                        </variation>
                                         <variation key="heightClass=regular-widthClass=regular">
                                             <mask key="subviews">
                                                 <exclude reference="BvV-BA-BC4"/>
@@ -281,6 +301,7 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="messageLabel" destination="Hzj-Hl-prO" id="Wjt-gQ-w9e"/>
                         <outlet property="passwordTextField" destination="IBs-v0-uCn" id="bf9-Lf-7i5"/>
                         <outlet property="scrollView" destination="fVe-SE-Hee" id="K75-GN-jKk"/>
                         <outlet property="usernameTextField" destination="BvV-BA-BC4" id="7hd-xB-Quv"/>
@@ -1344,14 +1365,6 @@
                                                     <action selector="cancelButtonTouchUpInside:" destination="oWX-EZ-9ck" eventType="touchUpInside" id="WJh-2X-tC6"/>
                                                 </connections>
                                             </button>
-                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2na-aM-Ad0">
-                                                <rect key="frame" x="53" y="163" width="422" height="30"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
-                                                <connections>
-                                                    <outlet property="delegate" destination="oWX-EZ-9ck" id="NQd-O0-hHm"/>
-                                                </connections>
-                                            </textField>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="b0Y-cB-Pwq">
                                                 <rect key="frame" x="53" y="93" width="422" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1383,6 +1396,23 @@
                                                     <action selector="submitButtonTouchUpInside:" destination="oWX-EZ-9ck" eventType="touchUpInside" id="ICq-dS-Dmc"/>
                                                 </connections>
                                             </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Error/Succes message" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r96-ei-SBS">
+                                                <rect key="frame" x="53" y="64" width="422" height="21"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="21" id="qmO-O5-Yp1"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2na-aM-Ad0">
+                                                <rect key="frame" x="53" y="163" width="422" height="30"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                                <connections>
+                                                    <outlet property="delegate" destination="oWX-EZ-9ck" id="NQd-O0-hHm"/>
+                                                </connections>
+                                            </textField>
                                         </subviews>
                                         <color key="backgroundColor" red="0.23137254900000001" green="0.43137254899999999" blue="0.64705882349999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -1393,6 +1423,7 @@
                                             <constraint firstAttribute="trailing" secondItem="oC3-Ql-Nz0" secondAttribute="trailing" constant="53" id="1Pr-ew-9qX"/>
                                             <constraint firstAttribute="centerX" secondItem="2na-aM-Ad0" secondAttribute="centerX" id="6PV-Vu-64R"/>
                                             <constraint firstAttribute="bottom" secondItem="diY-db-7Ms" secondAttribute="bottom" constant="36" id="Ak7-jg-hFQ"/>
+                                            <constraint firstItem="b0Y-cB-Pwq" firstAttribute="top" secondItem="r96-ei-SBS" secondAttribute="bottom" constant="8" id="HMO-TL-iNu"/>
                                             <constraint firstItem="b0Y-cB-Pwq" firstAttribute="top" secondItem="k04-KE-oxb" secondAttribute="bottom" constant="30" id="LLN-Jp-0SM"/>
                                             <constraint firstAttribute="centerX" secondItem="oC3-Ql-Nz0" secondAttribute="centerX" constant="-0.5" id="M96-Cb-3Tu"/>
                                             <constraint firstAttribute="width" secondItem="b0Y-cB-Pwq" secondAttribute="width" multiplier="5:4" id="Qnh-BH-5Dj"/>
@@ -1401,8 +1432,10 @@
                                             <constraint firstAttribute="centerX" secondItem="k04-KE-oxb" secondAttribute="centerX" constant="0.25" id="V5C-tH-m6l"/>
                                             <constraint firstItem="oC3-Ql-Nz0" firstAttribute="leading" secondItem="UmE-31-Yqx" secondAttribute="leading" constant="53" id="VpL-1b-ieZ"/>
                                             <constraint firstAttribute="centerX" secondItem="diY-db-7Ms" secondAttribute="centerX" constant="-47" id="VqE-Ae-vHT"/>
+                                            <constraint firstItem="b0Y-cB-Pwq" firstAttribute="width" secondItem="r96-ei-SBS" secondAttribute="width" id="Ykk-L9-Hr5"/>
                                             <constraint firstItem="oC3-Ql-Nz0" firstAttribute="leading" secondItem="UmE-31-Yqx" secondAttribute="leading" constant="53" id="cBy-6B-RTS"/>
                                             <constraint firstAttribute="width" secondItem="2na-aM-Ad0" secondAttribute="width" multiplier="5:4" id="cYR-Jm-OZH"/>
+                                            <constraint firstItem="b0Y-cB-Pwq" firstAttribute="centerX" secondItem="r96-ei-SBS" secondAttribute="centerX" id="eRF-m5-ddp"/>
                                             <constraint firstAttribute="trailing" secondItem="b0Y-cB-Pwq" secondAttribute="trailing" constant="53" id="egN-4C-Z4j"/>
                                             <constraint firstAttribute="centerY" secondItem="b0Y-cB-Pwq" secondAttribute="centerY" constant="40" id="euE-qt-NoU"/>
                                             <constraint firstItem="oC3-Ql-Nz0" firstAttribute="top" secondItem="2na-aM-Ad0" secondAttribute="bottom" constant="40" id="fh6-Zh-PHa"/>
@@ -1434,8 +1467,8 @@
                                         </variation>
                                         <variation key="heightClass=regular-widthClass=regular">
                                             <mask key="subviews">
-                                                <exclude reference="2na-aM-Ad0"/>
                                                 <exclude reference="b0Y-cB-Pwq"/>
+                                                <exclude reference="2na-aM-Ad0"/>
                                             </mask>
                                         </variation>
                                     </view>
@@ -1467,6 +1500,7 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="messageLabel" destination="r96-ei-SBS" id="Fqo-2T-Bpe"/>
                         <outlet property="nameTextField" destination="2na-aM-Ad0" id="4ic-EO-jYB"/>
                         <outlet property="passwordTextField" destination="oC3-Ql-Nz0" id="PZN-Xb-6zd"/>
                         <outlet property="scrollView" destination="9Of-Cv-rw6" id="Dbe-Ei-eDM"/>

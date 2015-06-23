@@ -278,6 +278,10 @@
     self.contentTextView.layer.cornerRadius = 10.0;
     self.contentTextView.clipsToBounds = YES;
     
+    //register for gesture and hide keyboard when view touched
+    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyboard)];
+    [self.view addGestureRecognizer:recognizer];
+    
     Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
     
     [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
@@ -369,6 +373,10 @@
     UIEdgeInsets contentInsets = UIEdgeInsetsZero;
     self.scrollView.contentInset = contentInsets;
     self.scrollView.scrollIndicatorInsets = contentInsets;
+}
+
+-(void)hideKeyboard{
+    [self.view endEditing:YES];
 }
 
 # pragma mark - Text Field Delegate

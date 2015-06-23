@@ -45,6 +45,10 @@
     
     self.navigationItem.leftBarButtonItem = closeButton;
     
+    //set navigationBar colour
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f]];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
     self.comments = [[NSMutableArray alloc]init];
     
     [self loadComments];

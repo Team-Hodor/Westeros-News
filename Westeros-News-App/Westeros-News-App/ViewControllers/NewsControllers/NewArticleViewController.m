@@ -45,17 +45,7 @@
     // Do any additional setup after loading the view.
     [self registerForKeyboardNotifications];
     [self performInitialConfiguration];
-    
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonActionTriggered)];
-    
-    self.navigationItem.leftBarButtonItem = cancelButton;
-    
-    if ([DataRepository sharedInstance].selectedArticle) {
-        // TODO: Set initial values for selected article
-        self.title = @"Edit Article";
-    } else {
-        self.title = @"New Article";
-    }
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -259,6 +249,35 @@
 }
 
 - (void)performInitialConfiguration {
+    
+    //set navigationBar colour
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f]];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
+    //set title color
+    NSDictionary *navbarTitleTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                               [UIColor whiteColor],
+                                               NSForegroundColorAttributeName,
+                                               nil];
+    [self.navigationController.navigationBar setTitleTextAttributes:navbarTitleTextAttributes];
+    
+    //add cancel button
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonActionTriggered)];
+    
+    self.navigationItem.leftBarButtonItem = cancelButton;
+    
+    if ([DataRepository sharedInstance].selectedArticle) {
+        // TODO: Set initial values for selected article
+        self.title = @"Edit Article";
+    } else {
+        self.title = @"New Article";
+    }
+    
+    
+    //rounded corners
+    self.contentTextView.layer.cornerRadius = 10.0;
+    self.contentTextView.clipsToBounds = YES;
+    
     Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
     
     [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {

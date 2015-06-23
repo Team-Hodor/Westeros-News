@@ -17,7 +17,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-
 @property (strong, nonatomic) UIView *activeField;
 
 #define NEWS_CONTROLLER_ID @"newsNavigationController";

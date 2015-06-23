@@ -659,12 +659,6 @@
                                     <action selector="editTapped:" destination="H29-rs-nmY" eventType="touchUpInside" id="ueb-Sx-O5w"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="00a-Lk-DK4">
-                                <rect key="frame" x="16" y="60" width="568" height="35"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="29"/>
-                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fy2-Jr-6ca">
                                 <rect key="frame" x="75" y="155" width="450" height="30"/>
                                 <constraints>
@@ -679,6 +673,12 @@
                                     </mask>
                                 </variation>
                             </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="00a-Lk-DK4">
+                                <rect key="frame" x="16" y="60" width="568" height="35"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="29"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -702,6 +702,7 @@
                     <connections>
                         <outlet property="nameTxtField" destination="fy2-Jr-6ca" id="frs-M8-YuX"/>
                         <outlet property="saveButton" destination="TN4-wu-LOb" id="EXr-bL-G3M"/>
+                        <outlet property="topConstraint" destination="jma-Rl-jo9" id="Kg4-fy-1aY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hEs-S7-AqR" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -761,10 +762,8 @@
                         <color key="backgroundColor" white="0.13" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="uzx-fX-qtV" firstAttribute="leading" secondItem="P2e-72-eGt" secondAttribute="leadingMargin" id="3uM-iM-pfz"/>
-                            <constraint firstAttribute="centerX" secondItem="haV-00-pWy" secondAttribute="centerX" id="4DI-p2-XgB"/>
                             <constraint firstAttribute="trailingMargin" secondItem="haV-00-pWy" secondAttribute="trailing" constant="59" id="6JA-Jd-AiD"/>
                             <constraint firstAttribute="trailingMargin" secondItem="vH9-BO-Og4" secondAttribute="trailing" constant="59" id="6gj-DU-sab"/>
-                            <constraint firstAttribute="centerY" secondItem="haV-00-pWy" secondAttribute="centerY" constant="113" id="BG4-Dv-1tF"/>
                             <constraint firstItem="vH9-BO-Og4" firstAttribute="top" secondItem="haV-00-pWy" secondAttribute="bottom" constant="43" id="Hvl-X2-d4x"/>
                             <constraint firstItem="uzx-fX-qtV" firstAttribute="top" secondItem="ifT-84-0Sn" secondAttribute="bottom" constant="40" id="SwU-yb-dpJ"/>
                             <constraint firstItem="vH9-BO-Og4" firstAttribute="centerX" secondItem="haV-00-pWy" secondAttribute="centerX" id="XJr-15-cBB"/>
@@ -775,16 +774,12 @@
                             <constraint firstItem="uzx-fX-qtV" firstAttribute="trailing" secondItem="P2e-72-eGt" secondAttribute="trailingMargin" id="u50-lJ-M8i"/>
                             <constraint firstItem="G1O-PG-wb6" firstAttribute="top" secondItem="vH9-BO-Og4" secondAttribute="bottom" constant="43" id="vPy-fR-ObI"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="BG4-Dv-1tF"/>
-                            </mask>
-                        </variation>
                     </view>
                     <connections>
                         <outlet property="changeButton" destination="G1O-PG-wb6" id="7V5-kT-Q2M"/>
                         <outlet property="oldPasswordTxtField" destination="haV-00-pWy" id="UHb-As-PuI"/>
                         <outlet property="passwordTxtField" destination="vH9-BO-Og4" id="Sqj-RI-kBY"/>
+                        <outlet property="topConstraint" destination="SwU-yb-dpJ" id="YJW-Vq-WBy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jSy-CY-PNW" userLabel="First Responder" sceneMemberID="firstResponder"/>

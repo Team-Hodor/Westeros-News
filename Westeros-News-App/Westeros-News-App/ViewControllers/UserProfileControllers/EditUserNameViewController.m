@@ -14,8 +14,8 @@
 @interface EditUserNameViewController () <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *nameTxtField;
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topConstraint;
 
 @end
 
@@ -82,6 +82,44 @@
     //rounded corners
     self.saveButton.layer.cornerRadius = 4.0;
     self.saveButton.clipsToBounds = YES;
+    
+    [self registerForKeyboardNotifications];
+    
+    //register for gesture and hide keyboard when view touched
+    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyboard)];
+    [self.view addGestureRecognizer:recognizer];
+}
+
+#pragma mark - Managing the keyboard
+
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeShown:)
+                                                 name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+    
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillBeShown:(NSNotification*)aNotification{
+    
+         self.topConstraint.constant -= 100;
+   
+}
+
+// Called when the UIKeyboardWillHideNotification is sent
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification{
+
+        self.topConstraint.constant += 100;
+    
+}
+
+-(void)hideKeyboard{
+    [self.view endEditing:YES];
 }
 
 -(BOOL) areFieldsValidated {

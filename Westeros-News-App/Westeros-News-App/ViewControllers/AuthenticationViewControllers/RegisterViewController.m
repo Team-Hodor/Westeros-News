@@ -20,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UIView *innerView;
 
 @property (strong, nonatomic) UIView *activeField;
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+@property (weak, nonatomic) IBOutlet UIButton *registerButton;
 
 @end
 
@@ -27,7 +29,26 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    //register for gesture and hide keyboard when view touched
+    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyboard)];
+    [self.view addGestureRecognizer:recognizer];
+    
     [self registerForKeyboardNotifications];
+    
+    //clear message label text
+    self.messageLabel.text = @"";
+    
+    //button rounded corners
+    self.registerButton.layer.cornerRadius = 4.0;
+    self.registerButton.clipsToBounds = YES;
+    
+    self.innerView.layer.cornerRadius = 4.0;
+    self.innerView.clipsToBounds = YES;
+}
+
+-(void)hideKeyboard{
+    [self.view endEditing:YES];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -55,28 +76,27 @@
                                              if ([[resultData objectForKey:@"error"] isEqualToString:@"Invalid JSON"]) {
                                                  // INTERNAL ERROR
                                                  NSLog(@"Internal error");
+                                                 
+                                                 [self showErrorMessage:@"Error. Please try again later."];
                     
-                                                    [UIAlertController showAlertWithTitle:@"Error"
-                                                                            andMessage:@"There was an error saving the data on the server. Please try again later."
-                                                                      inViewController:self
-                                                                              withHandler:nil];
                                                  registerButton.enabled = YES;
                                                  registerButton.layer.backgroundColor = defaultColor.CGColor;
+                                                 
                                              } else if ( [resultData objectForKey:@"error"] ) {
-                                                 [UIAlertController showAlertWithTitle:@"Error"
-                                                                            andMessage:@"Username already taken."
-                                                                      inViewController:self
-                                                                           withHandler:nil];
+                                                 
+                                                 [self showErrorMessage:@"Username already taken.."];
+
                                                  registerButton.enabled = YES;
                                                  registerButton.layer.backgroundColor = defaultColor.CGColor;
+                                                 
                                              } else {
-                                                 [UIAlertController showAlertWithTitle:@"Success"
-                                                                            andMessage:@"Username registered successfully."
-                                                                      inViewController:self
-                                                                           withHandler:^() {
-                                                                               [self.view endEditing:YES];
-                                                                               [self dismissViewControllerAnimated:YES completion:nil];
-                                                                           }];
+                                                 
+                                                 [self showSuccessMessage:@"Registration successfull."];
+                                                 
+                                                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                                                     [self.view endEditing:YES];
+                                                     [self loginWithUsername:username andPassword:password];
+                                                 });
                                              }
                                          }];
     } else {
@@ -90,6 +110,52 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+-(void)loginWithUsername:(NSString *)username andPassword:(NSString *)password{
+    
+    [WebServiceManager loginUserWithUsername:username andPassword:password completion:^(NSDictionary *resultData, NSURLResponse *response) {
+        if( [resultData objectForKey:@"createdAt"] ){
+            NSString *sessionId = [resultData objectForKey:@"sessionToken"];
+            NSString *uniqueId = [resultData objectForKey:@"objectId"];
+            NSString *name = [resultData objectForKey:@"name"];
+            NSMutableArray *favouriteNews = [[NSMutableArray alloc] init];
+            
+            for (id favourite in [resultData objectForKey:@"favourites"]) {
+                [favouriteNews addObject:[favourite objectForKey:@"objectId"]];
+            }
+            
+            User *loggedUser = [[User alloc] initWithUsername:username
+                                                         name:name
+                                                 andSessionId:sessionId
+                                                  andUniqueId:uniqueId];
+            
+            loggedUser.favouriteNews = favouriteNews;
+            loggedUser.isAdmin = (BOOL)[resultData objectForKey:@"isAdmin"];
+            
+            [DataRepository sharedInstance].loggedUser = loggedUser;
+            
+            //[self showSuccessMessage:@"Logg in successfull."];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [self showNewsViewController];
+            });
+            
+        } else {
+            [self showErrorMessage:@"Error. Please again try later."];
+        }
+    }];
+    
+}
+
+- (void)showNewsViewController {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    
+    UINavigationController *newsNavigationController = [storyboard instantiateViewControllerWithIdentifier:@"newsNavigationController"];
+    
+    newsNavigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    
+    [self presentViewController:newsNavigationController animated:YES completion:nil];
+}
+
 -(BOOL) areFieldsValidated {
     NSString *errorMessage;
     NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -99,20 +165,20 @@
     NSString *password = self.passwordTextField.text;
     
     if ([username length] == 0) {
-        errorMessage = @"The username text field cannot be empty.";
+        [self showErrorMessage:@"Username cannot be empty."];
+        return NO;
     } else if ([password length] == 0) {
-        errorMessage = @"The password text field cannot be empty.";
+        [self showErrorMessage:@"Password cannot be empty."];
+        return NO;
     } else if ([name length] == 0) {
-        errorMessage = @"The name text field cannot be empty";
+        [self showErrorMessage:@"Name cannot be empty"];
+        return NO;
     }
     
     if (!errorMessage) {
         return YES;
     } else {
-        [UIAlertController showAlertWithTitle:@"Error"
-                                   andMessage:errorMessage
-                             inViewController:self
-                                  withHandler:nil];
+        [self showErrorMessage:@"Error."];
         return NO;
     }
 }
@@ -173,5 +239,17 @@
     [textField resignFirstResponder];
     return YES;
 }
+
+//show error and success messages
+-(void)showErrorMessage:(NSString *)message{
+    self.messageLabel.textColor = [UIColor redColor];
+    self.messageLabel.text = message;
+}
+
+-(void)showSuccessMessage:(NSString *)message{
+    self.messageLabel.textColor = [UIColor greenColor];
+    self.messageLabel.text = message;
+}
+
 
 @end

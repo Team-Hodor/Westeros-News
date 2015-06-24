@@ -23,6 +23,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *previewImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *mainImageView;
 @property (weak, nonatomic) IBOutlet UIButton *submitButton;
+@property (weak, nonatomic) IBOutlet UIButton *choosePreviewImageButton;
+@property (weak, nonatomic) IBOutlet UIButton *chooseMainImageButton;
 
 // View management properties
 @property (strong, nonatomic) UIView *activeField;
@@ -45,17 +47,7 @@
     // Do any additional setup after loading the view.
     [self registerForKeyboardNotifications];
     [self performInitialConfiguration];
-    
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonActionTriggered)];
-    
-    self.navigationItem.leftBarButtonItem = cancelButton;
-    
-    if ([DataRepository sharedInstance].selectedArticle) {
-        // TODO: Set initial values for selected article
-        self.title = @"Edit Article";
-    } else {
-        self.title = @"New Article";
-    }
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -259,6 +251,36 @@
 }
 
 - (void)performInitialConfiguration {
+    
+    //set navigationBar colour
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f]];
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
+    //set title color
+    NSDictionary *navbarTitleTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                               [UIColor whiteColor],
+                                               NSForegroundColorAttributeName,
+                                               nil];
+    [self.navigationController.navigationBar setTitleTextAttributes:navbarTitleTextAttributes];
+    
+    //add cancel button
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonActionTriggered)];
+    
+    self.navigationItem.leftBarButtonItem = cancelButton;
+    
+    if ([DataRepository sharedInstance].selectedArticle) {
+        // TODO: Set initial values for selected article
+        self.title = @"Edit Article";
+    } else {
+        self.title = @"New Article";
+    }
+    
+    [self changeBorderRadius];
+    
+    //register for gesture and hide keyboard when view touched
+    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyboard)];
+    [self.view addGestureRecognizer:recognizer];
+    
     Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
     
     [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
@@ -311,6 +333,28 @@
     self.categoryTextField.inputView = typePicker;
 }
 
+- (void)changeBorderRadius{
+    //rounded corners
+    self.contentTextView.layer.cornerRadius = 4.0;
+    self.contentTextView.clipsToBounds = YES;
+    
+    self.previewImageView.layer.cornerRadius = 4.0;
+    self.previewImageView.clipsToBounds = YES;
+    
+    self.mainImageView.layer.cornerRadius = 4.0;
+    self.mainImageView.clipsToBounds = YES;
+    
+    self.submitButton.layer.cornerRadius = 4.0;
+    self.submitButton.clipsToBounds = YES;
+    
+    self.choosePreviewImageButton.layer.cornerRadius = 4.0;
+    self.choosePreviewImageButton.clipsToBounds = YES;
+    
+    self.chooseMainImageButton.layer.cornerRadius = 4.0;
+    self.chooseMainImageButton.clipsToBounds = YES;
+
+}
+
 #pragma mark - Managing the keyboard
 
 - (void)registerForKeyboardNotifications
@@ -350,6 +394,10 @@
     UIEdgeInsets contentInsets = UIEdgeInsetsZero;
     self.scrollView.contentInset = contentInsets;
     self.scrollView.scrollIndicatorInsets = contentInsets;
+}
+
+-(void)hideKeyboard{
+    [self.view endEditing:YES];
 }
 
 # pragma mark - Text Field Delegate

@@ -17,6 +17,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet UIView *innerView;
 
 @property (strong, nonatomic) UIView *activeField;
 
@@ -29,7 +32,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //register for gesture and hide keyboard when view touched
+    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideKeyboard)];
+    [self.view addGestureRecognizer:recognizer];
+    
     [self registerForKeyboardNotifications];
+    
+    //clear message label text
+    self.messageLabel.text = @"";
+    
+    //button rounded corners
+    self.loginButton.layer.cornerRadius = 4.0;
+    self.loginButton.clipsToBounds = YES;
+    
+    self.innerView.layer.cornerRadius = 4.0;
+    self.innerView.clipsToBounds = YES;
+}
+
+-(void)hideKeyboard{
+    [self.view endEditing:YES];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -48,10 +69,8 @@
     
     [WebServiceManager loginUserWithUsername:username andPassword:password completion:^(NSDictionary *resultData, NSURLResponse *response) {
             if ( [resultData objectForKey:@"error"] ) {
-                [UIAlertController showAlertWithTitle:@"Error"
-                                           andMessage:@"Invalid username or password."
-                                     inViewController:self
-                                          withHandler:nil];
+                
+                [self showErrorMessage:@"Invalid username or password!"];
                 loginButton.enabled = YES;
                 loginButton.layer.backgroundColor = defaultColor.CGColor;
             } else if( [resultData objectForKey:@"createdAt"] ){
@@ -74,21 +93,19 @@
                 
                 [DataRepository sharedInstance].loggedUser = loggedUser;
                 
-                [UIAlertController showAlertWithTitle:@"Success"
-                                           andMessage:@"You have logged in successfully."
-                                     inViewController:self
-                                          withHandler:^(void) {
-                                              self.usernameTextField.text = @"";
-                                              self.passwordTextField.text = @"";
-                                              loginButton.enabled = YES;
-                                              loginButton.layer.backgroundColor = defaultColor.CGColor;
-                                              [self showNewsViewController];
-                                          }];
+                [self showSuccessMessage:@"Logg in successfull."];
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                    self.usernameTextField.text = @"";
+                    self.passwordTextField.text = @"";
+                    loginButton.enabled = YES;
+                    loginButton.layer.backgroundColor = defaultColor.CGColor;
+                    [self showNewsViewController];
+                });
+                
             } else {
-                [UIAlertController showAlertWithTitle:@"Error"
-                                           andMessage:@"There was an error while processing your request. Please try again later."
-                                     inViewController:self
-                                          withHandler:nil];
+                
+                [self showErrorMessage:@"Error. Please again try later."];
                 loginButton.enabled = YES;
                 loginButton.layer.backgroundColor = defaultColor.CGColor;
             }
@@ -164,6 +181,16 @@
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
+}
+
+-(void)showErrorMessage:(NSString *)message{
+    self.messageLabel.textColor = [UIColor redColor];
+    self.messageLabel.text = message;
+}
+
+-(void)showSuccessMessage:(NSString *)message{
+    self.messageLabel.textColor = [UIColor greenColor];
+    self.messageLabel.text = message;
 }
 
 @end

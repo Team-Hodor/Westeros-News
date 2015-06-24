@@ -34,10 +34,12 @@
 		31281D311B31B9B6008176A3 /* fav.png in Resources */ = {isa = PBXBuildFile; fileRef = 31281D2E1B31B9B6008176A3 /* fav.png */; };
 		31281D321B31B9B6008176A3 /* fav@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31281D2F1B31B9B6008176A3 /* fav@2x.png */; };
 		31281D331B31B9B6008176A3 /* fav@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31281D301B31B9B6008176A3 /* fav@3x.png */; };
+		316D9F681B39643700475142 /* ArticleCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 316D9F671B39643700475142 /* ArticleCommentViewController.m */; };
+		316D9F711B396C7000475142 /* CustomTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 316D9F701B396C7000475142 /* CustomTableView.m */; };
+		316D9F761B39FB7D00475142 /* default-placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 316D9F751B39FB7D00475142 /* default-placeholder.png */; };
 		319D6BF41B38379B00B776BA /* CommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 319D6BF31B38379B00B776BA /* CommentTableViewCell.m */; };
 		319D6BF71B38380E00B776BA /* Comment.m in Sources */ = {isa = PBXBuildFile; fileRef = 319D6BF61B38380E00B776BA /* Comment.m */; };
 		31CD3CBB1B36FAE700F2D90D /* ChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CD3CBA1B36FAE700F2D90D /* ChangePasswordViewController.m */; };
-		31CD3CC21B372DD400F2D90D /* ArticleCommentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CD3CC11B372DD400F2D90D /* ArticleCommentViewController.m */; };
 		31CF4C191B299B8E00F3D9C4 /* profile-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C161B299B8E00F3D9C4 /* profile-icon.png */; };
 		31CF4C1A1B299B8E00F3D9C4 /* profile-icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C171B299B8E00F3D9C4 /* profile-icon@3x.png */; };
 		31CF4C1B1B299B8E00F3D9C4 /* profile-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CF4C181B299B8E00F3D9C4 /* profile-icon@2x.png */; };
@@ -104,6 +106,10 @@
 		31281D2E1B31B9B6008176A3 /* fav.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fav.png; sourceTree = "<group>"; };
 		31281D2F1B31B9B6008176A3 /* fav@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fav@2x.png"; sourceTree = "<group>"; };
 		31281D301B31B9B6008176A3 /* fav@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fav@3x.png"; sourceTree = "<group>"; };
+		316D9F671B39643700475142 /* ArticleCommentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArticleCommentViewController.m; sourceTree = "<group>"; };
+		316D9F6F1B396C7000475142 /* CustomTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableView.h; sourceTree = "<group>"; };
+		316D9F701B396C7000475142 /* CustomTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableView.m; sourceTree = "<group>"; };
+		316D9F751B39FB7D00475142 /* default-placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "default-placeholder.png"; sourceTree = "<group>"; };
 		319D6BF21B38379B00B776BA /* CommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentTableViewCell.h; sourceTree = "<group>"; };
 		319D6BF31B38379B00B776BA /* CommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTableViewCell.m; sourceTree = "<group>"; };
 		319D6BF51B38380E00B776BA /* Comment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comment.h; sourceTree = "<group>"; };
@@ -111,7 +117,6 @@
 		31CD3CB91B36FAE700F2D90D /* ChangePasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangePasswordViewController.h; sourceTree = "<group>"; };
 		31CD3CBA1B36FAE700F2D90D /* ChangePasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangePasswordViewController.m; sourceTree = "<group>"; };
 		31CD3CC01B372DD400F2D90D /* ArticleCommentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArticleCommentViewController.h; sourceTree = "<group>"; };
-		31CD3CC11B372DD400F2D90D /* ArticleCommentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArticleCommentViewController.m; sourceTree = "<group>"; };
 		31CF4C161B299B8E00F3D9C4 /* profile-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-icon.png"; sourceTree = "<group>"; };
 		31CF4C171B299B8E00F3D9C4 /* profile-icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-icon@3x.png"; sourceTree = "<group>"; };
 		31CF4C181B299B8E00F3D9C4 /* profile-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile-icon@2x.png"; sourceTree = "<group>"; };
@@ -146,7 +151,7 @@
 				287A85AC1B36E7DE009EB581 /* NewsTableViewController.h */,
 				287A85AD1B36E7DE009EB581 /* NewsTableViewController.m */,
 				31CD3CC01B372DD400F2D90D /* ArticleCommentViewController.h */,
-				31CD3CC11B372DD400F2D90D /* ArticleCommentViewController.m */,
+				316D9F671B39643700475142 /* ArticleCommentViewController.m */,
 			);
 			path = NewsControllers;
 			sourceTree = "<group>";
@@ -212,6 +217,7 @@
 		28C2DF841B1C8D740001E968 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				316D9F751B39FB7D00475142 /* default-placeholder.png */,
 				31281D2E1B31B9B6008176A3 /* fav.png */,
 				31281D2F1B31B9B6008176A3 /* fav@2x.png */,
 				31281D301B31B9B6008176A3 /* fav@3x.png */,
@@ -311,6 +317,8 @@
 				3110BCE51B2AF11600307CAF /* NewsTableViewCell.m */,
 				319D6BF21B38379B00B776BA /* CommentTableViewCell.h */,
 				319D6BF31B38379B00B776BA /* CommentTableViewCell.m */,
+				316D9F6F1B396C7000475142 /* CustomTableView.h */,
+				316D9F701B396C7000475142 /* CustomTableView.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -401,6 +409,7 @@
 				31CF4C191B299B8E00F3D9C4 /* profile-icon.png in Resources */,
 				28C2DF951B1C8D740001E968 /* Images.xcassets in Resources */,
 				31CF4C1A1B299B8E00F3D9C4 /* profile-icon@3x.png in Resources */,
+				316D9F761B39FB7D00475142 /* default-placeholder.png in Resources */,
 				31CF4C1B1B299B8E00F3D9C4 /* profile-icon@2x.png in Resources */,
 				31281D331B31B9B6008176A3 /* fav@3x.png in Resources */,
 				31CF4C1D1B29A66800F3D9C4 /* game_of_thrones_bg.png in Resources */,
@@ -423,14 +432,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				287EC98E1B24B1D8001B1C19 /* NSString+DateValue.m in Sources */,
+				316D9F711B396C7000475142 /* CustomTableView.m in Sources */,
 				287EC97F1B245E66001B1C19 /* WebServiceManager.m in Sources */,
 				287A85B71B36E821009EB581 /* UserProfileTableViewController.m in Sources */,
 				31CD3CBB1B36FAE700F2D90D /* ChangePasswordViewController.m in Sources */,
 				287A85AE1B36E7DE009EB581 /* NewArticleViewController.m in Sources */,
 				28C2DFC51B1C91910001E968 /* User.m in Sources */,
 				319D6BF71B38380E00B776BA /* Comment.m in Sources */,
+				316D9F681B39643700475142 /* ArticleCommentViewController.m in Sources */,
 				2865D87F1B235B4500D84EE5 /* DataRepository.m in Sources */,
-				31CD3CC21B372DD400F2D90D /* ArticleCommentViewController.m in Sources */,
 				28C2DFB31B1C8DCF0001E968 /* DatabaseManager.m in Sources */,
 				2858A2011B2B2FEB0025FF81 /* Article.m in Sources */,
 				287A85AF1B36E7DE009EB581 /* NewsDetailViewController.m in Sources */,

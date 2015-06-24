@@ -23,7 +23,6 @@
     
     [self.tableView setBackgroundColor:[UIColor colorWithRed:34.0f/255.0f green:34.0f/255.0f blue:34.0f/255.0f alpha:1.0f]];
     
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -52,7 +51,9 @@
     
     //set title to user name
     self.title = @"User Profile";
+
 }
+
 
 #pragma mark - Table view data source
 

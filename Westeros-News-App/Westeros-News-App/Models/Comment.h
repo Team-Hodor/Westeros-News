@@ -11,7 +11,14 @@
 @interface Comment : NSObject
 
 @property (nonatomic, strong) NSString *authorId;
-@property (nonatomic, strong) NSString *createdAt;
+@property (nonatomic, strong) NSDate *createdAt;
 @property (nonatomic, strong) NSString *content;
+@property (nonatomic, strong) NSString *uniqueId;
+@property (nonatomic, strong) NSString *authorName;
+
+- (instancetype)initWithContent:(NSString *)content
+                       authorId:(NSString *)authorId
+                      createdAt:(NSDate *)createdAt
+                    andUniqueId:(NSString *)uniqueId;
 
 @end

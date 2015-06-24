@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UITextView *contentView;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 
+@property (weak, nonatomic) IBOutlet UIButton *showCommentsButton;
 
 @end
 
@@ -51,6 +52,7 @@
     self.subtitleLabel.text = self.article.subtitle;
     self.contentView.text = self.article.content;
     self.contentView.scrollEnabled = NO;
+    self.authorLabel.text = @"";
     
     [WebServiceManager getUserWithUserId:self.article.authorID completion:^(NSDictionary *dataDictionary, NSHTTPURLResponse *response) {
         if ( [dataDictionary objectForKey:@"error"] ) {
@@ -90,6 +92,14 @@
     
     self.navigationItem.rightBarButtonItem = favButton;
     
+    
+    //button rounded corners
+    self.showCommentsButton.layer.cornerRadius = 4.0;
+    self.showCommentsButton.clipsToBounds = YES;
+    
+    //image rounded corners
+    self.articleImageView.layer.cornerRadius = 4.0;
+    self.articleImageView.clipsToBounds = YES;
     
 }
 
@@ -164,6 +174,12 @@
         
     }
 
+}
+- (IBAction)showCommentTapped:(id)sender {
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    UINavigationController *commentsViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"commentsViewController"];
+    
+    [self presentViewController:commentsViewController animated:YES completion:nil];
 }
 
 - (void) setFavouriteButtonState:(UIBarButtonItem *)btn{

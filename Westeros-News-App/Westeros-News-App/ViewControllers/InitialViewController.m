@@ -28,8 +28,8 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     
     NSString *sessionToken = [[NSUserDefaults standardUserDefaults] valueForKey:@"sessionToken"];
     NSString *username = [[NSUserDefaults standardUserDefaults] valueForKey:@"username"];

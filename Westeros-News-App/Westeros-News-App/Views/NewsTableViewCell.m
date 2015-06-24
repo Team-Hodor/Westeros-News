@@ -52,6 +52,10 @@
 }
 
 - (void)setArticleImage {
+    if (self.articleImageView.image) {
+        return;
+    }
+    
     self.articleImageView.layer.cornerRadius = self.articleImageView.frame.size.height / 2.0;
     self.articleImageView.layer.masksToBounds = YES;
     

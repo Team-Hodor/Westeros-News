@@ -21,7 +21,7 @@ typedef enum {
     FavouriteNewsSection
 } NewsSection;
 
-@interface NewsTableViewController () <NSFetchedResultsControllerDelegate>
+@interface NewsTableViewController () <NSFetchedResultsControllerDelegate, UIScrollViewDelegate>
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
@@ -136,23 +136,31 @@ typedef enum {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     id  sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:indexPath.section];
-
-    UIView *bgColorView = [[UIView alloc] init];
-    bgColorView.backgroundColor = [UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f];
     
     if ([sectionInfo numberOfObjects] > indexPath.row) {
         NewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_ID forIndexPath:indexPath];
+        if (cell == nil) {
+            cell = [[NewsTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CELL_ID];
+        }
+        
         Article *article = [self.fetchedResultsController objectAtIndexPath:indexPath];
         
         cell.article = article;
         
-        //set cell background color on selection
-        [cell setSelectedBackgroundView:bgColorView];
+        if (self.tableView.dragging == NO && self.tableView.decelerating == NO)
+        {
+            [cell setArticleImage];
+        }
         
-            return cell;
+        return cell;
     } else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"showMoreCell" forIndexPath:indexPath];
         
+        UIView *bgColorView = [[UIView alloc] init];
+        bgColorView.backgroundColor = [UIColor colorWithRed:59.0f/255.0f
+                                                      green:110.0f/255.0f
+                                                       blue:165.0f/255.0f
+                                                      alpha:1.0f];
         //set cell background color on selection
         [cell setSelectedBackgroundView:bgColorView];
             return cell;
@@ -549,6 +557,33 @@ typedef enum {
         
         self.currentWebRequestSkipCount = [[self.fetchedResultsController fetchedObjects] count];
     }
+}
+
+#pragma mark - Cell Image Download support
+
+- (void)loadImagesForOnscreenRows
+{
+        NSArray *visiblePaths = [self.tableView indexPathsForVisibleRows];
+        for (NSIndexPath *indexPath in visiblePaths)
+        {
+            if ([[self.tableView cellForRowAtIndexPath:indexPath] isKindOfClass:[NewsTableViewCell class]]) {
+                NewsTableViewCell *cell = (NewsTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+                [cell setArticleImage];
+            }
+        }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if (!decelerate)
+    {
+        [self loadImagesForOnscreenRows];
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    [self loadImagesForOnscreenRows];
 }
 
 

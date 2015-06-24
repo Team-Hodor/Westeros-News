@@ -15,6 +15,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *dateLabel;
+@property (strong, nonatomic) UIActivityIndicatorView *indicator;
 
 @end
 
@@ -28,6 +29,11 @@
 }
 
 - (void)setArticle:(Article *)article{
+    UIView *bgColorView = [[UIView alloc] init];
+    bgColorView.backgroundColor = [UIColor colorWithRed:59.0f/255.0f green:110.0f/255.0f blue:165.0f/255.0f alpha:1.0f];
+    
+    [self setSelectedBackgroundView:bgColorView];
+    self.articleImageView.image = nil;
     _article = article;
     self.titleLabel.text = article.title;
     self.subtitleLabel.text = article.subtitle;
@@ -37,7 +43,12 @@
     
     self.dateLabel.text = [formatter stringFromDate:article.createdAt];
 
-    [self setArticleImage];
+//    // [self setArticleImage];
+//    UIActivityIndicatorView *indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//    [indicator startAnimating];
+//    [indicator setCenter:self.articleImageView.center];
+//    self.indicator = indicator;
+//    [self.contentView addSubview:indicator];
 }
 
 - (void)setArticleImage {
@@ -50,9 +61,8 @@
     [self.contentView addSubview:indicator];
     
     [WebServiceManager downloadImageWithImageURL:self.article.previewImageURL completion:^(UIImage *image, NSHTTPURLResponse *response) {
-        
-        [indicator removeFromSuperview];
-        self.articleImageView.image = image;
+            [indicator removeFromSuperview];
+            self.articleImageView.image = image;
     }];
 }
 

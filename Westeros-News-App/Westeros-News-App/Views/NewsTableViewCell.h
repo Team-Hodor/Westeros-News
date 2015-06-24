@@ -13,4 +13,6 @@
 
 @property (nonatomic, strong) Article *article;
 
+- (void)setArticleImage;
+
 @end

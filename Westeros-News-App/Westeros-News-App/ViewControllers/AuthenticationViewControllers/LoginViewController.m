@@ -59,18 +59,21 @@
 }
 
 - (IBAction)loginButtonTouchUpInside:(id)sender {
-    UIButton *loginButton = ((UIButton *)sender);
-    loginButton.enabled = NO;
-    UIColor *defaultColor = loginButton.backgroundColor;
-    loginButton.layer.backgroundColor = [UIColor grayColor].CGColor;
     
     NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *password = self.passwordTextField.text;
     
-    [WebServiceManager loginUserWithUsername:username andPassword:password completion:^(NSDictionary *resultData, NSURLResponse *response) {
+    if([self areFieldsValidated]){
+        
+        UIButton *loginButton = ((UIButton *)sender);
+        loginButton.enabled = NO;
+        UIColor *defaultColor = loginButton.backgroundColor;
+        loginButton.layer.backgroundColor = [UIColor grayColor].CGColor;
+        
+        [WebServiceManager loginUserWithUsername:username andPassword:password completion:^(NSDictionary *resultData, NSURLResponse *response) {
             if ( [resultData objectForKey:@"error"] ) {
                 
-                [self showErrorMessage:@"Invalid username or password!"];
+                [self showErrorMessage:@"Wrong username or password!"];
                 loginButton.enabled = YES;
                 loginButton.layer.backgroundColor = defaultColor.CGColor;
             } else if( [resultData objectForKey:@"createdAt"] ){
@@ -93,23 +96,30 @@
                 
                 [DataRepository sharedInstance].loggedUser = loggedUser;
                 
-                [self showSuccessMessage:@"Logg in successfull."];
-                
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                    self.usernameTextField.text = @"";
-                    self.passwordTextField.text = @"";
-                    loginButton.enabled = YES;
-                    loginButton.layer.backgroundColor = defaultColor.CGColor;
-                    [self showNewsViewController];
-                });
+                [UIAlertController showAlertWithTitle:@"Success"
+                                           andMessage:@"Login successful."
+                                     inViewController:self
+                                          withHandler:^{
+                                              self.usernameTextField.text = @"";
+                                              self.passwordTextField.text = @"";
+                                              loginButton.enabled = YES;
+                                              loginButton.layer.backgroundColor = defaultColor.CGColor;
+                                              [self showNewsViewController];
+                                          }];
                 
             } else {
                 
-                [self showErrorMessage:@"Error. Please again try later."];
+                [UIAlertController showAlertWithTitle:@"Error"
+                                           andMessage:@"Please try again later."
+                                     inViewController:self
+                                          withHandler:nil];
                 loginButton.enabled = YES;
                 loginButton.layer.backgroundColor = defaultColor.CGColor;
             }
-    }];
+        }];
+        
+    }
+
 }
 
 - (IBAction)cancelButtonTouchUpInside:(id)sender {
@@ -125,6 +135,28 @@
     newsNavigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     
     [self presentViewController:newsNavigationController animated:YES completion:nil];
+}
+
+-(BOOL) areFieldsValidated {
+    NSString *errorMessage;
+    NSString *username = [self.usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSString *password = self.passwordTextField.text;
+    
+    if ([username length] == 0) {
+        [self showErrorMessage:@"Username cannot be empty."];
+        return NO;
+    } else if ([password length] == 0) {
+        [self showErrorMessage:@"Password cannot be empty."];
+        return NO;
+    }
+    
+    if (!errorMessage) {
+        return YES;
+    } else {
+        [self showErrorMessage:@"Error."];
+        return NO;
+    }
 }
 
 #pragma mark - Managing the keyboard

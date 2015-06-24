@@ -415,7 +415,7 @@
                                   andHandler:handlerBlock];
 }
 
-+ (void)downloadImageWithImageURL:(NSString *)imageURL completion:(void (^)(NSData *, NSHTTPURLResponse *))handlerBlock {
++ (void)downloadImageWithImageURL:(NSString *)imageURL completion:(void (^)(UIImage *, NSHTTPURLResponse *))handlerBlock {
     
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     
@@ -430,8 +430,9 @@
                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                      NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
                                                      if (!error) {
+                                                         UIImage *image = [UIImage imageWithData:[NSData dataWithData:data]];
                                                          dispatch_async(dispatch_get_main_queue(), ^() {
-                                                             handlerBlock(data, httpResponse);
+                                                             handlerBlock(image, httpResponse);
                                                          });
                                                      } else {
                                                          NSLog(@"Unresolved error %@, %@", error, [error userInfo]);

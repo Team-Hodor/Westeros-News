@@ -24,6 +24,7 @@
     [super prepareForReuse];
     
     self.articleImageView.image = nil;
+    self.article = nil;
 }
 
 - (void)setArticle:(Article *)article{
@@ -48,10 +49,9 @@
     [indicator setCenter:self.articleImageView.center];
     [self.contentView addSubview:indicator];
     
-    [WebServiceManager downloadImageWithImageURL:self.article.previewImageURL completion:^(NSData *data, NSHTTPURLResponse *response) {
+    [WebServiceManager downloadImageWithImageURL:self.article.previewImageURL completion:^(UIImage *image, NSHTTPURLResponse *response) {
         
         [indicator removeFromSuperview];
-        UIImage *image = [UIImage imageWithData:[NSData dataWithData:data]];
         self.articleImageView.image = image;
     }];
 }

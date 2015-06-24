@@ -89,7 +89,7 @@
                    completion:(void (^)(NSDictionary *dataDictionary, NSHTTPURLResponse *response))handlerBlock;
 
 + (void)downloadImageWithImageURL:(NSString *)imageURL
-                       completion:(void (^)(NSData *, NSHTTPURLResponse *))handlerBlock;
+                       completion:(void (^)(UIImage *, NSHTTPURLResponse *))handlerBlock;
 
 + (void)checkUserSessionWithID:(NSString *)sessionToken
                     completion:(void (^)(NSDictionary *, NSHTTPURLResponse *))handlerBlock;

@@ -284,13 +284,6 @@
     Article *selectedArticle = [DataRepository sharedInstance].selectedArticle;
     
     [WebServiceManager loadAvailableCategoriesWithCompletion:^(NSDictionary *resultData, NSHTTPURLResponse *response) {
-        if (NO) {
-            [UIAlertController showAlertWithTitle:@"Error"
-                                       andMessage:@"An error occured while trying to get the available categories."
-                                 inViewController:self
-                                      withHandler:nil];
-        }
-        
         self.categoryTitles = [[NSMutableArray alloc] init];
         self.categoriesByID = [[NSMutableDictionary alloc] init];
         
@@ -312,14 +305,14 @@
         self.subtitleTextField.text = selectedArticle.subtitle;
         self.contentTextView.text = selectedArticle.content;
         
-        [WebServiceManager downloadImageWithImageURL:selectedArticle.mainImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response) {
-            UIImage *image = [UIImage imageWithData:imageData];
+        [WebServiceManager downloadImageWithImageURL:selectedArticle.mainImageURL completion:^(UIImage *image, NSHTTPURLResponse *response) {
+            
             self.mainImageView.image = image;
             self.initialMainImage = image;
         }];
         
-        [WebServiceManager downloadImageWithImageURL:selectedArticle.previewImageURL completion:^(NSData *imageData, NSHTTPURLResponse *response) {
-            UIImage *image = [UIImage imageWithData:imageData];
+        [WebServiceManager downloadImageWithImageURL:selectedArticle.previewImageURL completion:^(UIImage *image, NSHTTPURLResponse *response) {
+            
             self.previewImageView.image = image;
             self.initialPreviewImage = image;
         }];

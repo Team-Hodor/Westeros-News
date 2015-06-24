@@ -75,8 +75,8 @@
 
 - (void)setArticleImage {
 
-    [WebServiceManager downloadImageWithImageURL:self.article.mainImageURL completion:^(NSData *data, NSHTTPURLResponse *response) {
-        UIImage *image = [UIImage imageWithData:data];
+    [WebServiceManager downloadImageWithImageURL:self.article.mainImageURL completion:^(UIImage *image, NSHTTPURLResponse *response) {
+        
         self.articleImageView.image = image;
     }];
     

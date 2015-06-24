@@ -77,26 +77,32 @@
                                                  // INTERNAL ERROR
                                                  NSLog(@"Internal error");
                                                  
-                                                 [self showErrorMessage:@"Error. Please try again later."];
+                                                 [UIAlertController showAlertWithTitle:@"Error"
+                                                                            andMessage:@"Please try again later."
+                                                                      inViewController:self
+                                                                           withHandler:nil];
                     
                                                  registerButton.enabled = YES;
                                                  registerButton.layer.backgroundColor = defaultColor.CGColor;
                                                  
                                              } else if ( [resultData objectForKey:@"error"] ) {
                                                  
-                                                 [self showErrorMessage:@"Username already taken.."];
+                                                 [self showErrorMessage:@"Username taken."];
 
                                                  registerButton.enabled = YES;
                                                  registerButton.layer.backgroundColor = defaultColor.CGColor;
                                                  
                                              } else {
                                                  
-                                                 [self showSuccessMessage:@"Registration successfull."];
-                                                 
-                                                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                                                     [self.view endEditing:YES];
-                                                     [self loginWithUsername:username andPassword:password];
-                                                 });
+                                                 [self showSuccessMessage:@"Registration successful."];
+                                                 [UIAlertController showAlertWithTitle:@"Success"
+                                                                            andMessage:@"Registration successful."
+                                                                      inViewController:self
+                                                                           withHandler:^{
+                                                                               [self.view endEditing:YES];
+                                                                               [self loginWithUsername:username andPassword:password];
+
+                                                                           }];
                                              }
                                          }];
     } else {

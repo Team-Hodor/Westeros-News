@@ -169,13 +169,6 @@
 			path = UserProfileControllers;
 			sourceTree = "<group>";
 		};
-		287EC97C1B245C31001B1C19 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		28C2DF781B1C8D730001E968 = {
 			isa = PBXGroup;
 			children = (
@@ -197,7 +190,6 @@
 		28C2DF831B1C8D740001E968 /* Westeros-News-App */ = {
 			isa = PBXGroup;
 			children = (
-				287EC97C1B245C31001B1C19 /* Resources */,
 				28C2DFC21B1C91840001E968 /* Models */,
 				28C2DFB41B1C8F560001E968 /* Extensions */,
 				3110BCE31B2AEDF000307CAF /* Views */,
